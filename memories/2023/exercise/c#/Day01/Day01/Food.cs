@@ -6,17 +6,13 @@ public record Food(
     Guid? InspectorId)
 {
     public bool IsEdible(Func<DateOnly> now)
-    {
-        if (IsFresh(now) &&
-            CanBeConsumed() &&
-            HaveBeenInspected())
-            return true;
-        return false;
-    }
+        => IsFresh(now) &&
+           CanBeConsumed() &&
+           HaveBeenInspected();
 
-    private bool HaveBeenInspected() => InspectorId != null;
+    private bool IsFresh(Func<DateOnly> now) => ExpirationDate > now();
 
     private bool CanBeConsumed() => ApprovedForConsumption;
 
-    private bool IsFresh(Func<DateOnly> now) => ExpirationDate > now();
+    private bool HaveBeenInspected() => InspectorId != null;
 }
