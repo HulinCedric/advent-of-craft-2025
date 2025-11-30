@@ -12,7 +12,7 @@ public record Food(
            CanBeConsumed() &&
            HasBeenInspected();
 
-    private bool IsFresh(IProvideDate now) => ExpirationDate.IsPassed(now());
+    private bool IsFresh(IProvideDate now) => ExpirationDate.HasNotExpired(now());
 
     private bool CanBeConsumed() => ApprovedForConsumption;
 
