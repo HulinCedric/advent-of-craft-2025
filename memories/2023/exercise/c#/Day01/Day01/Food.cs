@@ -1,16 +1,18 @@
 ﻿namespace Day01;
 
+using IProvideDate = Func<DateOnly>;
+
 public record Food(
     DateOnly ExpirationDate,
     bool ApprovedForConsumption,
     Guid? InspectorId)
 {
-    public bool IsEdible(Func<DateOnly> now)
+    public bool IsEdible(IProvideDate now)
         => IsFresh(now) &&
            CanBeConsumed() &&
            HaveBeenInspected();
 
-    private bool IsFresh(Func<DateOnly> now) => ExpirationDate > now();
+    private bool IsFresh(IProvideDate now) => ExpirationDate > now();
 
     private bool CanBeConsumed() => ApprovedForConsumption;
 
