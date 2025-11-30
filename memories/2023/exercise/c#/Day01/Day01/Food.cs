@@ -8,11 +8,13 @@ public record Food(
     public bool IsEdible(Func<DateOnly> now)
     {
         if (IsFresh(now) &&
-            ApprovedForConsumption &&
+            CanBeConsumed() &&
             InspectorId != null)
             return true;
         return false;
     }
+
+    private bool CanBeConsumed() => ApprovedForConsumption;
 
     private bool IsFresh(Func<DateOnly> now) => ExpirationDate > now();
 }
