@@ -10,3 +10,7 @@
 
 - I loved the experience because: Short and accurate regarding one refactoring move. Power of naming.
 - I found the exercise could be better if: Guessing domain language is fine, but some small hint could be given to drive method naming during extraction.
+
+## Code Snippet
+
+![Solution](../img/day00-CedricHulin.png)
