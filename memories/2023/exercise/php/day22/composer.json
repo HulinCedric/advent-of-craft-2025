@@ -1,0 +1,20 @@
+{
+    "require": {
+        "pestphp/pest": "^2.33",
+        "nesbot/carbon": "^3.0",
+        "ramsey/uuid": "^4.7",
+        "mockery/mockery": "^1.6",
+        "innmind/immutable": "^4.14"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Tests\\": "tests/"
+        }
+    }
+}
