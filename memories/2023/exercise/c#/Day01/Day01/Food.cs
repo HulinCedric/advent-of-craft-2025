@@ -10,11 +10,11 @@ public record Food(
     public bool IsEdible(IProvideDate now)
         => IsFresh(now) &&
            CanBeConsumed() &&
-           HaveBeenInspected();
+           HasBeenInspected();
 
     private bool IsFresh(IProvideDate now) => ExpirationDate.IsPassed(now());
 
     private bool CanBeConsumed() => ApprovedForConsumption;
 
-    private bool HaveBeenInspected() => InspectorId != null;
+    private bool HasBeenInspected() => InspectorId != null;
 }
