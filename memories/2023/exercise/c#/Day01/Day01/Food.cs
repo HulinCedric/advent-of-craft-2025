@@ -2,7 +2,7 @@
 
 using IProvideDate = Func<DateOnly>;
 
-public record Food(
+public sealed record Food(
     DateOnly ExpirationDate,
     bool ApprovedForConsumption,
     Guid? InspectorId)
