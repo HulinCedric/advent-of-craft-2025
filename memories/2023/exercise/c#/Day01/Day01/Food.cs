@@ -14,5 +14,5 @@ public record Food(
         return false;
     }
 
-    private bool IsFresh(Func<DateOnly> now) => ExpirationDate.CompareTo(now()) > 0;
+    private bool IsFresh(Func<DateOnly> now) => ExpirationDate > now();
 }
