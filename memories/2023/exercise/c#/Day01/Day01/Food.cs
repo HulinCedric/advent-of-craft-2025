@@ -9,10 +9,12 @@ public record Food(
     {
         if (IsFresh(now) &&
             CanBeConsumed() &&
-            InspectorId != null)
+            HaveBeenInspected())
             return true;
         return false;
     }
+
+    private bool HaveBeenInspected() => InspectorId != null;
 
     private bool CanBeConsumed() => ApprovedForConsumption;
 
