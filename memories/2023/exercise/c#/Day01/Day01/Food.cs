@@ -1,17 +1,18 @@
-﻿namespace Day01
+﻿namespace Day01;
+
+public record Food(
+    DateOnly ExpirationDate,
+    bool ApprovedForConsumption,
+    Guid? InspectorId)
 {
-    public record Food(
-        DateOnly ExpirationDate,
-        bool ApprovedForConsumption,
-        Guid? InspectorId)
+    public bool IsEdible(Func<DateOnly> now)
     {
-        public bool IsEdible(Func<DateOnly> now)
-        {
-            if (ExpirationDate.CompareTo(now()) > 0 &&
-                ApprovedForConsumption &&
-                InspectorId != null)
-                return true;
-            return false;
-        }
+        if (IsFresh(now) &&
+            ApprovedForConsumption &&
+            InspectorId != null)
+            return true;
+        return false;
     }
+
+    private bool IsFresh(Func<DateOnly> now) => ExpirationDate.CompareTo(now()) > 0;
 }
