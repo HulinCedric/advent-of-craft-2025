@@ -13,13 +13,11 @@ class FizzBuzz(private val rules: List<Pair<Int, String>>) {
         else -> Some(convertSafely(input))
     }
 
-    private fun convertSafely(input: Int): String {
-        val matches = rules.filter { (divisor, _) -> `is`(divisor, input) }
-        if (matches.isEmpty()) return input.toString()
-
-        // Accumulate outputs from all matching rules in the order rules are provided
-        return matches.joinToString(separator = "") { it.second }
-    }
+    private fun convertSafely(input: Int): String =
+        rules
+            .mapNotNull { (divisor, output) -> if (`is`(divisor, input)) output else null }
+            .ifEmpty { listOf(input.toString()) }
+            .joinToString(separator = "")
 
     private fun `is`(divisor: Int, input: Int): Boolean = input % divisor == 0
     private fun isOutOfRange(input: Int) = input < MIN || input > MAX
