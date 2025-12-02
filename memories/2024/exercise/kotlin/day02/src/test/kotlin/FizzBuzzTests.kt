@@ -6,7 +6,7 @@ import io.kotest.datatest.withData
 
 class FizzBuzzTests : FunSpec({
     // inject mapping without the composite 15 -> "FizzBuzz" so outputs are accumulated
-    val fizzBuzz = FizzBuzz(listOf(3 to "Fizz", 5 to "Buzz", 7 to "Whizz"))
+    val fizzBuzz = FizzBuzz(listOf(3 to "Fizz", 5 to "Buzz", 7 to "Whizz", 11 to "Bang"))
 
     context("returns its numbers representation") {
         withData(
@@ -16,8 +16,8 @@ class FizzBuzzTests : FunSpec({
             ValidInput(82, "82"),
             // Fizz-only
             ValidInput(3, "Fizz"),
-            ValidInput(66, "Fizz"),
-            ValidInput(99, "Fizz"),
+            ValidInput(6, "Fizz"),
+            ValidInput(9, "Fizz"),
             // Buzz-only
             ValidInput(5, "Buzz"),
             ValidInput(50, "Buzz"),
@@ -36,7 +36,20 @@ class FizzBuzzTests : FunSpec({
             ValidInput(63, "FizzWhizz"),
             // Buzz + Whizz
             ValidInput(35, "BuzzWhizz"),
-            ValidInput(70, "BuzzWhizz")
+            ValidInput(70, "BuzzWhizz"),
+            // Bang-only
+            ValidInput(11, "Bang"),
+            ValidInput(22, "Bang"),
+            ValidInput(44, "Bang"),
+            // Fizz + Bang
+            ValidInput(33, "FizzBang"),
+            ValidInput(66, "FizzBang"),
+            ValidInput(99, "FizzBang"),
+            // Buzz + Bang
+            ValidInput(55, "BuzzBang"),
+            // Whizz + Bang
+            ValidInput(77, "WhizzBang")
+            // Over-the-limit cases from original set are intentionally excluded (e.g., 140, 105, 210, 420)
         ) { (input, expectedResult) ->
             fizzBuzz.convert(input).shouldBeSome(expectedResult)
         }
