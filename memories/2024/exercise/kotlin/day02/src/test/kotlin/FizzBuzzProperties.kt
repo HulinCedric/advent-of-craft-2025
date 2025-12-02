@@ -11,15 +11,17 @@ val fizzBuzzStrings = listOf("Fizz", "Buzz", "FizzBuzz")
 fun validStringsFor(x: Int): List<String> = fizzBuzzStrings + x.toString()
 
 class FizzBuzzProperties : StringSpec({
+    val fizzBuzz = FizzBuzz()
+
     "parse return a valid string for numbers between 1 and 100" {
         forAll(Arb.int(MIN..MAX)) { x ->
-            FizzBuzz.convert(x).isSome { result -> validStringsFor(x).contains(result) }
+            fizzBuzz.convert(x).isSome { result -> validStringsFor(x).contains(result) }
         }
     }
 
     "parse fail for numbers out of range" {
         forAll(Arb.int().filter { i -> i < MIN || i > MAX }) { x ->
-            FizzBuzz.convert(x).isNone()
+            fizzBuzz.convert(x).isNone()
         }
     }
 })

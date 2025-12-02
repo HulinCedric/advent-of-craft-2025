@@ -5,6 +5,8 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 
 class FizzBuzzTests : FunSpec({
+    val fizzBuzz = FizzBuzz()
+
     context("returns its numbers representation") {
         withData(
             ValidInput(1, "1"),
@@ -20,13 +22,13 @@ class FizzBuzzTests : FunSpec({
             ValidInput(30, "FizzBuzz"),
             ValidInput(45, "FizzBuzz")
         ) { (input, expectedResult) ->
-            FizzBuzz.convert(input).shouldBeSome(expectedResult)
+            fizzBuzz.convert(input).shouldBeSome(expectedResult)
         }
     }
 
     context("fails for numbers out of range") {
         withData(0, -1, 101) { x ->
-            FizzBuzz.convert(x).shouldBeNone()
+            fizzBuzz.convert(x).shouldBeNone()
         }
     }
 })

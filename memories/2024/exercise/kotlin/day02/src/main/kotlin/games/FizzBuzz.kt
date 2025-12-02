@@ -10,7 +10,7 @@ private const val FIZZBUZZ = 15
 private const val FIZZ = 3
 private const val BUZZ = 5
 
-object FizzBuzz {
+class FizzBuzz {
     fun convert(input: Int): Option<String> = when {
         isOutOfRange(input) -> None
         else -> Some(convertSafely(input))
