@@ -5,8 +5,8 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 
 class FizzBuzzTests : FunSpec({
-    // inject the exact mapping used by the original implementation
-    val fizzBuzz = FizzBuzz(listOf(15 to "FizzBuzz", 3 to "Fizz", 5 to "Buzz"))
+    // inject mapping without the composite 15 -> "FizzBuzz" so outputs are accumulated
+    val fizzBuzz = FizzBuzz(listOf(3 to "Fizz", 5 to "Buzz", 7 to "Whizz"))
 
     context("returns its numbers representation") {
         withData(
@@ -21,7 +21,18 @@ class FizzBuzzTests : FunSpec({
             ValidInput(85, "Buzz"),
             ValidInput(15, "FizzBuzz"),
             ValidInput(30, "FizzBuzz"),
-            ValidInput(45, "FizzBuzz")
+            ValidInput(45, "FizzBuzz"),
+            // Whizz-only
+            ValidInput(7, "Whizz"),
+            ValidInput(14, "Whizz"),
+            ValidInput(28, "Whizz"),
+            // Fizz + Whizz
+            ValidInput(21, "FizzWhizz"),
+            ValidInput(42, "FizzWhizz"),
+            ValidInput(63, "FizzWhizz"),
+            // Buzz + Whizz
+            ValidInput(35, "BuzzWhizz"),
+            ValidInput(70, "BuzzWhizz")
         ) { (input, expectedResult) ->
             fizzBuzz.convert(input).shouldBeSome(expectedResult)
         }
