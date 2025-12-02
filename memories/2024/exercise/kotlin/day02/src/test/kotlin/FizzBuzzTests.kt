@@ -5,7 +5,8 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 
 class FizzBuzzTests : FunSpec({
-    val fizzBuzz = FizzBuzz()
+    // inject the exact mapping used by the original implementation
+    val fizzBuzz = FizzBuzz(listOf(15 to "FizzBuzz", 3 to "Fizz", 5 to "Buzz"))
 
     context("returns its numbers representation") {
         withData(

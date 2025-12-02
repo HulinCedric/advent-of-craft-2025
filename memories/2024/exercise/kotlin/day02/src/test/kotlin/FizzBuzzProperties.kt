@@ -11,7 +11,7 @@ val fizzBuzzStrings = listOf("Fizz", "Buzz", "FizzBuzz")
 fun validStringsFor(x: Int): List<String> = fizzBuzzStrings + x.toString()
 
 class FizzBuzzProperties : StringSpec({
-    val fizzBuzz = FizzBuzz()
+    val fizzBuzz = FizzBuzz(listOf(15 to "FizzBuzz", 3 to "Fizz", 5 to "Buzz"))
 
     "parse return a valid string for numbers between 1 and 100" {
         forAll(Arb.int(MIN..MAX)) { x ->
