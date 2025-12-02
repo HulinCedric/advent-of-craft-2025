@@ -10,15 +10,19 @@ class FizzBuzzTests : FunSpec({
 
     context("returns its numbers representation") {
         withData(
+            // Number-only
             ValidInput(1, "1"),
             ValidInput(67, "67"),
             ValidInput(82, "82"),
+            // Fizz-only
             ValidInput(3, "Fizz"),
             ValidInput(66, "Fizz"),
             ValidInput(99, "Fizz"),
+            // Buzz-only
             ValidInput(5, "Buzz"),
             ValidInput(50, "Buzz"),
             ValidInput(85, "Buzz"),
+            // Fizz + Buzz
             ValidInput(15, "FizzBuzz"),
             ValidInput(30, "FizzBuzz"),
             ValidInput(45, "FizzBuzz"),
