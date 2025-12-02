@@ -4,10 +4,11 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 
-const val MIN = 1
-const val MAX = 100
-
-class FizzBuzz(private val rules: List<Pair<Int, String>>) {
+class FizzBuzz(
+    private val rules: List<Pair<Int, String>>,
+    private val min: Int,
+    private val max: Int
+) {
     fun convert(input: Int): Option<String> = when {
         isOutOfRange(input) -> None
         else -> Some(convertSafely(input))
@@ -20,5 +21,5 @@ class FizzBuzz(private val rules: List<Pair<Int, String>>) {
             .joinToString(separator = "")
 
     private fun `is`(divisor: Int, input: Int): Boolean = input % divisor == 0
-    private fun isOutOfRange(input: Int) = input < MIN || input > MAX
+    private fun isOutOfRange(input: Int) = input < min || input > max
 }

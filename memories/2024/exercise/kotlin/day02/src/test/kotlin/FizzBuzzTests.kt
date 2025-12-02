@@ -4,9 +4,12 @@ import io.kotest.assertions.arrow.core.shouldBeSome
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 
+private const val MIN = 1
+private const val MAX = 100
+
 class FizzBuzzTests : FunSpec({
     // inject mapping without the composite 15 -> "FizzBuzz" so outputs are accumulated
-    val fizzBuzz = FizzBuzz(listOf(3 to "Fizz", 5 to "Buzz", 7 to "Whizz", 11 to "Bang"))
+    val fizzBuzz = FizzBuzz(listOf(3 to "Fizz", 5 to "Buzz", 7 to "Whizz", 11 to "Bang"), MIN, MAX)
 
     context("returns its numbers representation") {
         withData(
