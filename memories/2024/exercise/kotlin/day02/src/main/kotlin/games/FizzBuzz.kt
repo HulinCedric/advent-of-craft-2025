@@ -21,5 +21,5 @@ class FizzBuzz(
             .joinToString(separator = "")
 
     private fun `is`(divisor: Int, input: Int): Boolean = input % divisor == 0
-    private fun isOutOfRange(input: Int) = input < min || input > max
+    private fun isOutOfRange(input: Int) = input !in min..max
 }

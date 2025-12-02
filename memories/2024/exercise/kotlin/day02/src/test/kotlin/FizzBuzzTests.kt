@@ -5,7 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 
 private const val MIN = 1
-private const val MAX = 100
+private const val MAX = 2000
 
 class FizzBuzzTests : FunSpec({
     // inject mapping without the composite 15 -> "FizzBuzz" so outputs are accumulated
@@ -51,15 +51,27 @@ class FizzBuzzTests : FunSpec({
             // Buzz + Bang
             ValidInput(55, "BuzzBang"),
             // Whizz + Bang
-            ValidInput(77, "WhizzBang")
-            // Over-the-limit cases from original set are intentionally excluded (e.g., 140, 105, 210, 420)
+            ValidInput(77, "WhizzBang"),
+
+            // Additional cases beyond 100 up to MAX
+            ValidInput(110, "BuzzBang"),
+            ValidInput(140, "BuzzWhizz"),
+            ValidInput(154, "WhizzBang"),
+            ValidInput(165, "FizzBuzzBang"),
+            ValidInput(210, "FizzBuzzWhizz"),
+            ValidInput(231, "FizzWhizzBang"),
+            ValidInput(385, "BuzzWhizzBang"),
+            ValidInput(420, "FizzBuzzWhizz"),
+            ValidInput(105, "FizzBuzzWhizz"),
+            ValidInput(1155, "FizzBuzzWhizzBang")
+
         ) { (input, expectedResult) ->
             fizzBuzz.convert(input).shouldBeSome(expectedResult)
         }
     }
 
     context("fails for numbers out of range") {
-        withData(0, -1, 101) { x ->
+        withData(0, -1, 2001) { x ->
             fizzBuzz.convert(x).shouldBeNone()
         }
     }

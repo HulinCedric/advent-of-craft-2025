@@ -6,7 +6,7 @@ import io.kotest.property.arbitrary.int
 import io.kotest.property.forAll
 
 private const val MIN = 1
-private const val MAX = 100
+private const val MAX = 2000
 
 val fizzBuzzStrings = listOf(
     "Fizz", "Buzz", "Whizz", "Bang",
@@ -26,7 +26,7 @@ fun validStringsFor(x: Int): List<String> = fizzBuzzStrings + x.toString()
 class FizzBuzzProperties : StringSpec({
     val fizzBuzz = FizzBuzz(listOf(3 to "Fizz", 5 to "Buzz", 7 to "Whizz", 11 to "Bang"), MIN, MAX)
 
-    "parse return a valid string for numbers between 1 and 100" {
+    "parse return a valid string for numbers between 1 and 2000" {
         forAll(Arb.int(MIN..MAX)) { x ->
             fizzBuzz.convert(x).isSome { result -> validStringsFor(x).contains(result) }
         }
