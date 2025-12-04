@@ -12,10 +12,13 @@ public class SantaTest
     [Fact]
     public void GivenNaughtyChildWhenDistributingGiftsThenChildReceivesThirdChoice()
     {
-        var bobby = new Child("bobby", "naughty");
+        var bobby = new Child("bobby", BehaviorType.NAUGHTY);
         bobby.SetWishList(Playstation, Plush, Ball);
-        var santa = new Santa();
-        santa.AddChild(bobby);
+
+        var childrenRepository = new ChildrenRepository();
+        childrenRepository.Add(bobby);
+        
+        var santa = new Santa(childrenRepository);
         var got = santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Ball);
@@ -24,10 +27,12 @@ public class SantaTest
     [Fact]
     public void GivenNiceChildWhenDistributingGiftsThenChildReceivesSecondChoice()
     {
-        var bobby = new Child("bobby", "nice");
+        var bobby = new Child("bobby", BehaviorType.NICE);
         bobby.SetWishList(Playstation, Plush, Ball);
-        var santa = new Santa();
-        santa.AddChild(bobby);
+        var childrenRepository = new ChildrenRepository();
+        childrenRepository.Add(bobby);
+        
+        var santa = new Santa(childrenRepository);
         var got = santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Plush);
@@ -36,10 +41,12 @@ public class SantaTest
     [Fact]
     public void GivenVeryNiceChildWhenDistributingGiftsThenChildReceivesFirstChoice()
     {
-        var bobby = new Child("bobby", "very nice");
+        var bobby = new Child("bobby", BehaviorType.VERY_NICE);
         bobby.SetWishList(Playstation, Plush, Ball);
-        var santa = new Santa();
-        santa.AddChild(bobby);
+        var childrenRepository = new ChildrenRepository();
+        childrenRepository.Add(bobby);
+        
+        var santa = new Santa(childrenRepository);
         var got = santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Playstation);
@@ -48,10 +55,13 @@ public class SantaTest
     [Fact]
     public void GivenNonExistingChildWhenDistributingGiftsThenExceptionThrown()
     {
-        var santa = new Santa();
-        var bobby = new Child("bobby", "very nice");
+        var bobby = new Child("bobby", BehaviorType.VERY_NICE);
         bobby.SetWishList(Playstation, Plush, Ball);
-        santa.AddChild(bobby);
+
+        var childrenRepository = new ChildrenRepository();
+        childrenRepository.Add(bobby);
+
+        var santa = new Santa(childrenRepository);
 
         var chooseToyForChild = () => santa.ChooseToyForChild("alice");
         chooseToyForChild.Should()

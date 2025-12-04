@@ -1,0 +1,1 @@
+﻿global using DateOnlyProvider = System.Func<System.DateOnly>;

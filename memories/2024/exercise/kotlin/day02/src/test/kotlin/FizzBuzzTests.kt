@@ -18,7 +18,13 @@ class FizzBuzzTests : FunSpec({
             ValidInput(85, "Buzz"),
             ValidInput(15, "FizzBuzz"),
             ValidInput(30, "FizzBuzz"),
-            ValidInput(45, "FizzBuzz")
+            ValidInput(45, "FizzBuzz"),
+            ValidInput(7, "Whizz"),
+            ValidInput(11, "Bang"),
+            ValidInput(21, "FizzBang"),
+            ValidInput(35, "BuzzBang"),
+            ValidInput(77, "WhizBang"),
+            ValidInput(75, "FizzBuzzWhiz")
         ) { (input, expectedResult) ->
             FizzBuzz.convert(input).shouldBeSome(expectedResult)
         }

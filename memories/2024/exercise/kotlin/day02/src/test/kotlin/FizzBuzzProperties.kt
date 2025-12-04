@@ -7,7 +7,7 @@ import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.int
 import io.kotest.property.forAll
 
-val fizzBuzzStrings = listOf("Fizz", "Buzz", "FizzBuzz")
+val fizzBuzzStrings = listOf("Fizz", "Buzz", "FizzBuzz", "Whizz", "Bang", "FizzBang", "BuzzBang", "FizzBuzzWhiz", "WhizBang")
 fun validStringsFor(x: Int): List<String> = fizzBuzzStrings + x.toString()
 
 class FizzBuzzProperties : StringSpec({

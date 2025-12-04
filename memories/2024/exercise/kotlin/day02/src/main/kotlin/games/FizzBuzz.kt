@@ -9,6 +9,12 @@ const val MAX = 100
 private const val FIZZBUZZ = 15
 private const val FIZZ = 3
 private const val BUZZ = 5
+private const val WHIZZ = 7
+private const val BANG = 11
+private const val FIZZBANG = 21
+private const val BUZZBANG = 35
+private const val FIZZBUZZWHIZ = 75
+private const val WHIZBANG = 77
 
 object FizzBuzz {
     fun convert(input: Int): Option<String> = when {
@@ -17,9 +23,15 @@ object FizzBuzz {
     }
 
     private fun convertSafely(input: Int): String = when {
+        `is`(WHIZBANG, input) -> "WhizBang"
+        `is`(FIZZBUZZWHIZ, input) -> "FizzBuzzWhiz"
+        `is`(BUZZBANG, input) -> "BuzzBang"
+        `is`(FIZZBANG, input) -> "FizzBang"
         `is`(FIZZBUZZ, input) -> "FizzBuzz"
         `is`(FIZZ, input) -> "Fizz"
         `is`(BUZZ, input) -> "Buzz"
+        `is`(WHIZZ, input) -> "Whizz"
+        `is`(BANG, input) -> "Bang"
         else -> input.toString()
     }
 
