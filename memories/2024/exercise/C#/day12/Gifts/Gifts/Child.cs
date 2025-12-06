@@ -4,7 +4,7 @@ public class Child
 {
     private readonly List<Toy> _wishlist = [];
 
-    public Child(string name, IBehavior behavior)
+    public Child(string name, IBehavior? behavior)
     {
         Name = name;
         Behavior = behavior;
@@ -22,4 +22,6 @@ public class Child
         _wishlist.Add(secondChoice);
         _wishlist.Add(thirdChoice);
     }
+
+    public Toy? ChooseToy() => Behavior?.ChooseToy(Wishlist);
 }

@@ -13,7 +13,7 @@ public class Santa
         if (found == null)
             throw new InvalidOperationException("No such child found");
 
-        return found.Behavior?.ChooseToy(found.Wishlist);
+        return found.ChooseToy();
     }
 
     public void AddChild(Child child) => _childrenRepository.Add(child);

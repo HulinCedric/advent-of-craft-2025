@@ -9,11 +9,7 @@ public static class ChildFactory
     public static Child Create(string name, string behaviorKey)
     {
         var factory = BehaviorFactoryProducer.GetFactory(behaviorKey);
-        if (factory == null)
-            throw new ArgumentException($"Unknown behavior key: '{behaviorKey}'", nameof(behaviorKey));
-
-        var behavior = factory.Create();
-
+        var behavior = factory?.Create();
         return new Child(name, behavior);
     }
 }
