@@ -6,12 +6,7 @@ namespace Gifts.Tests;
 
 public class SantaTest
 {
-    private Santa _santa;
-
-    public SantaTest()
-    {
-        _santa = new Santa(new InMemoryChildrenRepository());
-    }
+    private readonly Santa _santa = new(new InMemoryChildrenRepository());
 
     private static readonly Toy Playstation = new("playstation");
     private static readonly Toy Ball = new("ball");
@@ -24,6 +19,7 @@ public class SantaTest
         var bobby = new Child("bobby", Behavior.Naughty);
         bobby = bobby.SetWishList(Playstation, Plush, Ball);
         _santa.AddChild(bobby);
+      
         var got = _santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Ball);
@@ -34,9 +30,9 @@ public class SantaTest
     {
         var bobby = new Child("bobby", Behavior.Nice);
         bobby = bobby.SetWishList(Playstation, Plush, Ball);
-        var santa = new Santa(new InMemoryChildrenRepository());
-        santa.AddChild(bobby);
-        var got = santa.ChooseToyForChild("bobby");
+        _santa.AddChild(bobby);
+       
+        var got = _santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Plush);
     }
@@ -46,9 +42,9 @@ public class SantaTest
     {
         var bobby = new Child("bobby", Behavior.VeryNice);
         bobby = bobby.SetWishList(Playstation, Plush, Ball);
-        var santa = new Santa(new InMemoryChildrenRepository());
-        santa.AddChild(bobby);
-        var got = santa.ChooseToyForChild("bobby");
+        _santa.AddChild(bobby);
+       
+        var got = _santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Playstation);
     }
@@ -56,12 +52,12 @@ public class SantaTest
     [Fact]
     public void GivenNonExistingChildWhenDistributingGiftsThenFailed()
     {
-        var santa = new Santa(new InMemoryChildrenRepository());
         var bobby = new Child("bobby", Behavior.VeryNice);
         bobby = bobby.SetWishList(Playstation, Plush, Ball);
-        santa.AddChild(bobby);
+       
+        _santa.AddChild(bobby);
 
-        var got = santa.ChooseToyForChild("alice");
+        var got = _santa.ChooseToyForChild("alice");
         got.Should().Be("No such child found");
     }
     
@@ -69,9 +65,9 @@ public class SantaTest
     public void GivenChildWithoutWishListWhenDistributingGiftsThenChildReceivesNoToy()
     {
         var bobby = new Child("bobby", Behavior.VeryNice);
-        var santa = new Santa(new InMemoryChildrenRepository());
-        santa.AddChild(bobby);
-        var got = santa.ChooseToyForChild("bobby");
+        _santa.AddChild(bobby);
+       
+        var got = _santa.ChooseToyForChild("bobby");
 
         got.Should().Be(NoToy);
     }
