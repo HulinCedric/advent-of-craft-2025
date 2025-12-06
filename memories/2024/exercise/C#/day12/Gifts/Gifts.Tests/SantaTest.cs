@@ -8,20 +8,29 @@ public class SantaTest
     private static readonly Toy Playstation = new("playstation");
     private static readonly Toy Ball = new("ball");
     private static readonly Toy Plush = new("plush");
+    private readonly ChildFactory _childFactory;
+    private readonly Santa _santa;
+
+    public SantaTest()
+    {
+        var behaviorFactoryResolver = new BehaviorFactoryResolver();
+        behaviorFactoryResolver.Register("naughty", new NaughtyBehaviorFactory());
+        behaviorFactoryResolver.Register("nice", new NiceBehaviorFactory());
+        behaviorFactoryResolver.Register("very nice", new VeryNiceBehaviorFactory());
+        _childFactory = new ChildFactory(behaviorFactoryResolver);
+        var repo = new InMemoryChildRepository();
+
+        _santa = new Santa(repo);
+    }
 
     [Fact]
     public void GivenNaughtyChildWhenDistributingGiftsThenChildReceivesThirdChoice()
     {
-        var resolver = new BehaviorFactoryResolver();
-        var factory = new ChildFactory(resolver);
-        var repo = new InMemoryChildRepository();
-
-        var bobby = factory.Create("bobby", "naughty");
+        var bobby = _childFactory.Create("bobby", "naughty");
         bobby.SetWishList(Playstation, Plush, Ball);
 
-        var santa = new Santa(repo);
-        santa.AddChild(bobby);
-        var got = santa.ChooseToyForChild("bobby");
+        _santa.AddChild(bobby);
+        var got = _santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Ball);
     }
@@ -29,16 +38,11 @@ public class SantaTest
     [Fact]
     public void GivenNiceChildWhenDistributingGiftsThenChildReceivesSecondChoice()
     {
-        var resolver = new BehaviorFactoryResolver();
-        var factory = new ChildFactory(resolver);
-        var repo = new InMemoryChildRepository();
-
-        var bobby = factory.Create("bobby", "nice");
+        var bobby = _childFactory.Create("bobby", "nice");
         bobby.SetWishList(Playstation, Plush, Ball);
 
-        var santa = new Santa(repo);
-        santa.AddChild(bobby);
-        var got = santa.ChooseToyForChild("bobby");
+        _santa.AddChild(bobby);
+        var got = _santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Plush);
     }
@@ -46,16 +50,11 @@ public class SantaTest
     [Fact]
     public void GivenVeryNiceChildWhenDistributingGiftsThenChildReceivesFirstChoice()
     {
-        var resolver = new BehaviorFactoryResolver();
-        var factory = new ChildFactory(resolver);
-        var repo = new InMemoryChildRepository();
-
-        var bobby = factory.Create("bobby", "very nice");
+        var bobby = _childFactory.Create("bobby", "very nice");
         bobby.SetWishList(Playstation, Plush, Ball);
 
-        var santa = new Santa(repo);
-        santa.AddChild(bobby);
-        var got = santa.ChooseToyForChild("bobby");
+        _santa.AddChild(bobby);
+        var got = _santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Playstation);
     }
@@ -63,16 +62,11 @@ public class SantaTest
     [Fact]
     public void GivenNonExistingChildWhenDistributingGiftsThenExceptionThrown()
     {
-        var resolver = new BehaviorFactoryResolver();
-        var factory = new ChildFactory(resolver);
-        var repo = new InMemoryChildRepository();
-        var santa = new Santa(repo);
-
-        var bobby = factory.Create("bobby", "very nice");
+        var bobby = _childFactory.Create("bobby", "very nice");
         bobby.SetWishList(Playstation, Plush, Ball);
-        santa.AddChild(bobby);
+        _santa.AddChild(bobby);
 
-        var chooseToyForChild = () => santa.ChooseToyForChild("alice");
+        var chooseToyForChild = () => _santa.ChooseToyForChild("alice");
         chooseToyForChild.Should()
             .Throw<InvalidOperationException>()
             .WithMessage("No such child found");
