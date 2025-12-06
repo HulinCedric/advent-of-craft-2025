@@ -12,9 +12,13 @@ public class SantaTest
     [Fact]
     public void GivenNaughtyChildWhenDistributingGiftsThenChildReceivesThirdChoice()
     {
+        var resolver = new BehaviorFactoryResolver();
+        var factory = new ChildFactory(resolver);
         var repo = new InMemoryChildRepository();
-        var bobby = ChildFactory.Create("bobby", "naughty");
+
+        var bobby = factory.Create("bobby", "naughty");
         bobby.SetWishList(Playstation, Plush, Ball);
+
         var santa = new Santa(repo);
         santa.AddChild(bobby);
         var got = santa.ChooseToyForChild("bobby");
@@ -25,9 +29,13 @@ public class SantaTest
     [Fact]
     public void GivenNiceChildWhenDistributingGiftsThenChildReceivesSecondChoice()
     {
+        var resolver = new BehaviorFactoryResolver();
+        var factory = new ChildFactory(resolver);
         var repo = new InMemoryChildRepository();
-        var bobby = ChildFactory.Create("bobby", "nice");
+
+        var bobby = factory.Create("bobby", "nice");
         bobby.SetWishList(Playstation, Plush, Ball);
+
         var santa = new Santa(repo);
         santa.AddChild(bobby);
         var got = santa.ChooseToyForChild("bobby");
@@ -38,9 +46,13 @@ public class SantaTest
     [Fact]
     public void GivenVeryNiceChildWhenDistributingGiftsThenChildReceivesFirstChoice()
     {
+        var resolver = new BehaviorFactoryResolver();
+        var factory = new ChildFactory(resolver);
         var repo = new InMemoryChildRepository();
-        var bobby = ChildFactory.Create("bobby", "very nice");
+
+        var bobby = factory.Create("bobby", "very nice");
         bobby.SetWishList(Playstation, Plush, Ball);
+
         var santa = new Santa(repo);
         santa.AddChild(bobby);
         var got = santa.ChooseToyForChild("bobby");
@@ -51,9 +63,12 @@ public class SantaTest
     [Fact]
     public void GivenNonExistingChildWhenDistributingGiftsThenExceptionThrown()
     {
+        var resolver = new BehaviorFactoryResolver();
+        var factory = new ChildFactory(resolver);
         var repo = new InMemoryChildRepository();
         var santa = new Santa(repo);
-        var bobby = ChildFactory.Create("bobby", "very nice");
+
+        var bobby = factory.Create("bobby", "very nice");
         bobby.SetWishList(Playstation, Plush, Ball);
         santa.AddChild(bobby);
 

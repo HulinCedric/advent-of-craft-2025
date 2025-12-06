@@ -1,15 +1,30 @@
 namespace Gifts;
 
-public static class ChildFactory
+public sealed class ChildFactory
 {
-    /// <summary>
-    ///     Create a Child with the given name and behavior key (string). The behavior key is validated via
-    ///     BehaviorFactoryProducer.
-    /// </summary>
-    public static Child Create(string name, string behaviorKey)
+    private readonly IBehaviorFactoryResolver _resolver;
+
+    public ChildFactory(IBehaviorFactoryResolver resolver)
     {
-        var factory = BehaviorFactoryProducer.GetFactory(behaviorKey);
-        var behavior = factory?.Create();
+        _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+    }
+
+    public Child Create(string name, string behaviorKey)
+    {
+        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
+        if (string.IsNullOrWhiteSpace(behaviorKey)) throw new ArgumentNullException(nameof(behaviorKey));
+
+        var factory = _resolver.GetFactory(behaviorKey);
+        if (factory == null) throw new ArgumentException($"Unknown behavior key: '{behaviorKey}'", nameof(behaviorKey));
+
+        var behavior = factory.Create() ?? throw new InvalidOperationException("Behavior factory returned null");
         return new Child(name, behavior);
+    }
+
+    public Child CreateWithWishlist(string name, string behaviorKey, Toy firstChoice, Toy secondChoice, Toy thirdChoice)
+    {
+        var child = Create(name, behaviorKey);
+        child.SetWishList(firstChoice, secondChoice, thirdChoice);
+        return child;
     }
 }
