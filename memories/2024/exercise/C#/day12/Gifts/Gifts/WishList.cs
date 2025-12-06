@@ -2,7 +2,7 @@ using LanguageExt;
 
 namespace Gifts;
 
-internal class WishList
+internal sealed class WishList
 {
     private readonly Seq<Toy> _wishlist;
 

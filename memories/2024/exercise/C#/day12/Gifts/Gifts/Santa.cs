@@ -4,7 +4,7 @@ namespace Gifts;
 
 using Result = Either<string, Option<Toy>>;
 
-public class Santa(IChildrenRepository childrenRepository)
+public sealed class Santa(IChildrenRepository childrenRepository)
 {
     public Result ChooseToyForChild(ChildName childName)
         => childrenRepository.FindChildByName(childName)

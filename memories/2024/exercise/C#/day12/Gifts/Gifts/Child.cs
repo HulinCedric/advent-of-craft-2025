@@ -2,7 +2,7 @@
 
 namespace Gifts;
 
-public class Child
+public sealed class Child
 {
     private readonly Behavior _behavior;
     private readonly ChildName _name;
