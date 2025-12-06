@@ -53,7 +53,7 @@ public class SantaTest
     {
         var repo = new InMemoryChildRepository();
         var santa = new Santa(repo);
-        var bobby = new Child("bobby", new VeryNiceBehavior());
+        var bobby = ChildFactory.Create("bobby", "very nice");
         bobby.SetWishList(Playstation, Plush, Ball);
         santa.AddChild(bobby);
 
