@@ -4,10 +4,7 @@ public class Santa
 {
     private readonly IChildRepository _childrenRepository;
 
-    public Santa(IChildRepository childrenRepository)
-    {
-        _childrenRepository = childrenRepository ?? throw new ArgumentNullException(nameof(childrenRepository));
-    }
+    public Santa(IChildRepository childrenRepository) => _childrenRepository = childrenRepository;
 
     public Toy? ChooseToyForChild(string childName)
     {
@@ -16,7 +13,7 @@ public class Santa
         if (found == null)
             throw new InvalidOperationException("No such child found");
 
-        return found.Behavior.ChooseToy(found.Wishlist);
+        return found.Behavior?.ChooseToy(found.Wishlist);
     }
 
     public void AddChild(Child child) => _childrenRepository.Add(child);
