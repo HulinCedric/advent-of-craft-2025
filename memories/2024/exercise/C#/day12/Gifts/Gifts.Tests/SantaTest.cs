@@ -12,9 +12,10 @@ public class SantaTest
     [Fact]
     public void GivenNaughtyChildWhenDistributingGiftsThenChildReceivesThirdChoice()
     {
-        var bobby = ChildFactory.Create("bobby", "naughty");
+        var repo = new InMemoryChildRepository();
+        var bobby = new Child("bobby", new NaughtyBehavior());
         bobby.SetWishList(Playstation, Plush, Ball);
-        var santa = new Santa();
+        var santa = new Santa(repo);
         santa.AddChild(bobby);
         var got = santa.ChooseToyForChild("bobby");
 
@@ -24,9 +25,10 @@ public class SantaTest
     [Fact]
     public void GivenNiceChildWhenDistributingGiftsThenChildReceivesSecondChoice()
     {
-        var bobby = ChildFactory.Create("bobby", "nice");
+        var repo = new InMemoryChildRepository();
+        var bobby = new Child("bobby", new NiceBehavior());
         bobby.SetWishList(Playstation, Plush, Ball);
-        var santa = new Santa();
+        var santa = new Santa(repo);
         santa.AddChild(bobby);
         var got = santa.ChooseToyForChild("bobby");
 
@@ -36,9 +38,10 @@ public class SantaTest
     [Fact]
     public void GivenVeryNiceChildWhenDistributingGiftsThenChildReceivesFirstChoice()
     {
-        var bobby = ChildFactory.Create("bobby", "very nice");
+        var repo = new InMemoryChildRepository();
+        var bobby = new Child("bobby", new VeryNiceBehavior());
         bobby.SetWishList(Playstation, Plush, Ball);
-        var santa = new Santa();
+        var santa = new Santa(repo);
         santa.AddChild(bobby);
         var got = santa.ChooseToyForChild("bobby");
 
@@ -48,8 +51,9 @@ public class SantaTest
     [Fact]
     public void GivenNonExistingChildWhenDistributingGiftsThenExceptionThrown()
     {
-        var santa = new Santa();
-        var bobby = ChildFactory.Create("boby", "very nice");
+        var repo = new InMemoryChildRepository();
+        var santa = new Santa(repo);
+        var bobby = new Child("bobby", new VeryNiceBehavior());
         bobby.SetWishList(Playstation, Plush, Ball);
         santa.AddChild(bobby);
 

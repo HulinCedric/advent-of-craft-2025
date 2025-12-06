@@ -2,19 +2,16 @@
 
 public class Santa
 {
-    private readonly List<Child> _childrenRepository = new();
+    private readonly IChildRepository _childrenRepository;
+
+    public Santa(IChildRepository childrenRepository)
+    {
+        _childrenRepository = childrenRepository ?? throw new ArgumentNullException(nameof(childrenRepository));
+    }
 
     public Toy? ChooseToyForChild(string childName)
     {
-        Child? found = null;
-        for (int i = 0; i < _childrenRepository.Count; i++)
-        {
-            var currentChild = _childrenRepository[i];
-            if (currentChild.Name == childName)
-            {
-                found = currentChild;
-            }
-        }
+        var found = _childrenRepository.GetByName(childName);
 
         if (found == null)
             throw new InvalidOperationException("No such child found");
