@@ -13,7 +13,7 @@ public class SantaTest
     public void GivenNaughtyChildWhenDistributingGiftsThenChildReceivesThirdChoice()
     {
         var repo = new InMemoryChildRepository();
-        var bobby = new Child("bobby", new NaughtyBehavior());
+        var bobby = ChildFactory.Create("bobby", "naughty");
         bobby.SetWishList(Playstation, Plush, Ball);
         var santa = new Santa(repo);
         santa.AddChild(bobby);
@@ -26,7 +26,7 @@ public class SantaTest
     public void GivenNiceChildWhenDistributingGiftsThenChildReceivesSecondChoice()
     {
         var repo = new InMemoryChildRepository();
-        var bobby = new Child("bobby", new NiceBehavior());
+        var bobby = ChildFactory.Create("bobby", "nice");
         bobby.SetWishList(Playstation, Plush, Ball);
         var santa = new Santa(repo);
         santa.AddChild(bobby);
@@ -39,7 +39,7 @@ public class SantaTest
     public void GivenVeryNiceChildWhenDistributingGiftsThenChildReceivesFirstChoice()
     {
         var repo = new InMemoryChildRepository();
-        var bobby = new Child("bobby", new VeryNiceBehavior());
+        var bobby = ChildFactory.Create("bobby", "very nice");
         bobby.SetWishList(Playstation, Plush, Ball);
         var santa = new Santa(repo);
         santa.AddChild(bobby);
