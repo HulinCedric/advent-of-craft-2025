@@ -6,6 +6,13 @@ namespace Gifts.Tests;
 
 public class SantaTest
 {
+    private Santa _santa;
+
+    public SantaTest()
+    {
+        _santa = new Santa(new InMemoryChildrenRepository());
+    }
+
     private static readonly Toy Playstation = new("playstation");
     private static readonly Toy Ball = new("ball");
     private static readonly Toy Plush = new("plush");
@@ -16,9 +23,8 @@ public class SantaTest
     {
         var bobby = new Child("bobby", Behavior.Naughty);
         bobby = bobby.SetWishList(Playstation, Plush, Ball);
-        var santa = new Santa(new InMemoryChildrenRepository());
-        santa.AddChild(bobby);
-        var got = santa.ChooseToyForChild("bobby");
+        _santa.AddChild(bobby);
+        var got = _santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Ball);
     }
