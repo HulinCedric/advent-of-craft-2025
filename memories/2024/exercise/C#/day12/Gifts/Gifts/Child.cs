@@ -2,17 +2,16 @@
 
 public class Child
 {
+    private readonly IBehavior? _behavior;
     private readonly List<Toy> _wishlist = [];
 
     public Child(string name, IBehavior? behavior)
     {
         Name = name;
-        Behavior = behavior;
+        _behavior = behavior;
     }
 
     public string Name { get; }
-    public IBehavior? Behavior { get; }
-    public IReadOnlyList<Toy> Wishlist => _wishlist.AsReadOnly();
 
     public void SetWishList(Toy firstChoice, Toy secondChoice, Toy thirdChoice)
     {
@@ -23,5 +22,5 @@ public class Child
         _wishlist.Add(thirdChoice);
     }
 
-    public Toy? ChooseToy() => Behavior?.ChooseToy(Wishlist);
+    public Toy? ChooseToy() => _behavior?.ChooseToy(_wishlist);
 }
