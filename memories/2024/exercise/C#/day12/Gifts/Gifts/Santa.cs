@@ -2,7 +2,7 @@
 
 public class Santa
 {
-    private readonly List<Child> _childrenRepository = [];
+    private readonly List<Child> _childrenRepository = new();
 
     public Toy? ChooseToyForChild(string childName)
     {
@@ -19,16 +19,7 @@ public class Santa
         if (found == null)
             throw new InvalidOperationException("No such child found");
 
-        if (found.Behavior == "naughty")
-            return found.Wishlist[^1];
-
-        if (found.Behavior == "nice")
-            return found.Wishlist[1];
-
-        if (found.Behavior == "very nice")
-            return found.Wishlist[0];
-
-        return null;
+        return found.Behavior.ChooseToy(found.Wishlist);
     }
 
     public void AddChild(Child child) => _childrenRepository.Add(child);
