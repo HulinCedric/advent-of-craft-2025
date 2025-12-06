@@ -2,53 +2,6 @@
 
 namespace Gifts;
 
-public class Behavior(string value)
-{
-    public static readonly Behavior VeryNice = new VeryNiceBehavior();
-    public static readonly Behavior Nice = new NiceBehavior();
-    public static readonly Behavior Naughty = new NaughtyBehavior();
-
-    internal virtual Option<Toy> GetChoice(WishList wishList) => Option<Toy>.None;
-}
-
-internal class NaughtyBehavior : Behavior
-{
-    private const string Value = "naughty";
-
-    internal NaughtyBehavior() : base(Value)
-    {
-    }
-
-    internal override Option<Toy> GetChoice(WishList wishList) => wishList.GetThirdChoice();
-}
-
-internal class NiceBehavior : Behavior
-{
-    private const string Value = "nice";
-
-    internal NiceBehavior() : base(Value)
-    {
-    }
-
-    internal override Option<Toy> GetChoice(WishList wishList) => wishList.GetSecondChoice();
-}
-
-internal class VeryNiceBehavior : Behavior
-{
-    private const string Value = "very nice";
-
-    internal VeryNiceBehavior() : base(Value)
-    {
-    }
-
-    internal override Option<Toy> GetChoice(WishList wishList) => wishList.GetFirstChoice();
-}
-
-public record ChildName(string Name)
-{
-    public static implicit operator ChildName(string name) => new(name);
-}
-
 public class Child
 {
     private readonly Behavior _behavior;
