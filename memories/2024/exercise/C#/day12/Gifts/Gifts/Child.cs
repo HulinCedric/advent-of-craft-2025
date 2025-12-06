@@ -5,7 +5,7 @@ public class Child
     private readonly IBehavior? _behavior;
     private readonly List<Toy> _wishlist = new();
 
-    public Child(string name, IBehavior? behavior)
+    internal Child(string name, IBehavior? behavior)
     {
         Name = name;
         _behavior = behavior;
