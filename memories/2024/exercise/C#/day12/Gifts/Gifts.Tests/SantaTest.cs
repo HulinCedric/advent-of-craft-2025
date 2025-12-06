@@ -1,5 +1,5 @@
 global using Xunit;
-using FluentAssertions;
+using FluentAssertions.LanguageExt;
 using LanguageExt;
 
 namespace Gifts.Tests;
