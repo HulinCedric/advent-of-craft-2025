@@ -1,5 +1,6 @@
 global using Xunit;
 using FluentAssertions;
+using LanguageExt;
 
 namespace Gifts.Tests;
 
@@ -8,31 +9,16 @@ public class SantaTest
     private static readonly Toy Playstation = new("playstation");
     private static readonly Toy Ball = new("ball");
     private static readonly Toy Plush = new("plush");
-    private readonly ChildFactory _childFactory;
-    private readonly Santa _santa;
-
-    public SantaTest()
-    {
-        IBehaviorFactoryResolver behaviorFactoryResolver = new BehaviorFactoryResolver();
-        behaviorFactoryResolver.Register("naughty", new NaughtyBehaviorFactory());
-        behaviorFactoryResolver.Register("nice", new NiceBehaviorFactory());
-        behaviorFactoryResolver.Register("very nice", new VeryNiceBehaviorFactory());
-       
-        _childFactory = new ChildFactory(behaviorFactoryResolver);
-        
-        IChildRepository repo = new InMemoryChildRepository();
-        
-        _santa = new Santa(repo);
-    }
+    private static readonly Option<Toy> NoToy = Option<Toy>.None;
 
     [Fact]
     public void GivenNaughtyChildWhenDistributingGiftsThenChildReceivesThirdChoice()
     {
-        var bobby = _childFactory.Create("bobby", "naughty");
-        bobby.SetWishList(Playstation, Plush, Ball);
-
-        _santa.AddChild(bobby);
-        var got = _santa.ChooseToyForChild("bobby");
+        var bobby = new Child("bobby", Behavior.Naughty);
+        bobby = bobby.SetWishList(Playstation, Plush, Ball);
+        var santa = new Santa(new InMemoryChildrenRepository());
+        santa.AddChild(bobby);
+        var got = santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Ball);
     }
@@ -40,11 +26,11 @@ public class SantaTest
     [Fact]
     public void GivenNiceChildWhenDistributingGiftsThenChildReceivesSecondChoice()
     {
-        var bobby = _childFactory.Create("bobby", "nice");
-        bobby.SetWishList(Playstation, Plush, Ball);
-
-        _santa.AddChild(bobby);
-        var got = _santa.ChooseToyForChild("bobby");
+        var bobby = new Child("bobby", Behavior.Nice);
+        bobby = bobby.SetWishList(Playstation, Plush, Ball);
+        var santa = new Santa(new InMemoryChildrenRepository());
+        santa.AddChild(bobby);
+        var got = santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Plush);
     }
@@ -52,25 +38,35 @@ public class SantaTest
     [Fact]
     public void GivenVeryNiceChildWhenDistributingGiftsThenChildReceivesFirstChoice()
     {
-        var bobby = _childFactory.Create("bobby", "very nice");
-        bobby.SetWishList(Playstation, Plush, Ball);
-
-        _santa.AddChild(bobby);
-        var got = _santa.ChooseToyForChild("bobby");
+        var bobby = new Child("bobby", Behavior.VeryNice);
+        bobby = bobby.SetWishList(Playstation, Plush, Ball);
+        var santa = new Santa(new InMemoryChildrenRepository());
+        santa.AddChild(bobby);
+        var got = santa.ChooseToyForChild("bobby");
 
         got.Should().Be(Playstation);
     }
 
     [Fact]
-    public void GivenNonExistingChildWhenDistributingGiftsThenExceptionThrown()
+    public void GivenNonExistingChildWhenDistributingGiftsThenFailed()
     {
-        var bobby = _childFactory.Create("bobby", "very nice");
-        bobby.SetWishList(Playstation, Plush, Ball);
-        _santa.AddChild(bobby);
+        var santa = new Santa(new InMemoryChildrenRepository());
+        var bobby = new Child("bobby", Behavior.VeryNice);
+        bobby = bobby.SetWishList(Playstation, Plush, Ball);
+        santa.AddChild(bobby);
 
-        var chooseToyForChild = () => _santa.ChooseToyForChild("alice");
-        chooseToyForChild.Should()
-            .Throw<InvalidOperationException>()
-            .WithMessage("No such child found");
+        var got = santa.ChooseToyForChild("alice");
+        got.Should().Be("No such child found");
+    }
+    
+    [Fact]
+    public void GivenChildWithoutWishListWhenDistributingGiftsThenChildReceivesNoToy()
+    {
+        var bobby = new Child("bobby", Behavior.VeryNice);
+        var santa = new Santa(new InMemoryChildrenRepository());
+        santa.AddChild(bobby);
+        var got = santa.ChooseToyForChild("bobby");
+
+        got.Should().Be(NoToy);
     }
 }

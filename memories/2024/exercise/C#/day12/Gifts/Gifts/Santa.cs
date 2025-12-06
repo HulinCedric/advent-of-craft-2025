@@ -1,20 +1,20 @@
-﻿namespace Gifts;
+﻿using LanguageExt;
 
-public class Santa
+namespace Gifts;
+
+using Result = Either<string, Option<Toy>>;
+
+public class Santa(IChildrenRepository childrenRepository)
 {
-    private readonly IChildRepository _childrenRepository;
+    public Result ChooseToyForChild(ChildName childName)
+        => childrenRepository.FindChildByName(childName)
+            .Match(
+                ToToyChoice,
+                ToFailure);
 
-    public Santa(IChildRepository childrenRepository) => _childrenRepository = childrenRepository;
+    private static Result ToToyChoice(Child child) => child.GetChoice();
 
-    public Toy? ChooseToyForChild(string childName)
-    {
-        var found = _childrenRepository.GetByName(childName);
+    private static Result ToFailure() => "No such child found";
 
-        if (found == null)
-            throw new InvalidOperationException("No such child found");
-
-        return found.ChooseToy();
-    }
-
-    public void AddChild(Child child) => _childrenRepository.Add(child);
+    public void AddChild(Child child) => childrenRepository.AddChild(child);
 }

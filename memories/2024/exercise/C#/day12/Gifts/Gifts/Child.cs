@@ -1,26 +1,75 @@
-﻿namespace Gifts;
+﻿using LanguageExt;
+
+namespace Gifts;
+
+public class Behavior(string value)
+{
+    public static readonly Behavior VeryNice = new VeryNiceBehavior();
+    public static readonly Behavior Nice = new NiceBehavior();
+    public static readonly Behavior Naughty = new NaughtyBehavior();
+
+    internal virtual Option<Toy> GetChoice(WishList wishList) => Option<Toy>.None;
+}
+
+internal class NaughtyBehavior : Behavior
+{
+    private const string Value = "naughty";
+
+    internal NaughtyBehavior() : base(Value)
+    {
+    }
+
+    internal override Option<Toy> GetChoice(WishList wishList) => wishList.GetThirdChoice();
+}
+
+internal class NiceBehavior : Behavior
+{
+    private const string Value = "nice";
+
+    internal NiceBehavior() : base(Value)
+    {
+    }
+
+    internal override Option<Toy> GetChoice(WishList wishList) => wishList.GetSecondChoice();
+}
+
+internal class VeryNiceBehavior : Behavior
+{
+    private const string Value = "very nice";
+
+    internal VeryNiceBehavior() : base(Value)
+    {
+    }
+
+    internal override Option<Toy> GetChoice(WishList wishList) => wishList.GetFirstChoice();
+}
+
+public record ChildName(string Name)
+{
+    public static implicit operator ChildName(string name) => new(name);
+}
 
 public class Child
 {
-    private readonly IBehavior? _behavior;
-    private readonly List<Toy> _wishlist = new();
+    private readonly Behavior _behavior;
+    private readonly ChildName _name;
+    private readonly WishList _wishlist;
 
-    internal Child(string name, IBehavior? behavior)
+    public Child(ChildName name, Behavior behavior) : this(name, behavior, WishList.Empty())
     {
-        Name = name;
+    }
+
+    private Child(ChildName name, Behavior behavior, WishList wishlist)
+    {
+        _name = name;
         _behavior = behavior;
+        _wishlist = wishlist;
     }
 
-    public string Name { get; }
+    public Child SetWishList(Toy firstChoice, Toy secondChoice, Toy thirdChoice)
+        => new(_name, _behavior, WishList.WithThreeChoices(firstChoice, secondChoice, thirdChoice));
 
-    public void SetWishList(Toy firstChoice, Toy secondChoice, Toy thirdChoice)
-    {
-        _wishlist.Clear();
+    internal Option<Toy> GetChoice() => _behavior.GetChoice(_wishlist);
 
-        _wishlist.Add(firstChoice);
-        _wishlist.Add(secondChoice);
-        _wishlist.Add(thirdChoice);
-    }
-
-    public Toy? ChooseToy() => _behavior?.ChooseToy(_wishlist);
+    internal bool IsNamed(ChildName childName) => _name == childName;
 }
