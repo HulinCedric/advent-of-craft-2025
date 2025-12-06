@@ -13,13 +13,15 @@ public class SantaTest
 
     public SantaTest()
     {
-        var behaviorFactoryResolver = new BehaviorFactoryResolver();
+        IBehaviorFactoryResolver behaviorFactoryResolver = new BehaviorFactoryResolver();
         behaviorFactoryResolver.Register("naughty", new NaughtyBehaviorFactory());
         behaviorFactoryResolver.Register("nice", new NiceBehaviorFactory());
         behaviorFactoryResolver.Register("very nice", new VeryNiceBehaviorFactory());
+       
         _childFactory = new ChildFactory(behaviorFactoryResolver);
-        var repo = new InMemoryChildRepository();
-
+        
+        IChildRepository repo = new InMemoryChildRepository();
+        
         _santa = new Santa(repo);
     }
 
