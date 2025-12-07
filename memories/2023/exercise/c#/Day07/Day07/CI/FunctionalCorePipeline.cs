@@ -5,16 +5,13 @@ namespace Day07.CI;
 
 internal sealed record FunctionalCorePipeline
 {
-    private readonly bool _shouldSendEmailSummary;
     private readonly Seq<IPipelineStepResult> _stepsResults;
 
     private FunctionalCorePipeline(
         Project project,
-        bool shouldSendEmailSummary,
         IEnumerable<IPipelineStepResult> pipelineStepResults)
     {
         Project = project;
-        _shouldSendEmailSummary = shouldSendEmailSummary;
         _stepsResults = pipelineStepResults.ToSeq();
     }
 
@@ -33,15 +30,12 @@ internal sealed record FunctionalCorePipeline
     public bool IsDeploymentSuccessful()
         => _stepsResults.OfType<DeploymentStepResult>().FirstOrDefault()?.IsPassed ?? false;
 
-    public static FunctionalCorePipeline From(Project project, bool shouldSendEmailSummary)
-        => new(project, shouldSendEmailSummary, []);
+    public static FunctionalCorePipeline From(Project project) => new(project, []);
 
-    public bool ShouldSendEmailSummary() => _shouldSendEmailSummary;
 
     public FunctionalCorePipeline AddStepResult(IPipelineStepResult pipelineStepResult)
         => new(
             Project,
-            _shouldSendEmailSummary,
             _stepsResults.Append(pipelineStepResult));
 
     public FunctionalCorePipeline Run(params IEnumerable<IPipelineStep> steps)

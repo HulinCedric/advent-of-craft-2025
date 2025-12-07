@@ -1,12 +1,12 @@
 namespace Day07.CI;
 
-internal class SendEmailSummaryStep : IPipelineStep
+internal class SendEmailSummaryStep(bool sendEmailSummary) : IPipelineStep
 {
     public FunctionalCorePipeline Handle(FunctionalCorePipeline input) => input.AddStepResult(PipelineResult(input));
 
-    private static IPipelineStepResult PipelineResult(FunctionalCorePipeline input)
+    private IPipelineStepResult PipelineResult(FunctionalCorePipeline input)
     {
-        if (!input.ShouldSendEmailSummary())
+        if (!sendEmailSummary)
             return SendSummaryPipelineStepResult.New()
                 .AddLog(LogLevel.Info, "Email disabled");
 

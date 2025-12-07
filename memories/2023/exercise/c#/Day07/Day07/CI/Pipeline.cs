@@ -7,11 +7,11 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
     public void Run(Project project)
     {
         var result = FunctionalCorePipeline
-            .From(project, config.SendEmailSummary())
+            .From(project)
             .Run(
                 new TestStep(),
                 new DeploymentStep(),
-                new SendEmailSummaryStep());
+                new SendEmailSummaryStep(config.SendEmailSummary()));
 
         Logs(result);
         SendEmail(result);
