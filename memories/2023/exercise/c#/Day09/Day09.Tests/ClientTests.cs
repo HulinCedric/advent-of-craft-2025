@@ -113,4 +113,21 @@ public class ClientTests
             .Which.ParamName.Should()
             .Be("orderLines");
     }
+    
+    [Fact]
+    public void TotalAmount_Should_Handle_MaxDouble_Values_Correctly()
+    {
+        var client = new Client(
+            new Dictionary<string, double>
+            {
+                { "First item", double.MaxValue },
+                { "Second item", double.MaxValue }
+            });
+
+        var total = client.TotalAmount();
+        total.Should().Be(double.PositiveInfinity);
+
+        var statement = client.ToStatement();
+        statement.Should().Contain("Total : Infinity€");
+    }
 }
