@@ -21,7 +21,6 @@ public class Client
             NewLine,
             _orderLines
                 .Select(kvp => FormatLine(kvp.Key, kvp.Value))
-                .ToList()
         )}";
 
         if (!IsNullOrEmpty(result)) result += NewLine;
