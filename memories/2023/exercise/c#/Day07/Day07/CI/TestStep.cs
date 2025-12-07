@@ -2,9 +2,9 @@ namespace Day07.CI;
 
 internal class TestStep : IPipelineStep
 {
-    public PipelineResult Handle(PipelineResult input) => input.AddStepResult(RunInternal(input));
+    public FunctionalCorePipeline Handle(FunctionalCorePipeline input) => input.AddStepResult(RunInternal(input));
 
-    private static IPipelineStepResult RunInternal(PipelineResult input)
+    private static IPipelineStepResult RunInternal(FunctionalCorePipeline input)
     {
         if (!input.Project.HasTests())
             return TestStepResult.StepPassed().AddLog(LogLevel.Info, "No tests");

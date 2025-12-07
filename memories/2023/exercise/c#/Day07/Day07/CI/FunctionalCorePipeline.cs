@@ -1,20 +1,21 @@
 using Day07.CI.Dependencies;
+using LanguageExt;
 
 namespace Day07.CI;
 
-internal class PipelineResult
+internal sealed record FunctionalCorePipeline
 {
     private readonly bool _shouldSendEmailSummary;
-    private readonly IReadOnlyList<IPipelineStepResult> _stepsResults;
+    private readonly Seq<IPipelineStepResult> _stepsResults;
 
-    private PipelineResult(
+    private FunctionalCorePipeline(
         Project project,
         bool shouldSendEmailSummary,
         IEnumerable<IPipelineStepResult> pipelineStepResults)
     {
         Project = project;
         _shouldSendEmailSummary = shouldSendEmailSummary;
-        _stepsResults = pipelineStepResults.ToList().AsReadOnly();
+        _stepsResults = pipelineStepResults.ToSeq();
     }
 
     public Project Project { get; }
@@ -32,17 +33,17 @@ internal class PipelineResult
     public bool IsDeploymentSuccessful()
         => _stepsResults.OfType<DeploymentStepResult>().FirstOrDefault()?.IsPassed ?? false;
 
-    public static PipelineResult From(Project project, bool shouldSendEmailSummary)
+    public static FunctionalCorePipeline From(Project project, bool shouldSendEmailSummary)
         => new(project, shouldSendEmailSummary, []);
 
     public bool ShouldSendEmailSummary() => _shouldSendEmailSummary;
 
-    public PipelineResult AddStepResult(IPipelineStepResult pipelineStepResult)
+    public FunctionalCorePipeline AddStepResult(IPipelineStepResult pipelineStepResult)
         => new(
             Project,
             _shouldSendEmailSummary,
             _stepsResults.Append(pipelineStepResult));
 
-    public PipelineResult Run(params IEnumerable<IPipelineStep> steps)
+    public FunctionalCorePipeline Run(params IEnumerable<IPipelineStep> steps)
         => steps.Aggregate(this, (current, step) => step.Handle(current));
 }

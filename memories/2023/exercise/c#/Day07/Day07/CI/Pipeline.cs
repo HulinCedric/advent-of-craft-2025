@@ -6,7 +6,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
     {
-        var result = PipelineResult
+        var result = FunctionalCorePipeline
             .From(project, config.SendEmailSummary())
             .Run(
                 new TestStep(),
@@ -17,7 +17,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         SendEmail(result);
     }
 
-    private void Logs(PipelineResult result)
+    private void Logs(FunctionalCorePipeline result)
     {
         foreach (var (level, message) in result.GetLogs())
         {
@@ -33,7 +33,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         }
     }
 
-    private void SendEmail(PipelineResult result)
+    private void SendEmail(FunctionalCorePipeline result)
     {
         var potentialEmailMessage = result.GetPotentialEmailMessage();
         if (potentialEmailMessage is not null) emailer.Send(potentialEmailMessage);
