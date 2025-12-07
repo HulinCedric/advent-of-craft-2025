@@ -23,7 +23,7 @@ public class Client
                 .Select(kvp => FormatLine(kvp.Key, kvp.Value))
         )}";
 
-        if (!IsNullOrEmpty(result)) result += NewLine;
+        if (_orderLines.Any()) result += NewLine;
 
         result += $"Total : {TotalAmount().ToString("0.##", InvariantCulture)}€";
 
