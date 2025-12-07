@@ -5,15 +5,16 @@ namespace Day07.CI;
 internal class PipelineResult
 {
     private readonly bool _shouldSendEmailSummary;
-    private readonly List<IPipelineStepResult> _stepsResults;
+    private readonly IReadOnlyList<IPipelineStepResult> _stepsResults;
 
     private PipelineResult(
         Project project,
-        bool shouldSendEmailSummary)
+        bool shouldSendEmailSummary,
+        IEnumerable<IPipelineStepResult> pipelineStepResults)
     {
         Project = project;
         _shouldSendEmailSummary = shouldSendEmailSummary;
-        _stepsResults = [];
+        _stepsResults = pipelineStepResults.ToList().AsReadOnly();
     }
 
     public Project Project { get; }
@@ -32,15 +33,15 @@ internal class PipelineResult
         => _stepsResults.OfType<DeploymentStepResult>().FirstOrDefault()?.IsPassed ?? false;
 
     public static PipelineResult From(Project project, bool shouldSendEmailSummary)
-        => new(project, shouldSendEmailSummary);
+        => new(project, shouldSendEmailSummary, []);
 
     public bool ShouldSendEmailSummary() => _shouldSendEmailSummary;
 
     public PipelineResult AddStepResult(IPipelineStepResult pipelineStepResult)
-    {
-        _stepsResults.Add(pipelineStepResult);
-        return this;
-    }
+        => new(
+            Project,
+            _shouldSendEmailSummary,
+            _stepsResults.Append(pipelineStepResult));
 
     public PipelineResult Run(List<IPipelineStep> steps)
         => steps.Aggregate(this, (current, step) => step.Handle(current));
