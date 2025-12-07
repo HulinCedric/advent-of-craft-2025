@@ -6,10 +6,14 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
     {
-        var input = PipelineResult.From(project, config.SendEmailSummary());
-
-
-        var result = input.InternalRun();
+        var result = PipelineResult
+            .From(project, config.SendEmailSummary())
+            .Run(
+            [
+                new TestStep(),
+                new DeploymentStep(),
+                new SendEmailSummaryStep()
+            ]);
 
         foreach (var (level, message) in result.GetLogs())
         {
