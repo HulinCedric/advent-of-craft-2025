@@ -30,7 +30,7 @@ public class Client
         return result;
     }
 
-    private string FormatLine(string name, double value) => $"{name} for {FormatAmount(value)}";
+    private static string FormatLine(string name, double value) => $"{name} for {FormatAmount(value)}";
 
     private static string FormatAmount(double value) => Invariant($"{value:0.##}€");
 
