@@ -2,6 +2,11 @@ using Day07.CI.Dependencies;
 
 namespace Day07.CI;
 
+public static class Steps
+{
+    public const string Test = nameof(Test);
+}
+
 public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
@@ -37,22 +42,12 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
     private static PipelineResult RunTests(PipelineResult input)
     {
         if (!input.Project.HasTests())
-        {
-            input.LogInfo("No tests");
-            input.TestsPass();
-            return input;
-        }
+            return input.StepPassed(Steps.Test, "No tests");
 
         if (input.Project.RunTests() == "success")
-        {
-            input.LogInfo("Tests passed");
-            input.TestsPass();
-            return input;
-        }
+            return input.StepPassed(Steps.Test, "Tests passed");
 
-        input.LogError("Tests failed");
-        input.TestsFail();
-        return input;
+        return input.StepFailed(Steps.Test, "Tests failed");
     }
 
     private static PipelineResult RunDeployment(PipelineResult input)
@@ -90,13 +85,15 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
             return input;
         }
 
-        if (input.IsDeploymentSuccessful())
+        if (!input.IsDeploymentSuccessful())
         {
-            input.SendEmail("Deployment completed successfully");
+            input.SendEmail("Deployment failed");
             return input;
         }
 
-        input.SendEmail("Deployment failed");
+        input.SendEmail("Deployment completed successfully");
         return input;
     }
 }
+
+internal sealed record PipelineStep(string Name, bool IsPassed);
