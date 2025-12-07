@@ -6,9 +6,9 @@ namespace Day07.CI
     {
         public void Run(Project project)
         {
-            var logs = InternalCore(project);
-            
-            foreach (var (level, message) in logs)
+            var result = InternalCore(project);
+
+            foreach (var (level, message) in result.Logs)
             {
                 switch (level)
                 {
@@ -22,29 +22,29 @@ namespace Day07.CI
             }
         }
 
-        private List<(LogLevel, string)> InternalCore(Project project)
+        private PipelineResult InternalCore(Project project)
         {
             bool testsPassed;
             bool deploySuccessful;
 
-            var logs = new List<(LogLevel, string)>();
+            var result = new PipelineResult(new List<(LogLevel, string)>());
 
             if (project.HasTests())
             {
                 if (project.RunTests() == "success")
                 {
-                    logs.Add((LogLevel.Info, "Tests passed"));
+                    result.Info("Tests passed");
                     testsPassed = true;
                 }
                 else
                 {
-                    logs.Add((LogLevel.Error, "Tests failed"));
+                    result.Error("Tests failed");
                     testsPassed = false;
                 }
             }
             else
             {
-                logs.Add((LogLevel.Error, "Tests failed"));
+                result.Info("No tests");
                 testsPassed = true;
             }
 
@@ -52,12 +52,12 @@ namespace Day07.CI
             {
                 if (project.Deploy() == "success")
                 {
-                    logs.Add((LogLevel.Info, "Deployment successful"));
+                    result.Info("Deployment successful");
                     deploySuccessful = true;
                 }
                 else
                 {
-                    logs.Add((LogLevel.Error, "Deployment failed"));
+                    result.Error("Deployment failed");
                     deploySuccessful = false;
                 }
             }
@@ -68,7 +68,7 @@ namespace Day07.CI
 
             if (config.SendEmailSummary())
             {
-                logs.Add((LogLevel.Info, "Sending email"));
+                log.Info("Sending email");
                 if (testsPassed)
                 {
                     if (deploySuccessful)
@@ -87,11 +87,32 @@ namespace Day07.CI
             }
             else
             {
-                // log.Info("Email disabled");
-                logs.Add((LogLevel.Info, "Email disabled"));
+                result.Info("Email disabled");
             }
 
-            return logs;
+            return result;
+        }
+    }
+
+    internal class PipelineResult
+    {
+        private readonly List<(LogLevel, string)> _logs;
+        public IReadOnlyList<(LogLevel, string)> Logs { get; }
+
+        public PipelineResult(IEnumerable<(LogLevel, string)> logs)
+        {
+            Logs = logs.ToList();
+        }
+
+
+        public void Info(string message)
+        {
+            _logs.Add((LogLevel.Info, message));
+        }
+
+        public void Error(string message)
+        {
+            _logs.Add((LogLevel.Error, message));
         }
     }
 
