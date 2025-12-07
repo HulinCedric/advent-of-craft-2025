@@ -26,7 +26,9 @@ internal class PipelineResult
     public IReadOnlyList<(LogLevel, string)> Logs => _logs;
     public string? GetPotentialEmailMessage() => _emailMessage;
     public bool IsTestsPassed() => _stepsResults.FirstOrDefault(s => s.Name == Steps.Test)?.IsPassed ?? false;
-    public bool IsDeploymentSuccessful() => _stepsResults.FirstOrDefault(s => s.Name == Steps.Deployment)?.IsPassed ?? false;
+
+    public bool IsDeploymentSuccessful()
+        => _stepsResults.FirstOrDefault(s => s.Name == Steps.Deployment)?.IsPassed ?? false;
 
     public static PipelineResult From(Project project, bool shouldSendEmailSummary)
         => new(project, [], null, shouldSendEmailSummary);
@@ -60,7 +62,21 @@ internal class PipelineResult
     public PipelineResult StepFailed(string stepName)
     {
         _stepsResults.Add(new PipelineStepResult(stepName, IsPassed: false));
-        
+
+        return this;
+    }
+
+    public PipelineResult AddStepResult(PipelineStepResult pipelineStepResult)
+    {
+        _stepsResults.Add(pipelineStepResult);
+
+        if (string.IsNullOrEmpty(pipelineStepResult.Message)) return this;
+
+        if (pipelineStepResult.IsPassed)
+            LogInfo(pipelineStepResult.Message);
+        else
+            LogError(pipelineStepResult.Message);
+
         return this;
     }
 }
