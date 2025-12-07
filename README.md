@@ -143,6 +143,7 @@ After each day you participate, jot down:
 - [Day 05 - Battle of TDD, Human vs AI.](challenges/day05/README.md)
 - [Day 06 - Carve a pure pipeline.](challenges/day06/README.md)
 - [Day 07 - Bug Driven Development.](challenges/day07/README.md)
+- [Day 08 - Ugly Code & developer bias.](challenges/day08/README.md)
 
 ## Who are we?
 
