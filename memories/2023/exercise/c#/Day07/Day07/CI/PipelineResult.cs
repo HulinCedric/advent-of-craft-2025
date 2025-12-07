@@ -41,31 +41,6 @@ internal class PipelineResult
 
     public bool ShouldSendEmailSummary() => _shouldSendEmailSummary;
 
-    public PipelineResult StepPassed(string stepName, string message)
-    {
-        _stepsResults.Add(new PipelineStepResult(stepName, IsPassed: true));
-
-        LogInfo(message);
-
-        return this;
-    }
-
-    public PipelineResult StepFailed(string stepName, string message)
-    {
-        _stepsResults.Add(new PipelineStepResult(stepName, IsPassed: false));
-
-        LogError(message);
-
-        return this;
-    }
-
-    public PipelineResult StepFailed(string stepName)
-    {
-        _stepsResults.Add(new PipelineStepResult(stepName, IsPassed: false));
-
-        return this;
-    }
-
     public PipelineResult AddStepResult(PipelineStepResult pipelineStepResult)
     {
         _stepsResults.Add(pipelineStepResult);

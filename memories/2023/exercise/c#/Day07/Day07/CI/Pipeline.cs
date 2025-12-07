@@ -77,12 +77,12 @@ internal class TestStep
     internal PipelineStepResult Run(PipelineResult input)
     {
         if (!input.Project.HasTests())
-            return new PipelineStepResult(Steps.Test, IsPassed: true, "No tests");
+            return PipelineStepResult.StepPassed(Steps.Test, "No tests");
 
         if (input.Project.RunTests() != "success")
-            return new PipelineStepResult(Steps.Test, IsPassed: false, "Tests failed");
+            return PipelineStepResult.StepFailed(Steps.Test,  "Tests failed");
 
-        return new PipelineStepResult(Steps.Test, IsPassed: true, "Tests passed");
+        return PipelineStepResult.StepPassed(Steps.Test,"Tests passed");
     }
 }
 
@@ -91,11 +91,11 @@ internal class DeploymentStep
     internal PipelineStepResult Run(PipelineResult input)
     {
         if (!input.IsTestsPassed())
-            return new PipelineStepResult(Steps.Deployment, IsPassed: false);
+            return PipelineStepResult.StepFailed(Steps.Deployment);
 
         if (input.Project.Deploy() != "success")
-            return new PipelineStepResult(Steps.Deployment, IsPassed: false, "Deployment failed");
+            return PipelineStepResult.StepFailed(Steps.Deployment,  "Deployment failed");
 
-        return new PipelineStepResult(Steps.Deployment, IsPassed: true, "Deployment successful");
+        return PipelineStepResult.StepPassed(Steps.Deployment,  "Deployment successful");
     }
 }
