@@ -23,7 +23,8 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
             }
         }
 
-        if (result.GetPotentialEmailMessage() is not null) emailer.Send(result.GetPotentialEmailMessage());
+        var potentialEmailMessage = result.GetPotentialEmailMessage();
+        if (potentialEmailMessage is not null) emailer.Send(potentialEmailMessage);
     }
 
     private static PipelineResult InternalRun(PipelineResult input)
