@@ -6,19 +6,22 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
     {
-        var result = FunctionalCorePipeline
-            .Run(
-                new TestStep(project),
-                new DeploymentStep(project),
-                new SendEmailSummaryStep(config.SendEmailSummary()));
+        var result = InternalRun(project);
 
         Logs(result);
         SendEmail(result);
     }
 
+    private FunctionalCorePipeline InternalRun(Project project)
+        => FunctionalCorePipeline
+            .Run(
+                new TestStep(project),
+                new DeploymentStep(project),
+                new SendEmailSummaryStep(config.SendEmailSummary()));
+
     private void Logs(FunctionalCorePipeline result)
     {
-        foreach (var (level, message) in result.GetLogs())
+        foreach (var (level, message) in result.StepsResults.GetLogs())
         {
             switch (level)
             {
@@ -33,8 +36,5 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
     }
 
     private void SendEmail(FunctionalCorePipeline result)
-    {
-        var potentialEmailMessage = result.GetPotentialEmailMessage();
-        if (potentialEmailMessage is not null) emailer.Send(potentialEmailMessage);
-    }
+        => result.StepsResults.GetSummaryEmailMessage().Do(emailer.Send);
 }

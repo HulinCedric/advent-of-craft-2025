@@ -1,3 +1,5 @@
+using LanguageExt;
+
 namespace Day07.CI;
 
 internal sealed record SendSummaryPipelineStepResult : IPipelineStepResult
@@ -6,19 +8,19 @@ internal sealed record SendSummaryPipelineStepResult : IPipelineStepResult
 
     private SendSummaryPipelineStepResult(
         IReadOnlyList<(LogLevel, string)> logs,
-        string? emailMessage = null)
+        Option<string> summaryEmailMessage)
     {
         _logs = logs;
-        EmailMessage = emailMessage;
+        SummaryEmailMessage = summaryEmailMessage;
     }
 
-    public string? EmailMessage { get; }
+    public Option<string> SummaryEmailMessage { get; }
     public IReadOnlyList<(LogLevel, string)> GetLogs() => _logs;
 
-    public static SendSummaryPipelineStepResult New() => new([]);
+    public static SendSummaryPipelineStepResult New() => new([], Option<string>.None);
 
     public SendSummaryPipelineStepResult AddLog(LogLevel level, string message)
-        => new(new List<(LogLevel, string)>(_logs) { (level, message) }, EmailMessage);
+        => new(new List<(LogLevel, string)>(_logs) { (level, message) }, SummaryEmailMessage);
 
     public SendSummaryPipelineStepResult SendEmail(string emailMessage) => new(_logs, emailMessage);
 }

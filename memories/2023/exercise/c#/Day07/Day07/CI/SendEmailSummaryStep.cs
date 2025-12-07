@@ -10,12 +10,12 @@ internal class SendEmailSummaryStep(bool sendEmailSummary) : IPipelineStep
             return SendSummaryPipelineStepResult.New()
                 .AddLog(LogLevel.Info, "Email disabled");
 
-        if (!input.IsTestsPassed())
+        if (!input.StepsResults.IsTestsPassed())
             return SendSummaryPipelineStepResult.New()
                 .AddLog(LogLevel.Info, "Sending email")
                 .SendEmail("Tests failed");
 
-        if (!input.IsDeploymentSuccessful())
+        if (!input.StepsResults.IsDeploymentSuccessful())
             return SendSummaryPipelineStepResult.New()
                 .AddLog(LogLevel.Info, "Sending email")
                 .SendEmail("Deployment failed");

@@ -8,7 +8,7 @@ internal class DeploymentStep(Project project) : IPipelineStep
 
     private IPipelineStepResult PipelineResult(FunctionalCorePipeline input)
     {
-        if (!input.IsTestsPassed())
+        if (!input.StepsResults.IsTestsPassed())
             return DeploymentStepResult.StepFailed();
 
         if (project.Deploy() != "success")
