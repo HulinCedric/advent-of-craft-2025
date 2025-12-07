@@ -35,24 +35,21 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
     private static PipelineResult RunDeployment(PipelineResult input)
     {
-        if (input.IsTestsPassed())
-        {
-            if (input.Project.Deploy() == "success")
-            {
-                input.Info("Deployment successful");
-                input.DeploymentSuccessful();
-            }
-            else
-            {
-                input.Error("Deployment failed");
-                input.DeploymentFailed();
-            }
-        }
-        else
+        if (!input.IsTestsPassed())
         {
             input.DeploymentFailed();
+            return input;
         }
 
+        if (input.Project.Deploy() == "success")
+        {
+            input.Info("Deployment successful");
+            input.DeploymentSuccessful();
+            return input;
+        }
+
+        input.Error("Deployment failed");
+        input.DeploymentFailed();
         return input;
     }
 
