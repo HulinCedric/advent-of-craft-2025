@@ -33,6 +33,10 @@ public class ClientTests
     }
 
     [Fact]
+    public void TotalAmount_Should_Be_Correct_Without_Calling_ToStatement()
+        => _client.TotalAmount().Should().Be(130.97);
+
+    [Fact]
     public void ToStatement_Called_Twice_Should_Not_Double_Total()
     {
         var first = _client.ToStatement();
