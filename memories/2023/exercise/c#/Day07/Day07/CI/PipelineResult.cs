@@ -6,7 +6,7 @@ internal class PipelineResult
 {
     private readonly List<(LogLevel, string)> _logs;
     private readonly bool _shouldSendEmailSummary;
-    private readonly List<PipelineStep> _steps;
+    private readonly List<PipelineStepResult> _steps;
     private string? _emailMessage;
 
     private PipelineResult(
@@ -41,7 +41,7 @@ internal class PipelineResult
 
     public PipelineResult StepPassed(string stepName, string message)
     {
-        _steps.Add(new PipelineStep(stepName, IsPassed: true));
+        _steps.Add(new PipelineStepResult(stepName, IsPassed: true));
 
         LogInfo(message);
 
@@ -50,7 +50,7 @@ internal class PipelineResult
 
     public PipelineResult StepFailed(string stepName, string message)
     {
-        _steps.Add(new PipelineStep(stepName, IsPassed: false));
+        _steps.Add(new PipelineStepResult(stepName, IsPassed: false));
 
         LogError(message);
 
@@ -59,7 +59,7 @@ internal class PipelineResult
 
     public PipelineResult StepFailed(string stepName)
     {
-        _steps.Add(new PipelineStep(stepName, IsPassed: false));
+        _steps.Add(new PipelineStepResult(stepName, IsPassed: false));
         
         return this;
     }
