@@ -8,6 +8,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
     {
         var input = PipelineResult.From(project, config.SendEmailSummary());
 
+
         var result = InternalRun(input);
 
         foreach (var (level, message) in result.GetLogs())
@@ -29,33 +30,25 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
     private static PipelineResult InternalRun(PipelineResult input)
     {
-        input = RunTests(input);
-        input = RunDeployment(input);
-        return SendEmailSummary(input);
-    }
+        var steps = new List<IPipelineStep>
+        {
+            new TestStep(),
+            new DeploymentStep(),
+            new SendEmailSummaryStep()
+        };
 
-    private static PipelineResult RunTests(PipelineResult input)
-    {
-        var pipelineStepResult = new TestStep().Run(input);
-        return input.AddStepResult(pipelineStepResult);
-    }
+        foreach (var step in steps)
+        {
+            input.AddStepResult(step.Run(input));
+        }
 
-    private static PipelineResult RunDeployment(PipelineResult input)
-    {
-        var pipelineStepResult = new DeploymentStep().Run(input);
-        return input.AddStepResult(pipelineStepResult);
-    }
-
-    private static PipelineResult SendEmailSummary(PipelineResult input)
-    {
-        var pipelineStepResult = new SendEmailSummaryStep().Run(input);
-        return input.AddStepResult(pipelineStepResult);
+        return input;
     }
 }
 
-internal class TestStep
+internal class TestStep : IPipelineStep
 {
-    internal PipelineStepResult Run(PipelineResult input)
+    public IPipelineStepResult Run(PipelineResult input)
     {
         if (!input.Project.HasTests())
             return PipelineStepResult.StepPassed(Steps.Test, "No tests");
@@ -67,9 +60,14 @@ internal class TestStep
     }
 }
 
-internal class DeploymentStep
+internal interface IPipelineStep
 {
-    internal PipelineStepResult Run(PipelineResult input)
+    internal IPipelineStepResult Run(PipelineResult input);
+}
+
+internal class DeploymentStep : IPipelineStep
+{
+    public IPipelineStepResult Run(PipelineResult input)
     {
         if (!input.IsTestsPassed())
             return PipelineStepResult.StepFailed(Steps.Deployment);
@@ -81,9 +79,9 @@ internal class DeploymentStep
     }
 }
 
-internal class SendEmailSummaryStep
+internal class SendEmailSummaryStep : IPipelineStep
 {
-    internal IPipelineStepResult Run(PipelineResult input)
+    public IPipelineStepResult Run(PipelineResult input)
     {
         var result = SendSummaryPipelineStepResult.New();
         if (!input.ShouldSendEmailSummary())
