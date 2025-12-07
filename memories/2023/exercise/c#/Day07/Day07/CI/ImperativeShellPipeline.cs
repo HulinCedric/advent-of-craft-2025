@@ -17,15 +17,20 @@ public class ImperativeShellPipeline(IConfig config, IEmailer emailer, ILogger l
     {
         foreach (var (level, message) in result.GetLogs())
         {
-            switch (level)
-            {
-                case LogLevel.Info:
-                    log.Info(message);
-                    break;
-                case LogLevel.Error:
-                    log.Error(message);
-                    break;
-            }
+            Log(level, message);
+        }
+    }
+
+    private void Log(LogLevel level, string message)
+    {
+        switch (level)
+        {
+            case LogLevel.Info:
+                log.Info(message);
+                break;
+            case LogLevel.Error:
+                log.Error(message);
+                break;
         }
     }
 
