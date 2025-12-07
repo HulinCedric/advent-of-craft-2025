@@ -37,11 +37,6 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
             new SendEmailSummaryStep()
         };
 
-        foreach (var step in steps)
-        {
-            input.AddStepResult(step.Run(input));
-        }
-
-        return input;
+        return steps.Aggregate(input, (current, step) => step.Run(current));
     }
 }

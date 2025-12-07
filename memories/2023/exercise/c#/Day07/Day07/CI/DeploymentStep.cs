@@ -2,7 +2,9 @@ namespace Day07.CI;
 
 internal class DeploymentStep : IPipelineStep
 {
-    public IPipelineStepResult Run(PipelineResult input)
+    public PipelineResult Run(PipelineResult input) => input.AddStepResult(PipelineResult(input));
+
+    private static IPipelineStepResult PipelineResult(PipelineResult input)
     {
         if (!input.IsTestsPassed())
             return DeploymentStepResult.StepFailed();
