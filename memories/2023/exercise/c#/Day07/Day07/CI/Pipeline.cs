@@ -67,7 +67,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
         if (config.SendEmailSummary())
         {
-            log.Info("Sending email");
+            input.Info("Sending email");
             if (testsPassed)
             {
                 if (deploySuccessful)
