@@ -123,7 +123,7 @@ internal class PipelineResult
 
     public Project Project { get; }
     public IReadOnlyList<(LogLevel, string)> Logs => _logs;
-    public string? EmailMessage { get; private set; }
+    public string? EmailMessage { get; }
 
     public bool IsTestsPassed() => _isTestsPassed;
     public bool IsDeploymentSuccessful() => _isDeploymentSuccessful;
