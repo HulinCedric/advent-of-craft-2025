@@ -19,5 +19,5 @@ internal sealed record TestStepResult : IPipelineStepResult
     public static TestStepResult StepFailed() => new(false, []);
 
     public TestStepResult AddLog(LogLevel level, string message)
-        => new(IsPassed, new List<(LogLevel, string)>(_logs) { (level, message) });
+        => new(IsPassed, [.._logs, (level, message)]);
 }
