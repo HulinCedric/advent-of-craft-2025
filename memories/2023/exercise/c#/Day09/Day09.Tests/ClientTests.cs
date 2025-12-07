@@ -81,4 +81,24 @@ public class ClientTests
         var statement = client.ToStatement();
         statement.Should().Be("Total : 0€");
     }
+    
+    [Fact]
+    public void ToStatement_Should_Not_Expose_FloatingPoint_Artifacts()
+    {
+        var client = new Client(new Dictionary<string, double>
+        {
+            { "Small item", 0.1 },
+            { "Another small item", 0.2 }
+        });
+
+        var statement = client.ToStatement();
+
+        statement.Should()
+            .BeEquivalentTo(
+                """
+                Small item for 0.1€
+                Another small item for 0.2€
+                Total : 0.3€
+                """);
+    }
 }

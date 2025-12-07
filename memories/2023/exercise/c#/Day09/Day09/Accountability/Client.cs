@@ -21,12 +21,12 @@ public class Client
 
         if (!IsNullOrEmpty(result)) result += NewLine;
 
-        result += $"Total : {TotalAmount().ToString(InvariantCulture)}€";
+        result += $"Total : {TotalAmount().ToString("0.##", InvariantCulture)}€";
 
         return result;
     }
 
-    private string FormatLine(string name, double value) => name + " for " + value.ToString(InvariantCulture) + "€";
+    private string FormatLine(string name, double value) => $"{name} for {value.ToString("0.##", InvariantCulture)}€";
 
     public double TotalAmount() => _orderLines.Sum(kvp => kvp.Value);
 }
