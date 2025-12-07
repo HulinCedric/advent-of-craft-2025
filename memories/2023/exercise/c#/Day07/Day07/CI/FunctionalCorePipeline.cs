@@ -1,4 +1,3 @@
-using Day07.CI.Dependencies;
 using LanguageExt;
 
 namespace Day07.CI;
@@ -7,15 +6,9 @@ internal sealed record FunctionalCorePipeline
 {
     private readonly Seq<IPipelineStepResult> _stepsResults;
 
-    private FunctionalCorePipeline(
-        Project project,
-        IEnumerable<IPipelineStepResult> pipelineStepResults)
-    {
-        Project = project;
-        _stepsResults = pipelineStepResults.ToSeq();
-    }
+    private FunctionalCorePipeline(IEnumerable<IPipelineStepResult> pipelineStepResults)
+        => _stepsResults = pipelineStepResults.ToSeq();
 
-    public Project Project { get; }
 
     public IReadOnlyList<(LogLevel, string)> GetLogs()
         => _stepsResults
@@ -30,14 +23,11 @@ internal sealed record FunctionalCorePipeline
     public bool IsDeploymentSuccessful()
         => _stepsResults.OfType<DeploymentStepResult>().FirstOrDefault()?.IsPassed ?? false;
 
-    public static FunctionalCorePipeline From(Project project) => new(project, []);
-
+    private static FunctionalCorePipeline New() => new([]);
 
     public FunctionalCorePipeline AddStepResult(IPipelineStepResult pipelineStepResult)
-        => new(
-            Project,
-            _stepsResults.Append(pipelineStepResult));
+        => new(_stepsResults.Append(pipelineStepResult));
 
-    public FunctionalCorePipeline Run(params IEnumerable<IPipelineStep> steps)
-        => steps.Aggregate(this, (current, step) => step.Handle(current));
+    public static FunctionalCorePipeline Run(params IEnumerable<IPipelineStep> steps)
+        => steps.Aggregate(New(), (current, step) => step.Handle(current));
 }
