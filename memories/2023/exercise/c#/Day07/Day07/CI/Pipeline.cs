@@ -6,8 +6,8 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
     {
-        var pipelineResult = new PipelineResult(project, new List<(LogLevel, string)>());
-        var result = InternalCore(pipelineResult);
+        var input = new PipelineResult(project, new List<(LogLevel, string)>());
+        var result = InternalCore(input);
 
         foreach (var (level, message) in result.Logs)
         {
