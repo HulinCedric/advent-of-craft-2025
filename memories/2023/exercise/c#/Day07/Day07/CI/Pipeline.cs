@@ -6,18 +6,11 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
     {
-        var result = InternalRun(project);
+        var result = FunctionalCorePipeline.Run(project, config.SendEmailSummary());
 
         Logs(result);
         SendEmail(result);
     }
-
-    private FunctionalCorePipeline InternalRun(Project project)
-        => FunctionalCorePipeline
-            .Run(
-                new TestStep(project),
-                new DeploymentStep(project),
-                new SendEmailSummaryStep(config.SendEmailSummary()));
 
     private void Logs(FunctionalCorePipeline result)
     {

@@ -1,6 +1,6 @@
 namespace Day07.CI;
 
-internal interface IPipelineStepResult
+public interface IPipelineStepResult
 {
     IReadOnlyList<(LogLevel, string)> GetLogs();
 }

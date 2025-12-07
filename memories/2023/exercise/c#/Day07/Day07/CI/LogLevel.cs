@@ -1,6 +1,6 @@
 namespace Day07.CI;
 
-internal enum LogLevel
+public enum LogLevel
 {
     Info,
     Error

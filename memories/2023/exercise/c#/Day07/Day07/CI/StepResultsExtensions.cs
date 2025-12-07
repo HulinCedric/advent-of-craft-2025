@@ -2,16 +2,16 @@ using LanguageExt;
 
 namespace Day07.CI;
 
-internal static class StepResultsExtensions
+public static class StepResultsExtensions
 {
     extension(Seq<IPipelineStepResult> stepResults)
     {
-        internal Seq<(LogLevel, string)> GetLogs()
+        public Seq<(LogLevel, string)> GetLogs()
             => stepResults
                 .SelectMany(stepResult => stepResult.GetLogs())
                 .ToSeq();
 
-        internal Option<string> GetSummaryEmailMessage()
+        public Option<string> GetSummaryEmailMessage()
             => stepResults
                 .OfType<SendSummaryPipelineStepResult>()
                 .Bind(r => r.SummaryEmailMessage)
