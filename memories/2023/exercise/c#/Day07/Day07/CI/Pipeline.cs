@@ -6,7 +6,8 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
     {
-        var input = PipelineResult.Empty(project, config.SendEmailSummary());
+        var input = PipelineResult.From(project, config.SendEmailSummary());
+
         var result = InternalRun(input);
 
         foreach (var (level, message) in result.Logs)
@@ -133,7 +134,7 @@ internal class PipelineResult
     public bool IsTestsPassed() => _isTestsPassed;
     public bool IsDeploymentSuccessful() => _isDeploymentSuccessful;
 
-    public static PipelineResult Empty(Project project, bool shouldSendEmailSummary)
+    public static PipelineResult From(Project project, bool shouldSendEmailSummary)
         => new(project, [], null, shouldSendEmailSummary);
 
     public void Info(string message) => _logs.Add((LogLevel.Info, message));
