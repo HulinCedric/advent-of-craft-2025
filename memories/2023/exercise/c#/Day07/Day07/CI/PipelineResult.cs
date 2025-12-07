@@ -42,4 +42,9 @@ internal class PipelineResult
             Project,
             _shouldSendEmailSummary,
             _stepsResults.Append(pipelineStepResult));
+
+    public PipelineResult Run(params IEnumerable<IPipelineStep> steps)
+    {
+        return steps.Aggregate(this, (current, step) => step.Handle(current));
+    }
 }
