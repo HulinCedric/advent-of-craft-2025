@@ -2,9 +2,7 @@ namespace Day07.CI;
 
 internal class SendEmailSummaryStep(bool sendEmailSummary) : IPipelineStep
 {
-    public FunctionalCorePipeline Handle(FunctionalCorePipeline input) => input.AddStepResult(PipelineResult(input));
-
-    private IPipelineStepResult PipelineResult(FunctionalCorePipeline input)
+    public IPipelineStepResult Handle(FunctionalCorePipeline input)
     {
         if (!sendEmailSummary)
             return SendSummaryPipelineStepResult.New()

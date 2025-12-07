@@ -11,8 +11,9 @@ internal sealed record FunctionalCorePipeline
 
     private static FunctionalCorePipeline New() => new([]);
 
-    public FunctionalCorePipeline AddStepResult(IPipelineStepResult stepResult) => new(StepsResults.Append(stepResult));
-
     public static FunctionalCorePipeline Run(params IEnumerable<IPipelineStep> steps)
-        => steps.Aggregate(New(), (current, step) => step.Handle(current));
+        => steps.Aggregate(New(), (current, step) => current.AddStepResult(step.Handle(current)));
+
+    private FunctionalCorePipeline AddStepResult(IPipelineStepResult stepResult)
+        => new(StepsResults.Append(stepResult));
 }
