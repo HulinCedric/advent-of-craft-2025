@@ -7,7 +7,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
     public void Run(Project project)
     {
         var input = PipelineResult.Empty(project, config.SendEmailSummary());
-        var result = InternalCore(input);
+        var result = InternalRun(input);
 
         foreach (var (level, message) in result.Logs)
         {
@@ -25,7 +25,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         if (result.EmailMessage is not null) emailer.Send(result.EmailMessage);
     }
 
-    private PipelineResult InternalCore(PipelineResult input)
+    private static PipelineResult InternalRun(PipelineResult input)
     {
         if (input.Project.HasTests())
         {
