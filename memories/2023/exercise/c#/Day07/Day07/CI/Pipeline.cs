@@ -39,30 +39,21 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         if (!input.Project.HasTests())
             return input.StepPassed(Steps.Test, "No tests");
 
-        if (input.Project.RunTests() == "success")
-            return input.StepPassed(Steps.Test, "Tests passed");
+        if (input.Project.RunTests() != "success")
+            return input.StepFailed(Steps.Test, "Tests failed");
 
-        return input.StepFailed(Steps.Test, "Tests failed");
+        return input.StepPassed(Steps.Test, "Tests passed");
     }
 
     private static PipelineResult RunDeployment(PipelineResult input)
     {
         if (!input.IsTestsPassed())
-        {
-            input.DeploymentFailed();
-            return input;
-        }
+            return input.StepFailed(Steps.Deployment);
 
-        if (input.Project.Deploy() == "success")
-        {
-            input.LogInfo("Deployment successful");
-            input.DeploymentSuccessful();
-            return input;
-        }
+        if (input.Project.Deploy() != "success")
+            return input.StepFailed(Steps.Deployment, "Deployment failed");
 
-        input.LogError("Deployment failed");
-        input.DeploymentFailed();
-        return input;
+        return input.StepPassed(Steps.Deployment, "Deployment successful");
     }
 
     private static PipelineResult SendEmailSummary(PipelineResult input)
