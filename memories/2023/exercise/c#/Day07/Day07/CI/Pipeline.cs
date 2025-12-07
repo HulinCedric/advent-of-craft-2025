@@ -9,7 +9,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         var input = PipelineResult.From(project, config.SendEmailSummary());
 
 
-        var result = InternalRun(input);
+        var result = input.InternalRun();
 
         foreach (var (level, message) in result.GetLogs())
         {
@@ -26,17 +26,5 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
         var potentialEmailMessage = result.GetPotentialEmailMessage();
         if (potentialEmailMessage is not null) emailer.Send(potentialEmailMessage);
-    }
-
-    private static PipelineResult InternalRun(PipelineResult input)
-    {
-        var steps = new List<IPipelineStep>
-        {
-            new TestStep(),
-            new DeploymentStep(),
-            new SendEmailSummaryStep()
-        };
-
-        return steps.Aggregate(input, (current, step) => step.Run(current));
     }
 }

@@ -2,7 +2,7 @@ namespace Day07.CI;
 
 internal class TestStep : IPipelineStep
 {
-    public PipelineResult Run(PipelineResult input) => input.AddStepResult(RunInternal(input));
+    public PipelineResult Handle(PipelineResult input) => input.AddStepResult(RunInternal(input));
 
     private static IPipelineStepResult RunInternal(PipelineResult input)
     {

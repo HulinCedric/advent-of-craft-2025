@@ -2,7 +2,7 @@ namespace Day07.CI;
 
 internal class SendEmailSummaryStep : IPipelineStep
 {
-    public PipelineResult Run(PipelineResult input) => input.AddStepResult(PipelineResult(input));
+    public PipelineResult Handle(PipelineResult input) => input.AddStepResult(PipelineResult(input));
 
     private static IPipelineStepResult PipelineResult(PipelineResult input)
     {

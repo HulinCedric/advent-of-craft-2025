@@ -41,4 +41,16 @@ internal class PipelineResult
         _stepsResults.Add(pipelineStepResult);
         return this;
     }
+
+    public PipelineResult InternalRun()
+    {
+        var steps = new List<IPipelineStep>
+        {
+            new TestStep(),
+            new DeploymentStep(),
+            new SendEmailSummaryStep()
+        };
+
+        return steps.Aggregate(this, (current, step) => step.Handle(current));
+    }
 }
