@@ -58,25 +58,22 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
     private static PipelineResult RunTests(PipelineResult input)
     {
-        if (input.Project.HasTests())
-        {
-            if (input.Project.RunTests() == "success")
-            {
-                input.Info("Tests passed");
-                input.TestsPass();
-            }
-            else
-            {
-                input.Error("Tests failed");
-                input.TestsFail();
-            }
-        }
-        else
+        if (!input.Project.HasTests())
         {
             input.Info("No tests");
             input.TestsPass();
+            return input;
         }
 
+        if (input.Project.RunTests() == "success")
+        {
+            input.Info("Tests passed");
+            input.TestsPass();
+            return input;
+        }
+
+        input.Error("Tests failed");
+        input.TestsFail();
         return input;
     }
 
