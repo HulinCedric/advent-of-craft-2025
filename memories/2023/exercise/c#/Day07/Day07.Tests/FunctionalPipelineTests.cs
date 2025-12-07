@@ -1,33 +1,25 @@
 using Day07.CI;
 using Day07.CI.Dependencies;
-using Day07.Tests.Doubles;
 using FluentAssertions;
 using FluentAssertions.LanguageExt;
-using NSubstitute;
 using Xunit;
 using static Day07.CI.Dependencies.TestStatus;
-using static NSubstitute.Arg;
 
 namespace Day07.Tests;
 
 public class FunctionalPipelineTests
 {
-    private readonly IConfig _config = Substitute.For<IConfig>();
-    private readonly IEmailer _emailer = Substitute.For<IEmailer>();
-    private readonly CapturingLogger _log = new();
-    private readonly Pipeline _pipeline;
-
-    public FunctionalPipelineTests() => _pipeline = new Pipeline(_config, _emailer, _log);
-
     [Fact]
     public void Project_With_Tests_That_Deploys_Successfully_With_Email_Notification()
     {
+        var sendEmailSummary = true;
+
         var project = Project.Builder()
             .With(PassingTests)
             .Deployed(true)
             .Build();
 
-        var result = FunctionalCorePipeline.Run(project, sendEmailSummary: true);
+        var result = FunctionalCorePipeline.Run(project, sendEmailSummary: sendEmailSummary);
 
         result.GetLogs()
             .Should()
@@ -44,12 +36,14 @@ public class FunctionalPipelineTests
     [Fact]
     public void Project_Without_Tests_That_Deploys_Successfully_With_Email_Notification()
     {
+        var sendEmailSummary = true;
+
         var project = Project.Builder()
             .With(NoTests)
             .Deployed(true)
             .Build();
 
-        var result = FunctionalCorePipeline.Run(project, sendEmailSummary: true);
+        var result = FunctionalCorePipeline.Run(project, sendEmailSummary: sendEmailSummary);
 
         result.GetLogs()
             .Should()
@@ -66,12 +60,14 @@ public class FunctionalPipelineTests
     [Fact]
     public void Project_Without_Tests_That_Deploys_Successfully_Without_Email_Notification()
     {
+        var sendEmailSummary = false;
+
         var project = Project.Builder()
             .With(NoTests)
             .Deployed(true)
             .Build();
 
-        var result = FunctionalCorePipeline.Run(project, sendEmailSummary: false);
+        var result = FunctionalCorePipeline.Run(project, sendEmailSummary: sendEmailSummary);
 
         result.GetLogs()
             .Should()
@@ -88,12 +84,36 @@ public class FunctionalPipelineTests
     [Fact]
     public void Project_With_Tests_That_Fail_With_Email_Notification()
     {
+        var sendEmailSummary = true;
+
         var project = Project.Builder()
             .With(FailingTests)
             .Deployed(true)
             .Build();
 
-        var result = FunctionalCorePipeline.Run(project, sendEmailSummary: true);
+        var result = FunctionalCorePipeline.Run(project, sendEmailSummary: sendEmailSummary);
+
+        result.GetLogs()
+            .Should()
+            .BeEquivalentTo(
+            [
+                (LogLevel.Error, "Tests failed"),
+                (LogLevel.Info, "Sending email")
+            ]);
+
+        result.GetSummaryEmailMessage().Should().Be("Tests failed");
+    }
+
+    [Fact]
+    public void Project_With_Tests_That_Fail_Without_Email_Notification()
+    {
+        var sendEmailSummary = false;
+
+        var project = Project.Builder()
+            .With(FailingTests)
+            .Build();
+
+        var result = FunctionalCorePipeline.Run(project, sendEmailSummary);
 
         result.GetLogs()
             .Should()
@@ -107,110 +127,98 @@ public class FunctionalPipelineTests
     }
 
     [Fact]
-    public void Project_With_Tests_That_Fail_Without_Email_Notification()
-    {
-        _config.SendEmailSummary().Returns(false);
-
-        var project = Project.Builder()
-            .With(FailingTests)
-            .Build();
-
-        _pipeline.Run(project);
-
-        _log.LoggedLines
-            .Should()
-            .BeEquivalentTo(
-                "ERROR: Tests failed",
-                "INFO: Email disabled");
-
-        _emailer.DidNotReceive().Send(Any<string>());
-    }
-
-    [Fact]
     public void Project_With_Tests_And_Failing_Build_With_Email_Notification()
     {
-        _config.SendEmailSummary().Returns(true);
+        var sendEmailSummary = true;
 
         var project = Project.Builder()
             .With(PassingTests)
             .Deployed(false)
             .Build();
 
-        _pipeline.Run(project);
+        var result = FunctionalCorePipeline.Run(project, sendEmailSummary);
 
-        _log.LoggedLines
+        result.GetLogs()
             .Should()
             .BeEquivalentTo(
-                "INFO: Tests passed",
-                "ERROR: Deployment failed",
-                "INFO: Sending email");
+            [
+                (LogLevel.Info, "Tests passed"),
+                (LogLevel.Error, "Deployment failed"),
+                (LogLevel.Info, "Sending email")
+            ]);
 
-        _emailer.Received(1).Send("Deployment failed");
+        result.GetSummaryEmailMessage().Should().Be("Deployment failed");
     }
 
     [Fact]
     public void Project_With_Tests_And_Failing_Build_Without_Email_Notification()
     {
-        _config.SendEmailSummary().Returns(false);
+        var sendEmailSummary = false;
 
         var project = Project.Builder()
             .With(PassingTests)
             .Deployed(false)
             .Build();
 
-        _pipeline.Run(project);
+        var result = FunctionalCorePipeline.Run(project, sendEmailSummary);
 
-        _log.LoggedLines
+        result.GetLogs()
             .Should()
             .BeEquivalentTo(
-                "INFO: Tests passed",
-                "ERROR: Deployment failed",
-                "INFO: Email disabled");
+            [
+                (LogLevel.Info, "Tests passed"),
+                (LogLevel.Error, "Deployment failed"),
+                (LogLevel.Info, "Email disabled")
+            ]);
 
-        _emailer.DidNotReceive().Send(Any<string>());
+        result.GetSummaryEmailMessage().Should().BeNone();
     }
 
     [Fact]
     public void Project_Without_Tests_And_Failing_Build_With_Email_Notification()
     {
-        _config.SendEmailSummary().Returns(true);
+        var sendEmailSummary = true;
 
         var project = Project.Builder()
             .With(NoTests)
             .Deployed(false)
             .Build();
 
-        _pipeline.Run(project);
+        var result = FunctionalCorePipeline.Run(project, sendEmailSummary);
 
-        _log.LoggedLines
+        result.GetLogs()
             .Should()
             .BeEquivalentTo(
-                "INFO: No tests",
-                "ERROR: Deployment failed",
-                "INFO: Sending email");
+            [
+                (LogLevel.Info, "No tests"),
+                (LogLevel.Error, "Deployment failed"),
+                (LogLevel.Info, "Sending email")
+            ]);
 
-        _emailer.Received(1).Send("Deployment failed");
+        result.GetSummaryEmailMessage().Should().Be("Deployment failed");
     }
 
     [Fact]
     public void Project_Without_Tests_And_Failing_Build_Without_Email_Notification()
     {
-        _config.SendEmailSummary().Returns(false);
+        var sendEmailSummary = false;
 
         var project = Project.Builder()
             .With(NoTests)
             .Deployed(false)
             .Build();
 
-        _pipeline.Run(project);
+        var result = FunctionalCorePipeline.Run(project, sendEmailSummary);
 
-        _log.LoggedLines
+        result.GetLogs()
             .Should()
             .BeEquivalentTo(
-                "INFO: No tests",
-                "ERROR: Deployment failed",
-                "INFO: Email disabled");
+            [
+                (LogLevel.Info, "No tests"),
+                (LogLevel.Error, "Deployment failed"),
+                (LogLevel.Info, "Email disabled")
+            ]);
 
-        _emailer.DidNotReceive().Send(Any<string>());
+        result.GetSummaryEmailMessage().Should().BeNone();
     }
 }
