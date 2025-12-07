@@ -6,7 +6,7 @@ internal class PipelineResult
 {
     private readonly List<(LogLevel, string)> _logs;
     private readonly bool _shouldSendEmailSummary;
-    private readonly List<PipelineStepResult> _steps;
+    private readonly List<PipelineStepResult> _stepsResults;
     private string? _emailMessage;
 
     private PipelineResult(
@@ -19,14 +19,14 @@ internal class PipelineResult
         _logs = logs;
         _emailMessage = emailMessage;
         _shouldSendEmailSummary = shouldSendEmailSummary;
-        _steps = [];
+        _stepsResults = [];
     }
 
     public Project Project { get; }
     public IReadOnlyList<(LogLevel, string)> Logs => _logs;
     public string? GetPotentialEmailMessage() => _emailMessage;
-    public bool IsTestsPassed() => _steps.FirstOrDefault(s => s.Name == Steps.Test)?.IsPassed ?? false;
-    public bool IsDeploymentSuccessful() => _steps.FirstOrDefault(s => s.Name == Steps.Deployment)?.IsPassed ?? false;
+    public bool IsTestsPassed() => _stepsResults.FirstOrDefault(s => s.Name == Steps.Test)?.IsPassed ?? false;
+    public bool IsDeploymentSuccessful() => _stepsResults.FirstOrDefault(s => s.Name == Steps.Deployment)?.IsPassed ?? false;
 
     public static PipelineResult From(Project project, bool shouldSendEmailSummary)
         => new(project, [], null, shouldSendEmailSummary);
@@ -41,7 +41,7 @@ internal class PipelineResult
 
     public PipelineResult StepPassed(string stepName, string message)
     {
-        _steps.Add(new PipelineStepResult(stepName, IsPassed: true));
+        _stepsResults.Add(new PipelineStepResult(stepName, IsPassed: true));
 
         LogInfo(message);
 
@@ -50,7 +50,7 @@ internal class PipelineResult
 
     public PipelineResult StepFailed(string stepName, string message)
     {
-        _steps.Add(new PipelineStepResult(stepName, IsPassed: false));
+        _stepsResults.Add(new PipelineStepResult(stepName, IsPassed: false));
 
         LogError(message);
 
@@ -59,7 +59,7 @@ internal class PipelineResult
 
     public PipelineResult StepFailed(string stepName)
     {
-        _steps.Add(new PipelineStepResult(stepName, IsPassed: false));
+        _stepsResults.Add(new PipelineStepResult(stepName, IsPassed: false));
         
         return this;
     }
