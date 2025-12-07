@@ -10,8 +10,19 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
             .From(project, config.SendEmailSummary());
 
         var result = Run(input);
+        
+        Logs(result);
+        SendEmail(result);
+    }
 
+    private void SendEmail(PipelineResult result)
+    {
+        var potentialEmailMessage = result.GetPotentialEmailMessage();
+        if (potentialEmailMessage is not null) emailer.Send(potentialEmailMessage);
+    }
 
+    private void Logs(PipelineResult result)
+    {
         foreach (var (level, message) in result.GetLogs())
         {
             switch (level)
@@ -24,9 +35,6 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
                     break;
             }
         }
-
-        var potentialEmailMessage = result.GetPotentialEmailMessage();
-        if (potentialEmailMessage is not null) emailer.Send(potentialEmailMessage);
     }
 
     private static PipelineResult Run(PipelineResult input)
