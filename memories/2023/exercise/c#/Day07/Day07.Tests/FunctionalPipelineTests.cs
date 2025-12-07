@@ -53,16 +53,18 @@ public class FunctionalPipelineTests
             .Deployed(true)
             .Build();
 
-        _pipeline.Run(project);
+        var result = FunctionalCorePipeline.Run(project, sendEmailSummary: true);
 
-        _log.LoggedLines
+        result.StepsResults.GetLogs()
             .Should()
             .BeEquivalentTo(
-                "INFO: No tests",
-                "INFO: Deployment successful",
-                "INFO: Sending email");
+            [
+                (LogLevel.Info, "No tests"),
+                (LogLevel.Info, "Deployment successful"),
+                (LogLevel.Info, "Sending email")
+            ]);
 
-        _emailer.Received(1).Send("Deployment completed successfully");
+        result.StepsResults.GetSummaryEmailMessage().Should().Be("Deployment completed successfully");
     }
 
     [Fact]
