@@ -4,9 +4,9 @@ internal sealed record TestStepResult : IPipelineStepResult
 {
     private readonly IReadOnlyList<(LogLevel, string)> _logs;
 
-    private TestStepResult(bool IsPassed, IReadOnlyList<(LogLevel, string)> logs)
+    private TestStepResult(bool isPassed, IReadOnlyList<(LogLevel, string)> logs)
     {
-        this.IsPassed = IsPassed;
+        this.IsPassed = isPassed;
         _logs = logs;
     }
 
