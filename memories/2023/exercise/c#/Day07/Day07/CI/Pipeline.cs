@@ -21,6 +21,11 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
                     break;
             }
         }
+        
+        if (result.EmailMessage is not null)
+        {
+            emailer.Send(result.EmailMessage);
+        }
     }
 
     private PipelineResult InternalCore(PipelineResult input)
@@ -71,13 +76,13 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
             if (testsPassed)
             {
                 if (deploySuccessful)
-                    emailer.Send("Deployment completed successfully");
+                    input.Send("Deployment completed successfully");
                 else
-                    emailer.Send("Deployment failed");
+                    input.Send("Deployment failed");
             }
             else
             {
-                emailer.Send("Tests failed");
+                input.Send("Tests failed");
             }
         }
         else
@@ -92,22 +97,26 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 internal class PipelineResult
 {
     private readonly List<(LogLevel, string)> _logs;
+    private string? _emailMessage;
 
-    private PipelineResult(Project project, List<(LogLevel, string)> logs)
+    private PipelineResult(Project project, List<(LogLevel, string)> logs, string? emailMessage)
     {
         Project = project;
         _logs = logs;
+        _emailMessage = emailMessage;
     }
 
     public Project Project { get; }
     public IReadOnlyList<(LogLevel, string)> Logs => _logs;
+    public string? EmailMessage => _emailMessage;
 
-    public static PipelineResult Empty(Project project) => new(project, new List<(LogLevel, string)>());
-
+    public static PipelineResult Empty(Project project) => new(project, new List<(LogLevel, string)>(), null);
 
     public void Info(string message) => _logs.Add((LogLevel.Info, message));
 
     public void Error(string message) => _logs.Add((LogLevel.Error, message));
+
+    public void Send(string message) => _emailMessage = message;
 }
 
 internal enum LogLevel
