@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Day09.Accountability;
 using FluentAssertions;
 using Xunit;
@@ -68,5 +69,16 @@ public class ClientTests
         var statement = client.ToStatement();
         statement.Should().Contain("Tenet Deluxe Edition for 45.99€");
         statement.Should().Contain("Interstellar for 23.98€");
+    }
+
+    [Fact]
+    public void Client_With_Empty_OrderLines_Should_Return_Zero_Total()
+    {
+        var client = new Client(ReadOnlyDictionary<string, double>.Empty);
+
+        client.TotalAmount().Should().Be(0);
+
+        var statement = client.ToStatement();
+        statement.Should().Be("Total : 0€");
     }
 }

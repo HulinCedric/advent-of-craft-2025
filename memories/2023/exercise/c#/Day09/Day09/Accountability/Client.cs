@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using static System.Environment;
 using static System.Globalization.CultureInfo;
 using static System.String;
@@ -12,12 +11,20 @@ public class Client
     public Client(IReadOnlyDictionary<string, double> orderLines) => _orderLines = orderLines.ToDictionary();
 
     public string ToStatement()
-        => $"{Join(
+    {
+        var result = $"{Join(
             NewLine,
             _orderLines
                 .Select(kvp => FormatLine(kvp.Key, kvp.Value))
                 .ToList()
-        )}{NewLine}Total : {TotalAmount().ToString(InvariantCulture)}€";
+        )}";
+
+        if (!IsNullOrEmpty(result)) result += NewLine;
+
+        result += $"Total : {TotalAmount().ToString(InvariantCulture)}€";
+
+        return result;
+    }
 
     private string FormatLine(string name, double value) => name + " for " + value.ToString(InvariantCulture) + "€";
 
