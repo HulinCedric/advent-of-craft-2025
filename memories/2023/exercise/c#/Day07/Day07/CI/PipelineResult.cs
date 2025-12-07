@@ -44,7 +44,5 @@ internal class PipelineResult
             _stepsResults.Append(pipelineStepResult));
 
     public PipelineResult Run(params IEnumerable<IPipelineStep> steps)
-    {
-        return steps.Aggregate(this, (current, step) => step.Handle(current));
-    }
+        => steps.Aggregate(this, (current, step) => step.Handle(current));
 }
