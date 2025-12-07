@@ -36,7 +36,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
     private static PipelineResult RunTests(PipelineResult input)
     {
-        var pipelineStepResult = new TestStep().Run(input.Project);
+        var pipelineStepResult = new TestStep().Run(input);
         return input.AddStepResult(pipelineStepResult);
     }
 
@@ -79,12 +79,12 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
 internal class TestStep
 {
-    internal PipelineStepResult Run(Project project)
+    internal PipelineStepResult Run(PipelineResult input)
     {
-        if (!project.HasTests())
+        if (!input.Project.HasTests())
             return new PipelineStepResult(Steps.Test, IsPassed: true, "No tests");
 
-        if (project.RunTests() != "success")
+        if (input.Project.RunTests() != "success")
             return new PipelineStepResult(Steps.Test, IsPassed: false, "Tests failed");
 
         return new PipelineStepResult(Steps.Test, IsPassed: true, "Tests passed");
