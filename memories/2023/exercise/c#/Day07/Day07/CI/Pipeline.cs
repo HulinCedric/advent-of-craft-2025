@@ -6,7 +6,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
     {
-        var input = new PipelineResult(project, new List<(LogLevel, string)>());
+        var input = PipelineResult.Empty(project);
         var result = InternalCore(input);
 
         foreach (var (level, message) in result.Logs)
@@ -93,14 +93,16 @@ internal class PipelineResult
 {
     private readonly List<(LogLevel, string)> _logs;
 
-    public PipelineResult(Project project, IEnumerable<(LogLevel, string)> logs)
+    private PipelineResult(Project project, List<(LogLevel, string)> logs)
     {
         Project = project;
-        Logs = logs.ToList();
+        _logs = logs;
     }
 
     public Project Project { get; }
-    public IReadOnlyList<(LogLevel, string)> Logs { get; }
+    public IReadOnlyList<(LogLevel, string)> Logs => _logs;
+
+    public static PipelineResult Empty(Project project) => new(project, new List<(LogLevel, string)>());
 
 
     public void Info(string message) => _logs.Add((LogLevel.Info, message));
