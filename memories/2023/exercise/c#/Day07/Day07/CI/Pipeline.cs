@@ -10,7 +10,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
         var result = InternalRun(input);
 
-        foreach (var (level, message) in result.Logs)
+        foreach (var (level, message) in result.GetLogs())
         {
             switch (level)
             {

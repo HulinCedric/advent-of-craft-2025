@@ -18,7 +18,7 @@ internal class PipelineResult
 
     public Project Project { get; }
 
-    public IReadOnlyList<(LogLevel, string)> Logs
+    public IReadOnlyList<(LogLevel, string)> GetLogs()
         => _stepsResults
             .SelectMany(stepResult => stepResult.GetLogs())
             .ToList();
