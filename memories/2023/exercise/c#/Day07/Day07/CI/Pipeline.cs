@@ -1,4 +1,5 @@
 using Day07.CI.Dependencies;
+using LanguageExt;
 
 namespace Day07.CI;
 
@@ -12,9 +13,9 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         SendEmail(result);
     }
 
-    private void Logs(FunctionalCorePipeline result)
+    private void Logs(Seq<IPipelineStepResult> result)
     {
-        foreach (var (level, message) in result.StepsResults.GetLogs())
+        foreach (var (level, message) in result.GetLogs())
         {
             switch (level)
             {
@@ -28,6 +29,5 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         }
     }
 
-    private void SendEmail(FunctionalCorePipeline result)
-        => result.StepsResults.GetSummaryEmailMessage().Do(emailer.Send);
+    private void SendEmail(Seq<IPipelineStepResult> result) => result.GetSummaryEmailMessage().Do(emailer.Send);
 }

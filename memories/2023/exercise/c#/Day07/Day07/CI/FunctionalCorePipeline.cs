@@ -10,11 +10,11 @@ public sealed record FunctionalCorePipeline
 
     public Seq<IPipelineStepResult> StepsResults { get; }
 
-    public static FunctionalCorePipeline Run(Project project, bool sendEmailSummary)
+    public static Seq<IPipelineStepResult> Run(Project project, bool sendEmailSummary)
         => Run(
             new TestStep(project),
             new DeploymentStep(project),
-            new SendEmailSummaryStep(sendEmailSummary));
+            new SendEmailSummaryStep(sendEmailSummary)).StepsResults;
 
     private static FunctionalCorePipeline Run(params IEnumerable<IPipelineStep> steps)
         => steps.Aggregate(New(), (current, step) => current.AddStepResult(step.Handle(current)));
