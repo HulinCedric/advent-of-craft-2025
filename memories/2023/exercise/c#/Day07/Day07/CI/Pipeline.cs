@@ -79,26 +79,26 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
     private static PipelineResult SendEmailSummary(PipelineResult input)
     {
-        if (input.SendEmailSummary())
-        {
-            input.Info("Sending email");
-            if (input.IsTestsPassed())
-            {
-                if (input.IsDeploymentSuccessful())
-                    input.Send("Deployment completed successfully");
-                else
-                    input.Send("Deployment failed");
-            }
-            else
-            {
-                input.Send("Tests failed");
-            }
-        }
-        else
+        if (!input.SendEmailSummary())
         {
             input.Info("Email disabled");
+            return input;
         }
 
+        input.Info("Sending email");
+        if (!input.IsTestsPassed())
+        {
+            input.Send("Tests failed");
+            return input;
+        }
+
+        if (input.IsDeploymentSuccessful())
+        {
+            input.Send("Deployment completed successfully");
+            return input;
+        }
+
+        input.Send("Deployment failed");
         return input;
     }
 }
