@@ -6,7 +6,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
     {
-        var input = PipelineResult.Empty(project);
+        var input = PipelineResult.Empty(project, config.SendEmailSummary());
         var result = InternalCore(input);
 
         foreach (var (level, message) in result.Logs)
@@ -22,16 +22,11 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
             }
         }
 
-        if (result.EmailMessage is not null)
-        {
-            emailer.Send(result.EmailMessage);
-        }
+        if (result.EmailMessage is not null) emailer.Send(result.EmailMessage);
     }
 
     private PipelineResult InternalCore(PipelineResult input)
     {
-        bool deploySuccessful;
-
         if (input.Project.HasTests())
         {
             if (input.Project.RunTests() == "success")
@@ -69,14 +64,13 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
             input.DeploymentFailed();
         }
 
-        
 
         return SendEmailSummary(input);
     }
 
-    private PipelineResult SendEmailSummary(PipelineResult input)
+    private static PipelineResult SendEmailSummary(PipelineResult input)
     {
-        if (config.SendEmailSummary())
+        if (input.SendEmailSummary())
         {
             input.Info("Sending email");
             if (input.IsTestsPassed())
@@ -95,60 +89,57 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         {
             input.Info("Email disabled");
         }
-        
+
         return input;
     }
 }
 
 internal class PipelineResult
 {
-    private bool _isTestsPassed;
     private readonly List<(LogLevel, string)> _logs;
-    private string? _emailMessage;
     private bool _isDeploymentSuccessful;
+    private bool _isTestsPassed;
+    private readonly bool _shouldSendEmailSummary;
 
-    private PipelineResult(Project project, List<(LogLevel, string)> logs, string? emailMessage)
+    private PipelineResult(
+        Project project,
+        List<(LogLevel, string)> logs,
+        string? emailMessage,
+        bool shouldSendEmailSummary)
     {
         Project = project;
         _logs = logs;
-        _emailMessage = emailMessage;
+        EmailMessage = emailMessage;
+        _shouldSendEmailSummary = shouldSendEmailSummary;
         _isTestsPassed = false;
         _isDeploymentSuccessful = false;
     }
 
     public Project Project { get; }
     public IReadOnlyList<(LogLevel, string)> Logs => _logs;
-    public string? EmailMessage => _emailMessage;
+    public string? EmailMessage { get; private set; }
+
     public bool IsTestsPassed() => _isTestsPassed;
     public bool IsDeploymentSuccessful() => _isDeploymentSuccessful;
 
-    public static PipelineResult Empty(Project project) => new(project, new List<(LogLevel, string)>(), null);
+    public static PipelineResult Empty(Project project, bool shouldSendEmailSummary)
+        => new(project, [], null, shouldSendEmailSummary);
 
     public void Info(string message) => _logs.Add((LogLevel.Info, message));
 
     public void Error(string message) => _logs.Add((LogLevel.Error, message));
 
-    public void Send(string message) => _emailMessage = message;
+    public void Send(string message) => EmailMessage = message;
 
-    public void TestsPass()
-    {
-        _isTestsPassed = true;
-    }
+    public void TestsPass() => _isTestsPassed = true;
 
-    public void TestsFail()
-    {
-        _isTestsPassed = false;
-    }
+    public void TestsFail() => _isTestsPassed = false;
 
-    public void DeploymentSuccessful()
-    {
-        _isDeploymentSuccessful = true;
-    }
+    public void DeploymentSuccessful() => _isDeploymentSuccessful = true;
 
-    public void DeploymentFailed()
-    {
-        _isDeploymentSuccessful = false;
-    }
+    public void DeploymentFailed() => _isDeploymentSuccessful = false;
+
+    public bool SendEmailSummary() => _shouldSendEmailSummary;
 }
 
 internal enum LogLevel
