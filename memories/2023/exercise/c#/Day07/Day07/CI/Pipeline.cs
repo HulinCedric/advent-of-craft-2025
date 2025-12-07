@@ -2,11 +2,6 @@ using Day07.CI.Dependencies;
 
 namespace Day07.CI;
 
-public static class Steps
-{
-    public const string Test = nameof(Test);
-}
-
 public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
@@ -95,5 +90,3 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         return input;
     }
 }
-
-internal sealed record PipelineStep(string Name, bool IsPassed);
