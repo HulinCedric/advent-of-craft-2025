@@ -27,6 +27,36 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
     private static PipelineResult InternalRun(PipelineResult input)
     {
+        input = RunTests(input);
+        input = RunDeployment(input);
+        return SendEmailSummary(input);
+    }
+
+    private static PipelineResult RunDeployment(PipelineResult input)
+    {
+        if (input.IsTestsPassed())
+        {
+            if (input.Project.Deploy() == "success")
+            {
+                input.Info("Deployment successful");
+                input.DeploymentSuccessful();
+            }
+            else
+            {
+                input.Error("Deployment failed");
+                input.DeploymentFailed();
+            }
+        }
+        else
+        {
+            input.DeploymentFailed();
+        }
+
+        return input;
+    }
+
+    private static PipelineResult RunTests(PipelineResult input)
+    {
         if (input.Project.HasTests())
         {
             if (input.Project.RunTests() == "success")
@@ -46,26 +76,7 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
             input.TestsPass();
         }
 
-        if (input.IsTestsPassed())
-        {
-            if (input.Project.Deploy() == "success")
-            {
-                input.Info("Deployment successful");
-                input.DeploymentSuccessful();
-            }
-            else
-            {
-                input.Error("Deployment failed");
-                input.DeploymentFailed();
-            }
-        }
-        else
-        {
-            input.DeploymentFailed();
-        }
-
-
-        return SendEmailSummary(input);
+        return input;
     }
 
     private static PipelineResult SendEmailSummary(PipelineResult input)
@@ -97,9 +108,9 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 internal class PipelineResult
 {
     private readonly List<(LogLevel, string)> _logs;
+    private readonly bool _shouldSendEmailSummary;
     private bool _isDeploymentSuccessful;
     private bool _isTestsPassed;
-    private readonly bool _shouldSendEmailSummary;
 
     private PipelineResult(
         Project project,
