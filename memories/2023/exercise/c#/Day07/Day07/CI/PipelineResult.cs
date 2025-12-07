@@ -2,12 +2,6 @@ using Day07.CI.Dependencies;
 
 namespace Day07.CI;
 
-internal static class StepResultExtensions
-{
-    internal static bool IsDeploymentSuccessful(this IEnumerable<IPipelineStepResult> results)
-        => results.OfType<DeploymentStepResult>().FirstOrDefault()?.IsPassed ?? false;
-}
-
 internal class PipelineResult
 {
     private readonly bool _shouldSendEmailSummary;
@@ -35,7 +29,8 @@ internal class PipelineResult
 
     public bool IsTestsPassed() => _stepsResults.OfType<TestStepResult>().FirstOrDefault()?.IsPassed ?? false;
 
-    public bool IsDeploymentSuccessful() => _stepsResults.IsDeploymentSuccessful();
+    public bool IsDeploymentSuccessful()
+        => _stepsResults.OfType<DeploymentStepResult>().FirstOrDefault()?.IsPassed ?? false;
 
     public static PipelineResult From(Project project, bool shouldSendEmailSummary)
         => new(project, shouldSendEmailSummary, []);
