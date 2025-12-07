@@ -6,7 +6,7 @@ internal class PipelineResult
 {
     private readonly List<(LogLevel, string)> _logs;
     private readonly bool _shouldSendEmailSummary;
-    private readonly List<PipelineStepResult> _stepsResults;
+    private readonly List<IPipelineStepResult> _stepsResults;
     private string? _emailMessage;
 
     private PipelineResult(
@@ -24,7 +24,10 @@ internal class PipelineResult
 
     public Project Project { get; }
     public IReadOnlyList<(LogLevel, string)> Logs => _logs;
-    public string? GetPotentialEmailMessage() => _emailMessage;
+
+    public string? GetPotentialEmailMessage()
+        => _stepsResults.OfType<SendSummaryPipelineStepResult>().FirstOrDefault()?.EmailMessage;
+
     public bool IsTestsPassed() => _stepsResults.FirstOrDefault(s => s.Name == Steps.Test)?.IsPassed ?? false;
 
     public bool IsDeploymentSuccessful()
@@ -41,12 +44,12 @@ internal class PipelineResult
 
     public bool ShouldSendEmailSummary() => _shouldSendEmailSummary;
 
-    public PipelineResult AddStepResult(PipelineStepResult pipelineStepResult)
+    public PipelineResult AddStepResult(IPipelineStepResult pipelineStepResult)
     {
         _stepsResults.Add(pipelineStepResult);
 
         _logs.AddRange(pipelineStepResult.GetLogs());
-        
+
         return this;
     }
 }

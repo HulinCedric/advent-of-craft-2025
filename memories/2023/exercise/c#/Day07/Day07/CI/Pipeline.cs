@@ -48,27 +48,8 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
     private static PipelineResult SendEmailSummary(PipelineResult input)
     {
-        if (!input.ShouldSendEmailSummary())
-        {
-            input.LogInfo("Email disabled");
-            return input;
-        }
-
-        input.LogInfo("Sending email");
-        if (!input.IsTestsPassed())
-        {
-            input.SendEmail("Tests failed");
-            return input;
-        }
-
-        if (!input.IsDeploymentSuccessful())
-        {
-            input.SendEmail("Deployment failed");
-            return input;
-        }
-
-        input.SendEmail("Deployment completed successfully");
-        return input;
+        var pipelineStepResult = new SendEmailSummaryStep().Run(input);
+        return input.AddStepResult(pipelineStepResult);
     }
 }
 
@@ -80,9 +61,9 @@ internal class TestStep
             return PipelineStepResult.StepPassed(Steps.Test, "No tests");
 
         if (input.Project.RunTests() != "success")
-            return PipelineStepResult.StepFailed(Steps.Test,  "Tests failed");
+            return PipelineStepResult.StepFailed(Steps.Test, "Tests failed");
 
-        return PipelineStepResult.StepPassed(Steps.Test,"Tests passed");
+        return PipelineStepResult.StepPassed(Steps.Test, "Tests passed");
     }
 }
 
@@ -94,8 +75,27 @@ internal class DeploymentStep
             return PipelineStepResult.StepFailed(Steps.Deployment);
 
         if (input.Project.Deploy() != "success")
-            return PipelineStepResult.StepFailed(Steps.Deployment,  "Deployment failed");
+            return PipelineStepResult.StepFailed(Steps.Deployment, "Deployment failed");
 
-        return PipelineStepResult.StepPassed(Steps.Deployment,  "Deployment successful");
+        return PipelineStepResult.StepPassed(Steps.Deployment, "Deployment successful");
+    }
+}
+
+internal class SendEmailSummaryStep
+{
+    internal IPipelineStepResult Run(PipelineResult input)
+    {
+        var result = SendSummaryPipelineStepResult.New();
+        if (!input.ShouldSendEmailSummary())
+            return result.AddLog(LogLevel.Info, "Email disabled");
+
+        result = result.AddLog(LogLevel.Info, "Sending email");
+        if (!input.IsTestsPassed())
+            return result.SendEmail("Tests failed");
+
+        if (!input.IsDeploymentSuccessful())
+            return result.SendEmail("Deployment failed");
+
+        return result.SendEmail("Deployment completed successfully");
     }
 }
