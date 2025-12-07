@@ -6,14 +6,20 @@ namespace Day09.Tests;
 
 public class ClientTests
 {
-    private readonly Client _client = new(
-        new Dictionary<string, double>
+    private readonly Client _client;
+    private readonly Dictionary<string, double> _orderLines;
+
+    public ClientTests()
+    {
+        _orderLines = new Dictionary<string, double>
         {
             { "Tenet Deluxe Edition", 45.99 },
             { "Inception", 30.50 },
             { "The Dark Knight", 30.50 },
             { "Interstellar", 23.98 }
-        });
+        };
+        _client = new Client(_orderLines);
+    }
 
     [Fact]
     public void Client_Should_Return_Statement()
@@ -45,5 +51,22 @@ public class ClientTests
         _client.TotalAmount().Should().Be(130.97);
 
         first.Should().BeEquivalentTo(second);
+    }
+
+    [Fact]
+    public void Client_Should_Not_Be_Affected_By_External_Dictionary_Mutations()
+    {
+        var client = new Client(_orderLines);
+
+        // mutate original dictionary after client creation
+        _orderLines["Tenet Deluxe Edition"] = 0.0;
+        _orderLines.Remove("Interstellar");
+
+        // client should still report the original total and lines
+        client.TotalAmount().Should().Be(130.97);
+
+        var statement = client.ToStatement();
+        statement.Should().Contain("Tenet Deluxe Edition for 45.99€");
+        statement.Should().Contain("Interstellar for 23.98€");
     }
 }
