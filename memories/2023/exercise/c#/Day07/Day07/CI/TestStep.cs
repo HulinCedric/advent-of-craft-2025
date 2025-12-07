@@ -5,11 +5,11 @@ internal class TestStep : IPipelineStep
     public IPipelineStepResult Run(PipelineResult input)
     {
         if (!input.Project.HasTests())
-            return PipelineStepResult.StepPassed(Steps.Test, "No tests");
+            return TestStepResult.StepPassed().AddLog(LogLevel.Info, "No tests");
 
         if (input.Project.RunTests() != "success")
-            return PipelineStepResult.StepFailed(Steps.Test, "Tests failed");
+            return TestStepResult.StepFailed().AddLog(LogLevel.Error, "Tests failed");
 
-        return PipelineStepResult.StepPassed(Steps.Test, "Tests passed");
+        return TestStepResult.StepPassed().AddLog(LogLevel.Info, "Tests passed");
     }
 }

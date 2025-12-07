@@ -5,11 +5,11 @@ internal class DeploymentStep : IPipelineStep
     public IPipelineStepResult Run(PipelineResult input)
     {
         if (!input.IsTestsPassed())
-            return PipelineStepResult.StepFailed(Steps.Deployment);
+            return DeploymentStepResult.StepFailed();
 
         if (input.Project.Deploy() != "success")
-            return PipelineStepResult.StepFailed(Steps.Deployment, "Deployment failed");
+            return DeploymentStepResult.StepFailed().AddLog(LogLevel.Error, "Deployment failed");
 
-        return PipelineStepResult.StepPassed(Steps.Deployment, "Deployment successful");
+        return DeploymentStepResult.StepPassed().AddLog(LogLevel.Info, "Deployment successful");
     }
 }

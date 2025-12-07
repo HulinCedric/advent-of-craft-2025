@@ -26,10 +26,10 @@ internal class PipelineResult
     public string? GetPotentialEmailMessage()
         => _stepsResults.OfType<SendSummaryPipelineStepResult>().FirstOrDefault()?.EmailMessage;
 
-    public bool IsTestsPassed() => _stepsResults.FirstOrDefault(s => s.Name == Steps.Test)?.IsPassed ?? false;
+    public bool IsTestsPassed() => _stepsResults.OfType<TestStepResult>().FirstOrDefault()?.IsPassed ?? false;
 
     public bool IsDeploymentSuccessful()
-        => _stepsResults.FirstOrDefault(s => s.Name == Steps.Deployment)?.IsPassed ?? false;
+        => _stepsResults.OfType<DeploymentStepResult>().FirstOrDefault()?.IsPassed ?? false;
 
     public static PipelineResult From(Project project, bool shouldSendEmailSummary)
         => new(project, shouldSendEmailSummary);
