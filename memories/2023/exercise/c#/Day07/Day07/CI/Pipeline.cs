@@ -33,26 +33,6 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         return SendEmailSummary(input);
     }
 
-    private static PipelineResult RunDeployment(PipelineResult input)
-    {
-        if (!input.IsTestsPassed())
-        {
-            input.DeploymentFailed();
-            return input;
-        }
-
-        if (input.Project.Deploy() == "success")
-        {
-            input.Info("Deployment successful");
-            input.DeploymentSuccessful();
-            return input;
-        }
-
-        input.Error("Deployment failed");
-        input.DeploymentFailed();
-        return input;
-    }
-
     private static PipelineResult RunTests(PipelineResult input)
     {
         if (!input.Project.HasTests())
@@ -71,6 +51,26 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
         input.Error("Tests failed");
         input.TestsFail();
+        return input;
+    }
+
+    private static PipelineResult RunDeployment(PipelineResult input)
+    {
+        if (!input.IsTestsPassed())
+        {
+            input.DeploymentFailed();
+            return input;
+        }
+
+        if (input.Project.Deploy() == "success")
+        {
+            input.Info("Deployment successful");
+            input.DeploymentSuccessful();
+            return input;
+        }
+
+        input.Error("Deployment failed");
+        input.DeploymentFailed();
         return input;
     }
 
