@@ -10,15 +10,21 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
             .From(project, config.SendEmailSummary());
 
         var result = Run(input);
-        
+
         Logs(result);
         SendEmail(result);
     }
 
-    private void SendEmail(PipelineResult result)
+    private static PipelineResult Run(PipelineResult input)
     {
-        var potentialEmailMessage = result.GetPotentialEmailMessage();
-        if (potentialEmailMessage is not null) emailer.Send(potentialEmailMessage);
+        List<IPipelineStep> steps =
+        [
+            new TestStep(),
+            new DeploymentStep(),
+            new SendEmailSummaryStep()
+        ];
+
+        return steps.Aggregate(input, (current, step) => step.Handle(current));
     }
 
     private void Logs(PipelineResult result)
@@ -37,15 +43,9 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
         }
     }
 
-    private static PipelineResult Run(PipelineResult input)
+    private void SendEmail(PipelineResult result)
     {
-        List<IPipelineStep> steps =
-        [
-            new TestStep(),
-            new DeploymentStep(),
-            new SendEmailSummaryStep()
-        ];
-
-        return steps.Aggregate(input, (current, step) => step.Handle(current));
+        var potentialEmailMessage = result.GetPotentialEmailMessage();
+        if (potentialEmailMessage is not null) emailer.Send(potentialEmailMessage);
     }
 }
