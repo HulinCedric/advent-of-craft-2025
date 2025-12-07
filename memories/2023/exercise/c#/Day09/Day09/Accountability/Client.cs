@@ -1,5 +1,5 @@
 using static System.Environment;
-using static System.Globalization.CultureInfo;
+using static System.FormattableString;
 using static System.String;
 
 namespace Day09.Accountability;
@@ -25,12 +25,14 @@ public class Client
 
         if (_orderLines.Any()) result += NewLine;
 
-        result += $"Total : {TotalAmount().ToString("0.##", InvariantCulture)}€";
+        result += $"Total : {FormatAmount(TotalAmount())}";
 
         return result;
     }
 
-    private string FormatLine(string name, double value) => $"{name} for {value.ToString("0.##", InvariantCulture)}€";
+    private string FormatLine(string name, double value) => $"{name} for {FormatAmount(value)}";
+
+    private static string FormatAmount(double value) => Invariant($"{value:0.##}€");
 
     public double TotalAmount() => _orderLines.Sum(kvp => kvp.Value);
 }
