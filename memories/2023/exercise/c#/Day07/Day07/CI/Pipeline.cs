@@ -37,19 +37,19 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
     {
         if (!input.Project.HasTests())
         {
-            input.Info("No tests");
+            input.LogInfo("No tests");
             input.TestsPass();
             return input;
         }
 
         if (input.Project.RunTests() == "success")
         {
-            input.Info("Tests passed");
+            input.LogInfo("Tests passed");
             input.TestsPass();
             return input;
         }
 
-        input.Error("Tests failed");
+        input.LogError("Tests failed");
         input.TestsFail();
         return input;
     }
@@ -64,38 +64,38 @@ public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
 
         if (input.Project.Deploy() == "success")
         {
-            input.Info("Deployment successful");
+            input.LogInfo("Deployment successful");
             input.DeploymentSuccessful();
             return input;
         }
 
-        input.Error("Deployment failed");
+        input.LogError("Deployment failed");
         input.DeploymentFailed();
         return input;
     }
 
     private static PipelineResult SendEmailSummary(PipelineResult input)
     {
-        if (!input.SendEmailSummary())
+        if (!input.ShouldSendEmailSummary())
         {
-            input.Info("Email disabled");
+            input.LogInfo("Email disabled");
             return input;
         }
 
-        input.Info("Sending email");
+        input.LogInfo("Sending email");
         if (!input.IsTestsPassed())
         {
-            input.Send("Tests failed");
+            input.SendEmail("Tests failed");
             return input;
         }
 
         if (input.IsDeploymentSuccessful())
         {
-            input.Send("Deployment completed successfully");
+            input.SendEmail("Deployment completed successfully");
             return input;
         }
 
-        input.Send("Deployment failed");
+        input.SendEmail("Deployment failed");
         return input;
     }
 }
@@ -131,11 +131,11 @@ internal class PipelineResult
     public static PipelineResult From(Project project, bool shouldSendEmailSummary)
         => new(project, [], null, shouldSendEmailSummary);
 
-    public void Info(string message) => _logs.Add((LogLevel.Info, message));
+    public void LogInfo(string message) => _logs.Add((LogLevel.Info, message));
 
-    public void Error(string message) => _logs.Add((LogLevel.Error, message));
+    public void LogError(string message) => _logs.Add((LogLevel.Error, message));
 
-    public void Send(string message) => EmailMessage = message;
+    public void SendEmail(string message) => EmailMessage = message;
 
     public void TestsPass() => _isTestsPassed = true;
 
@@ -145,7 +145,7 @@ internal class PipelineResult
 
     public void DeploymentFailed() => _isDeploymentSuccessful = false;
 
-    public bool SendEmailSummary() => _shouldSendEmailSummary;
+    public bool ShouldSendEmailSummary() => _shouldSendEmailSummary;
 }
 
 internal enum LogLevel
