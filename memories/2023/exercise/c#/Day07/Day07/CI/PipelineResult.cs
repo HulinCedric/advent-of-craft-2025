@@ -8,7 +8,6 @@ internal class PipelineResult
     private readonly bool _shouldSendEmailSummary;
     private readonly List<PipelineStep> _steps;
     private string? _emailMessage;
-    private bool _isDeploymentSuccessful;
 
     private PipelineResult(
         Project project,
@@ -20,7 +19,6 @@ internal class PipelineResult
         _logs = logs;
         _emailMessage = emailMessage;
         _shouldSendEmailSummary = shouldSendEmailSummary;
-        _isDeploymentSuccessful = false;
         _steps = [];
     }
 
