@@ -1,124 +1,115 @@
 using Day07.CI.Dependencies;
 
-namespace Day07.CI
-{
-    public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
-    {
-        public void Run(Project project)
-        {
-            var result = InternalCore(project);
+namespace Day07.CI;
 
-            foreach (var (level, message) in result.Logs)
+public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
+{
+    public void Run(Project project)
+    {
+        var pipelineResult = new PipelineResult(project, new List<(LogLevel, string)>());
+        var result = InternalCore(pipelineResult);
+
+        foreach (var (level, message) in result.Logs)
+        {
+            switch (level)
             {
-                switch (level)
-                {
-                    case LogLevel.Info:
-                        log.Info(message);
-                        break;
-                    case LogLevel.Error:
-                        log.Error(message);
-                        break;
-                }
+                case LogLevel.Info:
+                    log.Info(message);
+                    break;
+                case LogLevel.Error:
+                    log.Error(message);
+                    break;
             }
         }
+    }
 
-        private PipelineResult InternalCore(Project project)
+    private PipelineResult InternalCore(PipelineResult input)
+    {
+        bool testsPassed;
+        bool deploySuccessful;
+
+        if (input.Project.HasTests())
         {
-            bool testsPassed;
-            bool deploySuccessful;
-
-            var result = new PipelineResult(new List<(LogLevel, string)>());
-
-            if (project.HasTests())
+            if (input.Project.RunTests() == "success")
             {
-                if (project.RunTests() == "success")
-                {
-                    result.Info("Tests passed");
-                    testsPassed = true;
-                }
-                else
-                {
-                    result.Error("Tests failed");
-                    testsPassed = false;
-                }
-            }
-            else
-            {
-                result.Info("No tests");
+                input.Info("Tests passed");
                 testsPassed = true;
             }
-
-            if (testsPassed)
+            else
             {
-                if (project.Deploy() == "success")
-                {
-                    result.Info("Deployment successful");
-                    deploySuccessful = true;
-                }
-                else
-                {
-                    result.Error("Deployment failed");
-                    deploySuccessful = false;
-                }
+                input.Error("Tests failed");
+                testsPassed = false;
+            }
+        }
+        else
+        {
+            input.Info("No tests");
+            testsPassed = true;
+        }
+
+        if (testsPassed)
+        {
+            if (input.Project.Deploy() == "success")
+            {
+                input.Info("Deployment successful");
+                deploySuccessful = true;
             }
             else
             {
+                input.Error("Deployment failed");
                 deploySuccessful = false;
             }
+        }
+        else
+        {
+            deploySuccessful = false;
+        }
 
-            if (config.SendEmailSummary())
+        if (config.SendEmailSummary())
+        {
+            log.Info("Sending email");
+            if (testsPassed)
             {
-                log.Info("Sending email");
-                if (testsPassed)
-                {
-                    if (deploySuccessful)
-                    {
-                        emailer.Send("Deployment completed successfully");
-                    }
-                    else
-                    {
-                        emailer.Send("Deployment failed");
-                    }
-                }
+                if (deploySuccessful)
+                    emailer.Send("Deployment completed successfully");
                 else
-                {
-                    emailer.Send("Tests failed");
-                }
+                    emailer.Send("Deployment failed");
             }
             else
             {
-                result.Info("Email disabled");
+                emailer.Send("Tests failed");
             }
-
-            return result;
         }
-    }
+        else
+        {
+            input.Info("Email disabled");
+        }
 
-    internal class PipelineResult
+        return input;
+    }
+}
+
+internal class PipelineResult
+{
+    private readonly List<(LogLevel, string)> _logs;
+
+    public PipelineResult(Project project, IEnumerable<(LogLevel, string)> logs)
     {
-        private readonly List<(LogLevel, string)> _logs;
-        public IReadOnlyList<(LogLevel, string)> Logs { get; }
-
-        public PipelineResult(IEnumerable<(LogLevel, string)> logs)
-        {
-            Logs = logs.ToList();
-        }
-
-
-        public void Info(string message)
-        {
-            _logs.Add((LogLevel.Info, message));
-        }
-
-        public void Error(string message)
-        {
-            _logs.Add((LogLevel.Error, message));
-        }
+        Project = project;
+        Logs = logs.ToList();
     }
 
-    internal enum LogLevel
-    {
-        Info,
-        Error
-    }
+    public Project Project { get; }
+    public IReadOnlyList<(LogLevel, string)> Logs { get; }
+
+
+    public void Info(string message) => _logs.Add((LogLevel.Info, message));
+
+    public void Error(string message) => _logs.Add((LogLevel.Error, message));
+}
+
+internal enum LogLevel
+{
+    Info,
+    Error
 }
