@@ -45,13 +45,8 @@ internal class PipelineResult
     {
         _stepsResults.Add(pipelineStepResult);
 
-        if (string.IsNullOrEmpty(pipelineStepResult.Message)) return this;
-
-        if (pipelineStepResult.IsPassed)
-            LogInfo(pipelineStepResult.Message);
-        else
-            LogError(pipelineStepResult.Message);
-
+        _logs.AddRange(pipelineStepResult.GetLogs());
+        
         return this;
     }
 }
