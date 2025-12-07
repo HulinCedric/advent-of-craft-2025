@@ -3,7 +3,7 @@ using LanguageExt;
 
 namespace Day07.CI;
 
-public class Pipeline(IConfig config, IEmailer emailer, ILogger log)
+public class ImperativeShellPipeline(IConfig config, IEmailer emailer, ILogger log)
 {
     public void Run(Project project)
     {

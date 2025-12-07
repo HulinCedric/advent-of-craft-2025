@@ -7,7 +7,7 @@ using static Day07.CI.Dependencies.TestStatus;
 
 namespace Day07.Tests;
 
-public class FunctionalPipelineTests
+public class FunctionalCorePipelineTests
 {
     [Fact]
     public void Project_With_Tests_That_Deploys_Successfully_With_Email_Notification()
