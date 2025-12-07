@@ -8,7 +8,12 @@ public class Client
 {
     private readonly IReadOnlyDictionary<string, double> _orderLines;
 
-    public Client(IReadOnlyDictionary<string, double> orderLines) => _orderLines = orderLines.ToDictionary();
+    public Client(IReadOnlyDictionary<string, double> orderLines)
+    {
+        ArgumentNullException.ThrowIfNull(orderLines);
+
+        _orderLines = orderLines.ToDictionary();
+    }
 
     public string ToStatement()
     {
