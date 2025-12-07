@@ -106,6 +106,7 @@ internal class PipelineResult
     private readonly bool _shouldSendEmailSummary;
     private bool _isDeploymentSuccessful;
     private bool _isTestsPassed;
+    private string? _emailMessage;
 
     private PipelineResult(
         Project project,
@@ -115,7 +116,7 @@ internal class PipelineResult
     {
         Project = project;
         _logs = logs;
-        EmailMessage = emailMessage;
+        _emailMessage = emailMessage;
         _shouldSendEmailSummary = shouldSendEmailSummary;
         _isTestsPassed = false;
         _isDeploymentSuccessful = false;
@@ -123,7 +124,7 @@ internal class PipelineResult
 
     public Project Project { get; }
     public IReadOnlyList<(LogLevel, string)> Logs => _logs;
-    public string? EmailMessage { get; }
+    public string? EmailMessage => _emailMessage;
 
     public bool IsTestsPassed() => _isTestsPassed;
     public bool IsDeploymentSuccessful() => _isDeploymentSuccessful;
@@ -135,7 +136,7 @@ internal class PipelineResult
 
     public void LogError(string message) => _logs.Add((LogLevel.Error, message));
 
-    public void SendEmail(string message) => EmailMessage = message;
+    public void SendEmail(string message) => _emailMessage = message;
 
     public void TestsPass() => _isTestsPassed = true;
 
