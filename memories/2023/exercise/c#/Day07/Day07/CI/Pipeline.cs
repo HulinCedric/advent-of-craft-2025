@@ -6,6 +6,11 @@ namespace Day07.CI
     {
         public void Run(Project project)
         {
+            InternalCore(project);
+        }
+
+        private void InternalCore(Project project)
+        {
             bool testsPassed;
             bool deploySuccessful;
 
