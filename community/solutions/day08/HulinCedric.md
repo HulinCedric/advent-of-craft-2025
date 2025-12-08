@@ -9,7 +9,7 @@
 ## More feedback to share (optional)
 
 - I loved the experience because: Comparing different code styles and approaches is always interesting. Playing with
-  bias is a good exercise.
+  bias is a good exercise. The bias of "nice code = correct code" and _vice-versa_ is something we should be aware.
 - I found the exercise could be better if: Knowledge of the business goal to try to catch if the solutions fix the bug
   or not would be great.
 
@@ -42,8 +42,6 @@ Run the tests for each version and record the results:
 ---
 
 ### Part 3: Discover what happened?
-
-Before looking at the reveal:
 
 - Which version(s) did you reject based on style alone?
     - The version 1 & 3 for sure. The 2 partially with some tips to improve.
