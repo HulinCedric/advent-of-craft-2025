@@ -35,7 +35,7 @@ namespace SantaMarket.Model
                     var unitPrice = catalog.GetUnitPrice(product);
                     var quantityAsInt = (int) quantity;
 
-                    var discount = CalculateDiscount(offer, quantityAsInt, unitPrice, product, quantity);
+                    var discount = CalculateDiscount(offer, quantityAsInt, unitPrice, product);
 
                     if (discount != null)
                     {
@@ -49,8 +49,7 @@ namespace SantaMarket.Model
             Offer offer,
             int quantityAsInt,
             double unitPrice,
-            Product product,
-            double quantity)
+            Product product)
         {
             switch (offer.OfferType)
             {
