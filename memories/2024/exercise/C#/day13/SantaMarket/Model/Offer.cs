@@ -25,11 +25,14 @@ public class Offer(SpecialOfferType offerType, double argument)
 
         if (OfferType == SpecialOfferType.TenPercentDiscount) return CalculateTenPercentDiscount(product, unitPrice, quantityAsInt);
 
-        if (OfferType == SpecialOfferType.FiveForAmount && quantityAsInt >= 5)
+        if (OfferType == SpecialOfferType.FiveForAmount)
         {
-            var discountTotal = unitPrice * quantityAsInt -
-                                (Argument * (quantityAsInt / 5) + (quantityAsInt % 5) * unitPrice);
-            return new Discount(product, "5 for " + Argument, -discountTotal);
+            if (quantityAsInt >= 5)
+            {
+                var discountTotal = unitPrice * quantityAsInt -
+                                    (Argument * (quantityAsInt / 5) + (quantityAsInt % 5) * unitPrice);
+                return new Discount(product, "5 for " + Argument, -discountTotal);
+            }
         }
 
         return null;
