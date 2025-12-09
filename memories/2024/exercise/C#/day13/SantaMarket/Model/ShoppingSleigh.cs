@@ -34,9 +34,8 @@ namespace SantaMarket.Model
                     var offer = offers[product];
                     var unitPrice = catalog.GetUnitPrice(product);
                     var quantityAsInt = (int) quantity;
-                    Discount? discount = null;
 
-                    discount = CalculateDiscount(offer, quantityAsInt, unitPrice, discount, product, quantity);
+                    var discount = CalculateDiscount(offer, quantityAsInt, unitPrice, product, quantity);
 
                     if (discount != null)
                     {
@@ -50,26 +49,25 @@ namespace SantaMarket.Model
             Offer offer,
             int quantityAsInt,
             double unitPrice,
-            Discount? discount,
             Product product,
             double quantity)
         {
             if (offer.OfferType == SpecialOfferType.TwoForAmount && quantityAsInt >= 2)
             {
                 var total = offer.Argument * (quantityAsInt / 2) + (quantityAsInt % 2) * unitPrice;
-                discount = new Discount(product, "2 for " + offer.Argument, -(unitPrice * quantity - total));
+                return new Discount(product, "2 for " + offer.Argument, -(unitPrice * quantity - total));
             }
 
             if (offer.OfferType == SpecialOfferType.ThreeForTwo && quantityAsInt > 2)
             {
                 var discountAmount = quantity * unitPrice -
                                      ((quantityAsInt / 3 * 2 * unitPrice) + (quantityAsInt % 3) * unitPrice);
-                discount = new Discount(product, "3 for 2", -discountAmount);
+                return new Discount(product, "3 for 2", -discountAmount);
             }
 
             if (offer.OfferType == SpecialOfferType.TenPercentDiscount)
             {
-                discount = new Discount(product, offer.Argument + "% off",
+                return new Discount(product, offer.Argument + "% off",
                     -quantity * unitPrice * offer.Argument / 100.0);
             }
 
@@ -77,10 +75,10 @@ namespace SantaMarket.Model
             {
                 var discountTotal = unitPrice * quantity -
                                     (offer.Argument * (quantityAsInt / 5) + (quantityAsInt % 5) * unitPrice);
-                discount = new Discount(product, "5 for " + offer.Argument, -discountTotal);
+                return new Discount(product, "5 for " + offer.Argument, -discountTotal);
             }
 
-            return discount;
+            return null;
         }
     }
 }
