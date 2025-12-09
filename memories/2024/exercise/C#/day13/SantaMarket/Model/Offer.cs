@@ -23,11 +23,7 @@ public class Offer(SpecialOfferType offerType, double argument)
             return new Discount(product, "3 for 2", -discountAmount);
         }
 
-        if (OfferType == SpecialOfferType.TenPercentDiscount)
-            return new Discount(
-                product,
-                Argument + "% off",
-                -quantityAsInt * unitPrice * Argument / 100.0);
+        if (OfferType == SpecialOfferType.TenPercentDiscount) return CalculateTenPercentDiscount(product, unitPrice, quantityAsInt);
 
         if (OfferType == SpecialOfferType.FiveForAmount && quantityAsInt >= 5)
         {
@@ -38,4 +34,9 @@ public class Offer(SpecialOfferType offerType, double argument)
 
         return null;
     }
+
+    private Discount? CalculateTenPercentDiscount(Product product, double unitPrice, int quantityAsInt) => new(
+        product,
+        Argument + "% off",
+        -quantityAsInt * unitPrice * Argument / 100.0);
 }
