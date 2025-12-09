@@ -16,15 +16,21 @@ public class Offer(SpecialOfferType offerType, double argument)
             return new Discount(product, "2 for " + Argument, -(unitPrice * quantityAsInt - total));
         }
 
-        if (OfferType == SpecialOfferType.ThreeForTwo && quantityAsInt > 2)
+        if (OfferType == SpecialOfferType.ThreeForTwo) return CalculateThreeForTwoDiscount(product, unitPrice, quantityAsInt);
+        if (OfferType == SpecialOfferType.TenPercentDiscount) return CalculateTenPercentDiscount(product, unitPrice, quantityAsInt);
+        if (OfferType == SpecialOfferType.FiveForAmount) return CalculateFiveForAmountDiscount(product, unitPrice, quantityAsInt);
+
+        return null;
+    }
+
+    private static Discount? CalculateThreeForTwoDiscount(Product product, double unitPrice, int quantityAsInt)
+    {
+        if (quantityAsInt > 2)
         {
             var discountAmount = quantityAsInt * unitPrice -
                                  ((quantityAsInt / 3 * 2 * unitPrice) + (quantityAsInt % 3) * unitPrice);
             return new Discount(product, "3 for 2", -discountAmount);
         }
-
-        if (OfferType == SpecialOfferType.TenPercentDiscount) return CalculateTenPercentDiscount(product, unitPrice, quantityAsInt);
-        if (OfferType == SpecialOfferType.FiveForAmount) return CalculateFiveForAmountDiscount(product, unitPrice, quantityAsInt);
 
         return null;
     }
