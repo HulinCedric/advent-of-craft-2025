@@ -35,46 +35,13 @@ namespace SantaMarket.Model
                     var unitPrice = catalog.GetUnitPrice(product);
                     var quantityAsInt = (int) quantity;
 
-                    var discount = CalculateDiscount(offer, quantityAsInt, unitPrice, product);
+                    var discount = offer.CalculateDiscount(quantityAsInt, unitPrice, product);
 
                     if (discount != null)
                     {
                         receipt.AddDiscount(discount);
                     }
                 }
-            }
-        }
-
-        private static Discount? CalculateDiscount(
-            Offer offer,
-            int quantityAsInt,
-            double unitPrice,
-            Product product)
-        {
-            switch (offer.OfferType)
-            {
-                case SpecialOfferType.TwoForAmount when quantityAsInt >= 2:
-                {
-                    var total = offer.Argument * (quantityAsInt / 2) + (quantityAsInt % 2) * unitPrice;
-                    return new Discount(product, "2 for " + offer.Argument, -(unitPrice * quantityAsInt - total));
-                }
-                case SpecialOfferType.ThreeForTwo when quantityAsInt > 2:
-                {
-                    var discountAmount = quantityAsInt * unitPrice -
-                                         ((quantityAsInt / 3 * 2 * unitPrice) + (quantityAsInt % 3) * unitPrice);
-                    return new Discount(product, "3 for 2", -discountAmount);
-                }
-                case SpecialOfferType.TenPercentDiscount:
-                    return new Discount(product, offer.Argument + "% off",
-                        -quantityAsInt * unitPrice * offer.Argument / 100.0);
-                case SpecialOfferType.FiveForAmount when quantityAsInt >= 5:
-                {
-                    var discountTotal = unitPrice * quantityAsInt -
-                                        (offer.Argument * (quantityAsInt / 5) + (quantityAsInt % 5) * unitPrice);
-                    return new Discount(product, "5 for " + offer.Argument, -discountTotal);
-                }
-                default:
-                    return null;
             }
         }
     }
