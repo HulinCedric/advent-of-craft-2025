@@ -52,33 +52,31 @@ namespace SantaMarket.Model
             Product product,
             double quantity)
         {
-            if (offer.OfferType == SpecialOfferType.TwoForAmount && quantityAsInt >= 2)
+            switch (offer.OfferType)
             {
-                var total = offer.Argument * (quantityAsInt / 2) + (quantityAsInt % 2) * unitPrice;
-                return new Discount(product, "2 for " + offer.Argument, -(unitPrice * quantity - total));
+                case SpecialOfferType.TwoForAmount when quantityAsInt >= 2:
+                {
+                    var total = offer.Argument * (quantityAsInt / 2) + (quantityAsInt % 2) * unitPrice;
+                    return new Discount(product, "2 for " + offer.Argument, -(unitPrice * quantity - total));
+                }
+                case SpecialOfferType.ThreeForTwo when quantityAsInt > 2:
+                {
+                    var discountAmount = quantity * unitPrice -
+                                         ((quantityAsInt / 3 * 2 * unitPrice) + (quantityAsInt % 3) * unitPrice);
+                    return new Discount(product, "3 for 2", -discountAmount);
+                }
+                case SpecialOfferType.TenPercentDiscount:
+                    return new Discount(product, offer.Argument + "% off",
+                        -quantity * unitPrice * offer.Argument / 100.0);
+                case SpecialOfferType.FiveForAmount when quantityAsInt >= 5:
+                {
+                    var discountTotal = unitPrice * quantity -
+                                        (offer.Argument * (quantityAsInt / 5) + (quantityAsInt % 5) * unitPrice);
+                    return new Discount(product, "5 for " + offer.Argument, -discountTotal);
+                }
+                default:
+                    return null;
             }
-
-            if (offer.OfferType == SpecialOfferType.ThreeForTwo && quantityAsInt > 2)
-            {
-                var discountAmount = quantity * unitPrice -
-                                     ((quantityAsInt / 3 * 2 * unitPrice) + (quantityAsInt % 3) * unitPrice);
-                return new Discount(product, "3 for 2", -discountAmount);
-            }
-
-            if (offer.OfferType == SpecialOfferType.TenPercentDiscount)
-            {
-                return new Discount(product, offer.Argument + "% off",
-                    -quantity * unitPrice * offer.Argument / 100.0);
-            }
-
-            if (offer.OfferType == SpecialOfferType.FiveForAmount && quantityAsInt >= 5)
-            {
-                var discountTotal = unitPrice * quantity -
-                                    (offer.Argument * (quantityAsInt / 5) + (quantityAsInt % 5) * unitPrice);
-                return new Discount(product, "5 for " + offer.Argument, -discountTotal);
-            }
-
-            return null;
         }
     }
 }
