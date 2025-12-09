@@ -35,7 +35,6 @@ namespace SantaMarket.Model
                     var unitPrice = catalog.GetUnitPrice(product);
                     var quantityAsInt = (int) quantity;
                     Discount? discount = null;
-                    var x = offer.OfferType == SpecialOfferType.ThreeForTwo ? 3 : 1;
 
                     if (offer.OfferType == SpecialOfferType.TwoForAmount && quantityAsInt >= 2)
                     {
