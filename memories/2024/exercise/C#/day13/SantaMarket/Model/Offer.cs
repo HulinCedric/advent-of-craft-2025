@@ -6,9 +6,9 @@ namespace SantaMarket.Model
         public double Argument { get; } = argument;
 
         public Discount? CalculateDiscount(
-            int quantityAsInt,
+            Product product,
             double unitPrice,
-            Product product)
+            int quantityAsInt)
         {
             switch (OfferType)
             {
