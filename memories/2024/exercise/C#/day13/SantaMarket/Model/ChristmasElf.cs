@@ -5,23 +5,23 @@ namespace SantaMarket.Model
         private readonly Dictionary<Product, Offer> _offers = new();
 
         public void AddSpecialOffer(SpecialOfferType offerType, Product product, double argument)
-            => _offers[product] = new Offer(offerType, product, argument);
+            => _offers[product] = new Offer(offerType, argument);
 
-        public Receipt ChecksOutArticlesFrom(ShoppingSleigh thesleigh)
+        public Receipt ChecksOutArticlesFrom(ShoppingSleigh shoppingSleigh)
         {
             var receipt = new Receipt();
-            var productQuantities = thesleigh.Items();
+            var productQuantities = shoppingSleigh.Items();
 
-            foreach (var pq in productQuantities)
+            foreach (var productQuantity in productQuantities)
             {
-                var p = pq.Product;
-                var quantity = pq.Quantity;
-                var unitPrice = catalog.GetUnitPrice(p);
+                var product = productQuantity.Product;
+                var quantity = productQuantity.Quantity;
+                var unitPrice = catalog.GetUnitPrice(product);
                 var price = quantity * unitPrice;
-                receipt.AddProduct(p, quantity, unitPrice, price);
+                receipt.AddProduct(product, quantity, unitPrice, price);
             }
 
-            thesleigh.HandleOffers(receipt, _offers, catalog);
+            shoppingSleigh.HandleOffers(receipt, _offers, catalog);
 
             return receipt;
         }

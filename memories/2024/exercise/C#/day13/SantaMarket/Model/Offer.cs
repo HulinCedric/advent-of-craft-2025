@@ -1,8 +1,60 @@
-namespace SantaMarket.Model
+namespace SantaMarket.Model;
+
+public class Offer(SpecialOfferType offerType, double argument)
 {
-    public class Offer(SpecialOfferType offerType, Product product, double argument)
+    public SpecialOfferType OfferType { get; } = offerType;
+    public double Argument { get; } = argument;
+
+    public Discount? CalculateDiscount(
+        Product product,
+        double unitPrice,
+        int quantityAsInt)
     {
-        public SpecialOfferType OfferType { get; } = offerType;
-        public double Argument { get; } = argument;
+        if (OfferType == SpecialOfferType.TwoForAmount) return CalculateTwoForAmountDiscount(product, unitPrice, quantityAsInt);
+        if (OfferType == SpecialOfferType.ThreeForTwo) return CalculateThreeForTwoDiscount(product, unitPrice, quantityAsInt);
+        if (OfferType == SpecialOfferType.TenPercentDiscount) return CalculateTenPercentDiscount(product, unitPrice, quantityAsInt);
+        if (OfferType == SpecialOfferType.FiveForAmount) return CalculateFiveForAmountDiscount(product, unitPrice, quantityAsInt);
+
+        return null;
     }
+
+    private Discount? CalculateTwoForAmountDiscount(Product product, double unitPrice, int quantityAsInt)
+    {
+        if (quantityAsInt >= 2)
+        {
+            var total = Argument * (quantityAsInt / 2) + (quantityAsInt % 2) * unitPrice;
+            return new Discount(product, "2 for " + Argument, -(unitPrice * quantityAsInt - total));
+        }
+
+        return null;
+    }
+
+    private static Discount? CalculateThreeForTwoDiscount(Product product, double unitPrice, int quantityAsInt)
+    {
+        if (quantityAsInt > 2)
+        {
+            var discountAmount = quantityAsInt * unitPrice -
+                                 ((quantityAsInt / 3 * 2 * unitPrice) + (quantityAsInt % 3) * unitPrice);
+            return new Discount(product, "3 for 2", -discountAmount);
+        }
+
+        return null;
+    }
+
+    private Discount? CalculateFiveForAmountDiscount(Product product, double unitPrice, int quantityAsInt)
+    {
+        if (quantityAsInt >= 5)
+        {
+            var discountTotal = unitPrice * quantityAsInt -
+                                (Argument * (quantityAsInt / 5) + (quantityAsInt % 5) * unitPrice);
+            return new Discount(product, "5 for " + Argument, -discountTotal);
+        }
+
+        return null;
+    }
+
+    private Discount? CalculateTenPercentDiscount(Product product, double unitPrice, int quantityAsInt) => new(
+        product,
+        Argument + "% off",
+        -quantityAsInt * unitPrice * Argument / 100.0);
 }
