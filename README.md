@@ -145,6 +145,7 @@ After each day you participate, jot down:
 - [Day 07 - Bug Driven Development.](challenges/day07/README.md)
 - [Day 08 - Ugly Code & developer bias.](challenges/day08/README.md)
 - [Day 09 - A conventional journey.](challenges/day09/README.md)
+- [Day 10 - Opening the Time Portal.](challenges/day10/README.md)
 
 ## Who are we?
 
