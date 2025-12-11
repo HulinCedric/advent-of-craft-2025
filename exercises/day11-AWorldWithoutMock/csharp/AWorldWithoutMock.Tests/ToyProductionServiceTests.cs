@@ -55,10 +55,10 @@ public class ToyProductionServiceTests
 
 public class SpyNotificationService : INotificationService
 {
-    private readonly List<Toy> notifications = [];
-    public void NotifyToyAssigned(Toy toy) => notifications.Add(toy);
+    private readonly List<Toy> _notifications = [];
+    public void NotifyToyAssigned(Toy toy) => _notifications.Add(toy);
 
-    public IReadOnlyList<Toy> Notified() => notifications;
+    public IReadOnlyList<Toy> Notified() => _notifications;
 }
 
 public class FakeToyRepository : IToyRepository
