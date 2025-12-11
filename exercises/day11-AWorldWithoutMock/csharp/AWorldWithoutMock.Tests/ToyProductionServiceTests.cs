@@ -59,14 +59,10 @@ public class ToyProductionServiceTests
 
 public class FakeToyRepository : IToyRepository
 {
-    private readonly List<Toy> _toys = [];
-    public Toy? FindByName(string name) => _toys.FirstOrDefault(t => t.Name == name);
+    private readonly Dictionary<string, Toy> _toys = [];
+    public Toy? FindByName(string name) => _toys.GetValueOrDefault(name);
 
-    public void Save(Toy toy)
-    {
-        _toys.RemoveAll(t => t.Name == toy.Name);
-        _toys.Add(toy);
-    }
+    public void Save(Toy toy) => _toys[toy.Name] = toy;
 
-    public void AlreadyContains(Toy toy) => _toys.Add(toy);
+    public void AlreadyContains(Toy toy) => _toys[toy.Name] = toy;
 }
