@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Moq;
 using Xunit;
 
 namespace AWorldWithoutMocksBefore.Tests;
