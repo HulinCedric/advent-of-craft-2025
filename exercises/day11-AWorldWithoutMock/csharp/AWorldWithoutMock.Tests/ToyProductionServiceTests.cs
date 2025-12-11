@@ -28,14 +28,14 @@ public class ToyProductionServiceTests
     public void AssignToyToElf_ShouldNotSaveOrNotify_WhenToyNotFound()
     {
         var toyRepository = new FakeToyRepository();
-        var notificationMock = new Mock<INotificationService>();
-        var service = new ToyProductionService(toyRepository, notificationMock.Object);
+        var notificationService = new SpyNotificationService();
+        var service = new ToyProductionService(toyRepository, notificationService);
         toyRepository.WithoutToys();
 
         service.AssignToyToElf(ToyName);
 
         toyRepository.FindByName(ToyName).Should().BeNull();
-        notificationMock.VerifyNoOtherCalls();
+        notificationService.Notified().Should().BeEmpty();
     }
 
     [Fact]
