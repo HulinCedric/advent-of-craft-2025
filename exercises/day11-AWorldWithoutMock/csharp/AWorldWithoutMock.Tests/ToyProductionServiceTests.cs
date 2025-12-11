@@ -28,15 +28,14 @@ public class ToyProductionServiceTests
     [Fact]
     public void AssignToyToElf_ShouldNotSaveOrNotify_WhenToyNotFound()
     {
-        var repoMock = new Mock<IToyRepository>();
+        var toyRepository = new FakeToyRepository();
         var notificationMock = new Mock<INotificationService>();
-        var service = new ToyProductionService(repoMock.Object, notificationMock.Object);
-        repoMock.Setup(r => r.FindByName(ToyName)).Returns((Toy?)null);
+        var service = new ToyProductionService(toyRepository, notificationMock.Object);
+        toyRepository.WithoutToys();
 
         service.AssignToyToElf(ToyName);
-
-        repoMock.Verify(r => r.FindByName(ToyName), Times.Once);
-        repoMock.Verify(r => r.Save(It.IsAny<Toy>()), Times.Never);
+        
+        toyRepository.FindByName(ToyName).Should().BeNull();
         notificationMock.VerifyNoOtherCalls();
     }
 
@@ -65,4 +64,6 @@ public class FakeToyRepository : IToyRepository
     public void Save(Toy toy) => _toys[toy.Name] = toy;
 
     public void AlreadyContains(Toy toy) => _toys[toy.Name] = toy;
+
+    public void WithoutToys() => _toys.Clear();
 }
