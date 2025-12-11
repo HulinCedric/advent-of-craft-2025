@@ -12,17 +12,16 @@ public class ToyProductionServiceTests
     public void AssignToyToElf_ShouldSaveToyInProduction_AndNotify()
     {
         var toyRepository = new FakeToyRepository();
-        var notificationMock = new Mock<INotificationService>();
-        var service = new ToyProductionService(toyRepository, notificationMock.Object);
+        var notificationsService = new SpyNotificationService();
+        var service = new ToyProductionService(toyRepository, notificationsService);
         var toy = new Toy(ToyName, ToyState.Unassigned);
         toyRepository.AlreadyContains(toy);
 
         service.AssignToyToElf(ToyName);
 
-        toyRepository.FindByName(ToyName)!.State.Should().Be(ToyState.InProduction);
-        notificationMock.Verify(
-            n => n.NotifyToyAssigned(It.Is<Toy>(t => t.State == ToyState.InProduction)),
-            Times.Once);
+        var savedToy = toyRepository.FindByName(ToyName);
+        savedToy.State.Should().Be(ToyState.InProduction);
+        notificationsService.Notified().Should().ContainSingle().Which.Should().Be(savedToy);
     }
 
     [Fact]
@@ -34,7 +33,7 @@ public class ToyProductionServiceTests
         toyRepository.WithoutToys();
 
         service.AssignToyToElf(ToyName);
-        
+
         toyRepository.FindByName(ToyName).Should().BeNull();
         notificationMock.VerifyNoOtherCalls();
     }
@@ -47,12 +46,20 @@ public class ToyProductionServiceTests
         var service = new ToyProductionService(toyRepository, notificationMock.Object);
         var toy = new Toy(ToyName, ToyState.InProduction);
         toyRepository.AlreadyContains(toy);
-        
+
         service.AssignToyToElf(ToyName);
 
         toyRepository.FindByName(ToyName).Should().Be(toy);
         notificationMock.VerifyNoOtherCalls();
     }
+}
+
+public class SpyNotificationService : INotificationService
+{
+    private readonly List<Toy> notifications = [];
+    public void NotifyToyAssigned(Toy toy) => notifications.Add(toy);
+
+    public IReadOnlyList<Toy> Notified() => notifications;
 }
 
 public class FakeToyRepository : IToyRepository
