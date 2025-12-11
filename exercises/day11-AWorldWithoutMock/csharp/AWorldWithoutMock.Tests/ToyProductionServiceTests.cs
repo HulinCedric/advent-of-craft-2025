@@ -1,11 +1,15 @@
 using FluentAssertions;
+using FluentAssertions.Primitives;
 using Xunit;
 
 namespace AWorldWithoutMocksBefore.Tests;
 
+
+
 public class ToyProductionServiceTests
 {
     private const string ToyName = "Train";
+
     private readonly SpyNotificationService _notificationService;
     private readonly ToyProductionService _service;
     private readonly FakeToyRepository _toyRepository;
@@ -24,9 +28,12 @@ public class ToyProductionServiceTests
 
         _service.AssignToyToElf(ToyName);
 
-        var savedToy = _toyRepository.FindByName(ToyName);
-        savedToy.State.Should().Be(ToyState.InProduction);
-        _notificationService.Notified().Should().ContainSingle().Which.Should().Be(savedToy);
+        _toyRepository.ShouldHaveSavedToy(ToyName).InProduction();
+        _notificationService.Notified()
+            .Should()
+            .ContainSingle()
+            .Which.Should()
+            .BeEquivalentTo(new Toy(ToyName, ToyState.InProduction));
     }
 
     [Fact]
@@ -36,7 +43,7 @@ public class ToyProductionServiceTests
 
         _service.AssignToyToElf(ToyName);
 
-        _toyRepository.FindByName(ToyName).Should().BeNull();
+        _toyRepository.ShouldNotHaveSavedToy(ToyName);
         _notificationService.Notified().Should().BeEmpty();
     }
 
@@ -48,7 +55,7 @@ public class ToyProductionServiceTests
 
         _service.AssignToyToElf(ToyName);
 
-        _toyRepository.FindByName(ToyName).Should().Be(toy);
+        _toyRepository.ShouldHaveSavedToy(ToyName).InProduction();
         _notificationService.Notified().Should().BeEmpty();
     }
 }
@@ -56,6 +63,7 @@ public class ToyProductionServiceTests
 public class SpyNotificationService : INotificationService
 {
     private readonly List<Toy> _notifications = [];
+    
     public void NotifyToyAssigned(Toy toy) => _notifications.Add(toy);
 
     public IReadOnlyList<Toy> Notified() => _notifications;
@@ -71,4 +79,28 @@ public class FakeToyRepository : IToyRepository
     public void AlreadyContains(Toy toy) => _toys[toy.Name] = toy;
 
     public void WithoutToys() => _toys.Clear();
+}
+
+public static class ToyRepositoryVerificationExtensions
+{
+    public static Toy ShouldHaveSavedToy(this FakeToyRepository toyRepository, string toyName)
+        => toyRepository.ToyWithName(toyName);
+
+    private static Toy ToyWithName(this FakeToyRepository toyRepository, string toyName)
+    {
+        var toy = toyRepository.FindByName(toyName);
+        toy.Should().NotBeNull();
+        return toy;
+    }
+
+    public static void ShouldNotHaveSavedToy(this FakeToyRepository toyRepository, string toyName)
+        => toyRepository.FindByName(toyName).Should().BeNull();
+}
+
+public static class ToyVerificationExtensions
+{
+    public static AndConstraint<EnumAssertions<ToyState>> InProduction(this Toy toy)
+        => toy
+            .State.Should()
+            .Be(ToyState.InProduction);
 }
