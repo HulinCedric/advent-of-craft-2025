@@ -44,8 +44,7 @@ public class ToyProductionServiceTests
     [Fact]
     public void AssignToyToElf_ShouldNotSaveOrNotify_WhenToyAlreadyInProduction()
     {
-        var toy = new Toy(ToyName, ToyState.InProduction);
-        _toyRepository.AlreadyContains(toy);
+        _toyRepository.AlreadyContains(new Toy(ToyName, ToyState.InProduction));
 
         _service.AssignToyToElf(ToyName);
 
