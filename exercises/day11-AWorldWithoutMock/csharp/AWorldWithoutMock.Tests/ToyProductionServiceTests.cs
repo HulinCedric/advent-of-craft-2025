@@ -4,8 +4,6 @@ using Xunit;
 
 namespace AWorldWithoutMocksBefore.Tests;
 
-
-
 public class ToyProductionServiceTests
 {
     private const string ToyName = "Train";
