@@ -1,4 +1,4 @@
-using AWorldWithoutMocksBefore.Tests.TestsDoubles;
+using AWorldWithoutMocksBefore.Tests.TestDoubles;
 using AWorldWithoutMocksBefore.Tests.Verifications;
 using Xunit;
 

@@ -1,4 +1,4 @@
-namespace AWorldWithoutMocksBefore.Tests.TestsDoubles;
+namespace AWorldWithoutMocksBefore.Tests.TestDoubles;
 
 public class FakeToyRepository : IToyRepository
 {

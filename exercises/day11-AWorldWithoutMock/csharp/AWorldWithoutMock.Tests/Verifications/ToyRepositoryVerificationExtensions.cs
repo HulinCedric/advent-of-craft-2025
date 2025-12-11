@@ -1,4 +1,4 @@
-using AWorldWithoutMocksBefore.Tests.TestsDoubles;
+using AWorldWithoutMocksBefore.Tests.TestDoubles;
 using FluentAssertions;
 
 namespace AWorldWithoutMocksBefore.Tests.Verifications;
