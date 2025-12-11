@@ -42,16 +42,15 @@ public class ToyProductionServiceTests
     [Fact]
     public void AssignToyToElf_ShouldNotSaveOrNotify_WhenToyAlreadyInProduction()
     {
-        var repoMock = new Mock<IToyRepository>();
+        var toyRepository = new FakeToyRepository();
         var notificationMock = new Mock<INotificationService>();
-        var service = new ToyProductionService(repoMock.Object, notificationMock.Object);
+        var service = new ToyProductionService(toyRepository, notificationMock.Object);
         var toy = new Toy(ToyName, ToyState.InProduction);
-        repoMock.Setup(r => r.FindByName(ToyName)).Returns(toy);
-
+        toyRepository.AlreadyContains(toy);
+        
         service.AssignToyToElf(ToyName);
 
-        repoMock.Verify(r => r.FindByName(ToyName), Times.Once);
-        repoMock.Verify(r => r.Save(It.IsAny<Toy>()), Times.Never);
+        toyRepository.FindByName(ToyName).Should().Be(toy);
         notificationMock.VerifyNoOtherCalls();
     }
 }
