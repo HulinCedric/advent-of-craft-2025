@@ -6,50 +6,50 @@ namespace AWorldWithoutMocksBefore.Tests;
 public class ToyProductionServiceTests
 {
     private const string ToyName = "Train";
+    private readonly SpyNotificationService _notificationService;
+    private readonly ToyProductionService _service;
+    private readonly FakeToyRepository _toyRepository;
+
+    public ToyProductionServiceTests()
+    {
+        _toyRepository = new FakeToyRepository();
+        _notificationService = new SpyNotificationService();
+        _service = new ToyProductionService(_toyRepository, _notificationService);
+    }
 
     [Fact]
     public void AssignToyToElf_ShouldSaveToyInProduction_AndNotify()
     {
-        var toyRepository = new FakeToyRepository();
-        var notificationsService = new SpyNotificationService();
-        var service = new ToyProductionService(toyRepository, notificationsService);
-        var toy = new Toy(ToyName, ToyState.Unassigned);
-        toyRepository.AlreadyContains(toy);
+        _toyRepository.AlreadyContains(new Toy(ToyName, ToyState.Unassigned));
 
-        service.AssignToyToElf(ToyName);
+        _service.AssignToyToElf(ToyName);
 
-        var savedToy = toyRepository.FindByName(ToyName);
+        var savedToy = _toyRepository.FindByName(ToyName);
         savedToy.State.Should().Be(ToyState.InProduction);
-        notificationsService.Notified().Should().ContainSingle().Which.Should().Be(savedToy);
+        _notificationService.Notified().Should().ContainSingle().Which.Should().Be(savedToy);
     }
 
     [Fact]
     public void AssignToyToElf_ShouldNotSaveOrNotify_WhenToyNotFound()
     {
-        var toyRepository = new FakeToyRepository();
-        var notificationService = new SpyNotificationService();
-        var service = new ToyProductionService(toyRepository, notificationService);
-        toyRepository.WithoutToys();
+        _toyRepository.WithoutToys();
 
-        service.AssignToyToElf(ToyName);
+        _service.AssignToyToElf(ToyName);
 
-        toyRepository.FindByName(ToyName).Should().BeNull();
-        notificationService.Notified().Should().BeEmpty();
+        _toyRepository.FindByName(ToyName).Should().BeNull();
+        _notificationService.Notified().Should().BeEmpty();
     }
 
     [Fact]
     public void AssignToyToElf_ShouldNotSaveOrNotify_WhenToyAlreadyInProduction()
     {
-        var toyRepository = new FakeToyRepository();
-        var notificationService = new SpyNotificationService();
-        var service = new ToyProductionService(toyRepository, notificationService);
         var toy = new Toy(ToyName, ToyState.InProduction);
-        toyRepository.AlreadyContains(toy);
+        _toyRepository.AlreadyContains(toy);
 
-        service.AssignToyToElf(ToyName);
+        _service.AssignToyToElf(ToyName);
 
-        toyRepository.FindByName(ToyName).Should().Be(toy);
-        notificationService.Notified().Should().BeEmpty();
+        _toyRepository.FindByName(ToyName).Should().Be(toy);
+        _notificationService.Notified().Should().BeEmpty();
     }
 }
 
