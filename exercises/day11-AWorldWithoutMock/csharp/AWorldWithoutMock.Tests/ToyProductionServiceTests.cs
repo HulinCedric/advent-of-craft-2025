@@ -27,11 +27,7 @@ public class ToyProductionServiceTests
         _service.AssignToyToElf(ToyName);
 
         _toyRepository.ShouldHaveSavedToy(ToyName).InProduction();
-        _notificationService.Notified()
-            .Should()
-            .ContainSingle()
-            .Which.Should()
-            .BeEquivalentTo(new Toy(ToyName, ToyState.InProduction));
+        _notificationService.ShouldHaveNotifiedToyAssigned(ToyName).InProduction();
     }
 
     [Fact]
@@ -42,7 +38,7 @@ public class ToyProductionServiceTests
         _service.AssignToyToElf(ToyName);
 
         _toyRepository.ShouldNotHaveSavedToy(ToyName);
-        _notificationService.Notified().Should().BeEmpty();
+        _notificationService.ShouldNotHaveNotifiedAnyToyAssigned();
     }
 
     [Fact]
@@ -54,14 +50,14 @@ public class ToyProductionServiceTests
         _service.AssignToyToElf(ToyName);
 
         _toyRepository.ShouldHaveSavedToy(ToyName).InProduction();
-        _notificationService.Notified().Should().BeEmpty();
+        _notificationService.ShouldNotHaveNotifiedAnyToyAssigned();
     }
 }
 
 public class SpyNotificationService : INotificationService
 {
     private readonly List<Toy> _notifications = [];
-    
+
     public void NotifyToyAssigned(Toy toy) => _notifications.Add(toy);
 
     public IReadOnlyList<Toy> Notified() => _notifications;
@@ -93,6 +89,20 @@ public static class ToyRepositoryVerificationExtensions
 
     public static void ShouldNotHaveSavedToy(this FakeToyRepository toyRepository, string toyName)
         => toyRepository.FindByName(toyName).Should().BeNull();
+}
+
+public static class NotificationServiceVerificationExtensions
+{
+    public static Toy ShouldHaveNotifiedToyAssigned(this SpyNotificationService notificationService, string toyName)
+        => notificationService.Notified()
+            .Should()
+            .ContainSingle(toy => toy.Name == toyName)
+            .Which;
+
+    public static void ShouldNotHaveNotifiedAnyToyAssigned(this SpyNotificationService notificationService)
+        => notificationService.Notified()
+            .Should()
+            .BeEmpty();
 }
 
 public static class ToyVerificationExtensions
