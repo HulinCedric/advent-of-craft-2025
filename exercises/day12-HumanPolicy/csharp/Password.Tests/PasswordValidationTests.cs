@@ -61,7 +61,7 @@ public static class PasswordValidationTests
         [Theory]
         [InlineData(null, "Null password")]
         [InlineData("xxxxxxx", "Too short")]
-        [InlineData("adventofcraft", "No capital letter", Skip = "TODO")]
+        [InlineData("adventofcraft", "No capital letter")]
         [InlineData("p@ssw0rd", "No capital letter", Skip = "TODO")]
         [InlineData("ADVENTOFCRAFT", "No lowercase letter", Skip = "TODO")]
         [InlineData("P@SSW0RD", "No lowercase letter", Skip = "TODO")]
@@ -86,6 +86,7 @@ public class HumanPasswordPolicy : IPasswordPolicy
     {
         if (password is null) return false;
         if (password.Length < MinLength) return false;
+        if (password.ToCharArray().All(char.IsLower)) return false;
 
         return true;
     }
