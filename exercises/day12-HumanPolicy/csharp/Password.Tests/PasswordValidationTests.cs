@@ -67,8 +67,8 @@ public static class PasswordValidationTests
         [InlineData("P@SSW0RD", "No lowercase letter")]
         [InlineData("Adventofcraft", "No number")]
         [InlineData("P@sswOrd", "No number")]
-        [InlineData("Adventof09craft", "No special character", Skip = "TODO")]
-        [InlineData("PAssw0rd", "No special character", Skip = "TODO")]
+        [InlineData("Adventof09craft", "No special character")]
+        [InlineData("PAssw0rd", "No special character")]
         [InlineData("Advent@of9Craft¨", "Invalid character", Skip = "TODO")]
         [InlineData("P@ssw^rd", "Invalid character", Skip = "TODO")]
         public void Invalid_elf_passwords(string password, string reason)
@@ -89,7 +89,9 @@ public class HumanPasswordPolicy : IPasswordPolicy
         if (!password.Any(char.IsLower)) return false;
         if (!password.Any(char.IsUpper)) return false;
         if (!password.Any(char.IsNumber)) return false;
-
+        var specialCharacters = new HashSet<char> { '.', '*', '#', '@', '$', '%', '&' };
+        if (!password.Any(c => specialCharacters.Contains(c))) return false;
+        
         return true;
     }
 }
