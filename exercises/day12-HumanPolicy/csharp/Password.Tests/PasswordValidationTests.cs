@@ -86,8 +86,8 @@ public class HumanPasswordPolicy : IPasswordPolicy
     {
         if (password is null) return false;
         if (password.Length < MinLength) return false;
-        if (password.ToCharArray().Where(char.IsLetter).All(char.IsLower)) return false;
-        if (password.ToCharArray().Where(char.IsLetter).All(char.IsUpper)) return false;
+        if (password.Where(char.IsLetter).All(char.IsLower)) return false;
+        if (password.Where(char.IsLetter).All(char.IsUpper)) return false;
 
         return true;
     }
