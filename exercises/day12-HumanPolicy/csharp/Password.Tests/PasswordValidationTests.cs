@@ -65,7 +65,7 @@ public static class PasswordValidationTests
         [InlineData("p@ssw0rd", "No capital letter")]
         [InlineData("ADVENTOFCRAFT", "No lowercase letter")]
         [InlineData("P@SSW0RD", "No lowercase letter")]
-        [InlineData("Adventofcraft", "No number", Skip = "TODO")]
+        [InlineData("Adventofcraft", "No number")]
         [InlineData("P@sswOrd", "No number", Skip = "TODO")]
         [InlineData("Adventof09craft", "No special character", Skip = "TODO")]
         [InlineData("PAssw0rd", "No special character", Skip = "TODO")]
@@ -88,6 +88,7 @@ public class HumanPasswordPolicy : IPasswordPolicy
         if (password.Length < MinLength) return false;
         if (password.Where(char.IsLetter).All(char.IsLower)) return false;
         if (password.Where(char.IsLetter).All(char.IsUpper)) return false;
+        if (!password.Any(char.IsNumber)) return false;
 
         return true;
     }
