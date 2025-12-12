@@ -66,7 +66,7 @@ public static class PasswordValidationTests
         [InlineData("ADVENTOFCRAFT", "No lowercase letter")]
         [InlineData("P@SSW0RD", "No lowercase letter")]
         [InlineData("Adventofcraft", "No number")]
-        [InlineData("P@sswOrd", "No number", Skip = "TODO")]
+        [InlineData("P@sswOrd", "No number")]
         [InlineData("Adventof09craft", "No special character", Skip = "TODO")]
         [InlineData("PAssw0rd", "No special character", Skip = "TODO")]
         [InlineData("Advent@of9Craft¨", "Invalid character", Skip = "TODO")]
