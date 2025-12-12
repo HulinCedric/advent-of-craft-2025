@@ -41,15 +41,7 @@ public static class PasswordValidationTests
                 .Should()
                 .BeFalse(reason);
     }
-
-    // - It has **at least 8 characters**
-    // - It contains **at least one uppercase letter**
-    // - It contains **at least one lowercase letter**
-    // - It contains **at least one digit**
-    // - It contains **at least one special character** from this whitelist:
-    //   - `.`, `*`, `#`, `@`, `$`, `%`, `&`
-    // - It contains **no invalid characters**:
-    //   - only letters, digits, and the special characters listed above are allowed.
+    
     public class ForHuman
     {
         [Theory]
