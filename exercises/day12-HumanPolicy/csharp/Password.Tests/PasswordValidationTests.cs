@@ -66,7 +66,7 @@ public static class PasswordValidationTests
         [InlineData("Ábcdef1@", "Invalid character - non-ASCII uppercase A")]
         [InlineData("Abcdef١@", "Invalid character - non-ASCII digit")]
         [InlineData("Abcдеф1@", "Invalid character - non-ASCII letter")]
-        public void Invalid_elf_passwords(string password, string reason)
+        public void Invalid_human_passwords(string password, string reason)
             => PasswordValidation.Validate(password, new HumanPasswordPolicy())
                 .Should()
                 .BeFalse(reason);
