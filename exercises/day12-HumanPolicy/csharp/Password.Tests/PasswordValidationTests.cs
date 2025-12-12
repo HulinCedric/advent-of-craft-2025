@@ -41,7 +41,7 @@ public static class PasswordValidationTests
                 .Should()
                 .BeFalse(reason);
     }
-    
+
     // - It has **at least 8 characters**
     // - It contains **at least one uppercase letter**
     // - It contains **at least one lowercase letter**
@@ -59,7 +59,7 @@ public static class PasswordValidationTests
             => PasswordValidation.Validate(password, new HumanPasswordPolicy()).Should().BeTrue();
 
         [Theory]
-        [InlineData(null, "Null password", Skip = "TODO")]
+        [InlineData(null, "Null password")]
         [InlineData("xxxxxxx", "Too short", Skip = "TODO")]
         [InlineData("adventofcraft", "No capital letter", Skip = "TODO")]
         [InlineData("p@ssw0rd", "No capital letter", Skip = "TODO")]
@@ -80,5 +80,10 @@ public static class PasswordValidationTests
 
 public class HumanPasswordPolicy : IPasswordPolicy
 {
-    public bool Validate(string? password) => true;
+    public bool Validate(string? password)
+    {
+        if (password is null) return false;
+        
+        return true;
+    }
 }
