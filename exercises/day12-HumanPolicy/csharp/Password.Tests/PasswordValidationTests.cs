@@ -18,7 +18,7 @@ namespace Password.Tests
         [MemberData(nameof(ValidElfPasswords))]
         public void Success_for_a_valid_elf_password(string password)
         {
-            PasswordValidation.Validate(password).Should().BeTrue();
+            PasswordValidation.Validate(password, new ElfPasswordPolicy()).Should().BeTrue();
         }
 
         public static IEnumerable<object[]> InvalidElfPasswords =>
@@ -38,7 +38,7 @@ namespace Password.Tests
         [MemberData(nameof(InvalidElfPasswords))]
         public void Invalid_elf_passwords(string password, string reason)
         {
-            PasswordValidation.Validate(password)
+            PasswordValidation.Validate(password, new ElfPasswordPolicy())
                 .Should().BeFalse(reason);
         }
     }
