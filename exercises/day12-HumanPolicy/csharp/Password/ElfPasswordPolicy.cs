@@ -1,6 +1,6 @@
 namespace Password;
 
-public class ElfPasswordPolicy
+public class ElfPasswordPolicy : IPasswordPolicy
 {
     private const int MinimumLength = 6;
 
