@@ -18,7 +18,19 @@ public class SleighTripServiceShould
         act.Should().Throw<ElfNotLoggedInException>();
     }
 
-    //TODO: Please finish testing the GetTripsByUser method!!
+    [Fact]
+    public void ReturnNoTripsWhenLoggedInElfIsNotFriendOfTargetElf()
+    {
+        // given
+        var tripService = new TestableSleighTripService(new Elf.Elf());
+        var targetElf = new Elf.Elf();
+
+        // when
+        var trips = tripService.GetTripsByUser(targetElf);
+        
+        // then
+        trips.Should().BeEmpty();
+    }
 
     private class TestableSleighTripService : Trip.SleighTripService
     {
