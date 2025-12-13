@@ -20,7 +20,7 @@ public class SleighTripServiceShould
     }
 
     [Fact]
-    public void ReturnNoTripsWhenLoggedInElfHaveNoFriends()
+    public void ReturnNoTripsWhenLoggedInElfHasNoFriends()
     {
         // given
         var tripService = new TestableSleighTripService(new Elf.Elf());
