@@ -62,7 +62,7 @@ public class SleighTripServiceShould
         targetElf.AddFriend(loggedUser);
 
         var sleightTrip = new SleightTrip();
-        tripService.Containing(sleightTrip);
+        tripService.WithTrip(sleightTrip);
 
         // when
         var trips = tripService.GetTripsByUser(targetElf);
@@ -82,6 +82,6 @@ public class SleighTripServiceShould
 
         protected override List<SleightTrip> FindTripsByUser(Elf.Elf targetElf) => _trips;
 
-        public void Containing(SleightTrip sleightTrip) => _trips.Add(sleightTrip);
+        public void WithTrip(SleightTrip sleightTrip) => _trips.Add(sleightTrip);
     }
 }
