@@ -19,11 +19,29 @@ public class SleighTripServiceShould
     }
 
     [Fact]
-    public void ReturnNoTripsWhenLoggedInElfIsNotFriendOfTargetElf()
+    public void ReturnNoTripsWhenLoggedInElfHaveNoFriends()
     {
         // given
         var tripService = new TestableSleighTripService(new Elf.Elf());
         var targetElf = new Elf.Elf();
+
+        // when
+        var trips = tripService.GetTripsByUser(targetElf);
+
+        // then
+        trips.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ReturnNoTripsWhenLoggedInElfIsNotFriendOfTargetElf()
+    {
+        // given
+        var loggedUser = new Elf.Elf();
+        var tripService = new TestableSleighTripService(loggedUser);
+        var targetElf = new Elf.Elf();
+
+        var anotherFriend = new Elf.Elf();
+        targetElf.AddFriend(anotherFriend);
 
         // when
         var trips = tripService.GetTripsByUser(targetElf);
