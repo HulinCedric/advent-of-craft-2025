@@ -65,7 +65,10 @@ public class SleighTripServiceShould
         tripService.Containing(sleightTrip);
 
         // when
-        tripService.GetTripsByUser(targetElf).Should().BeEquivalentTo([sleightTrip]);
+        var trips = tripService.GetTripsByUser(targetElf);
+        
+        // then
+        trips.Should().BeEquivalentTo([sleightTrip]);
     }
 
     private class TestableSleighTripService : Trip.SleighTripService
