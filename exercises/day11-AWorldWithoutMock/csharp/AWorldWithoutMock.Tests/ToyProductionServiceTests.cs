@@ -1,56 +1,54 @@
-using Moq;
+using AWorldWithoutMocksBefore.Tests.TestDoubles;
+using AWorldWithoutMocksBefore.Tests.Verifications;
 using Xunit;
 
-namespace AWorldWithoutMocksBefore.Tests
+namespace AWorldWithoutMocksBefore.Tests;
+
+public class ToyProductionServiceTests
 {
-    public class ToyProductionServiceTests
+    private const string ToyName = "Train";
+
+    private readonly SpyNotificationService _notificationService;
+    private readonly ToyProductionService _service;
+    private readonly FakeToyRepository _toyRepository;
+
+    public ToyProductionServiceTests()
     {
-        private const string ToyName = "Train";
+        _toyRepository = new FakeToyRepository();
+        _notificationService = new SpyNotificationService();
+        _service = new ToyProductionService(_toyRepository, _notificationService);
+    }
 
-        [Fact]
-        public void AssignToyToElf_ShouldSaveToyInProduction_AndNotify()
-        {
-            var repoMock = new Mock<IToyRepository>();
-            var notificationMock = new Mock<INotificationService>();
-            var service = new ToyProductionService(repoMock.Object, notificationMock.Object);
-            var toy = new Toy(ToyName, ToyState.Unassigned);
-            repoMock.Setup(r => r.FindByName(ToyName)).Returns(toy);
+    [Fact]
+    public void AssignToyToElf_ShouldSaveToyInProduction_AndNotify()
+    {
+        _toyRepository.AlreadyContains(new Toy(ToyName, ToyState.Unassigned));
 
-            service.AssignToyToElf(ToyName);
+        _service.AssignToyToElf(ToyName);
 
-            repoMock.Verify(r => r.Save(It.Is<Toy>(t => t.State == ToyState.InProduction)), Times.Once);
-            notificationMock.Verify(n => n.NotifyToyAssigned(It.Is<Toy>(t => t.State == ToyState.InProduction)), Times.Once);
-        }
+        _toyRepository.ShouldHaveSavedToy(ToyName).InProduction();
+        _notificationService.ShouldHaveNotifiedToyAssigned(ToyName).InProduction();
+    }
 
-        [Fact]
-        public void AssignToyToElf_ShouldNotSaveOrNotify_WhenToyNotFound()
-        {
-            var repoMock = new Mock<IToyRepository>();
-            var notificationMock = new Mock<INotificationService>();
-            var service = new ToyProductionService(repoMock.Object, notificationMock.Object);
-            repoMock.Setup(r => r.FindByName(ToyName)).Returns((Toy?)null);
+    [Fact]
+    public void AssignToyToElf_ShouldNotSaveOrNotify_WhenToyNotFound()
+    {
+        _toyRepository.WithoutToys();
 
-            service.AssignToyToElf(ToyName);
+        _service.AssignToyToElf(ToyName);
 
-            repoMock.Verify(r => r.FindByName(ToyName), Times.Once);
-            repoMock.Verify(r => r.Save(It.IsAny<Toy>()), Times.Never);
-            notificationMock.VerifyNoOtherCalls();
-        }
+        _toyRepository.ShouldNotHaveSavedToy(ToyName);
+        _notificationService.ShouldNotHaveNotifiedAnyToyAssigned();
+    }
 
-        [Fact]
-        public void AssignToyToElf_ShouldNotSaveOrNotify_WhenToyAlreadyInProduction()
-        {
-            var repoMock = new Mock<IToyRepository>();
-            var notificationMock = new Mock<INotificationService>();
-            var service = new ToyProductionService(repoMock.Object, notificationMock.Object);
-            var toy = new Toy(ToyName, ToyState.InProduction);
-            repoMock.Setup(r => r.FindByName(ToyName)).Returns(toy);
+    [Fact]
+    public void AssignToyToElf_ShouldNotSaveOrNotify_WhenToyAlreadyInProduction()
+    {
+        _toyRepository.AlreadyContains(new Toy(ToyName, ToyState.InProduction));
 
-            service.AssignToyToElf(ToyName);
+        _service.AssignToyToElf(ToyName);
 
-            repoMock.Verify(r => r.FindByName(ToyName), Times.Once);
-            repoMock.Verify(r => r.Save(It.IsAny<Toy>()), Times.Never);
-            notificationMock.VerifyNoOtherCalls();
-        }
+        _toyRepository.ShouldHaveSavedToy(ToyName).InProduction();
+        _notificationService.ShouldNotHaveNotifiedAnyToyAssigned();
     }
 }
