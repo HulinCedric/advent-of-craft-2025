@@ -9,14 +9,14 @@ using static NSubstitute.Arg;
 
 namespace Day07.Tests
 {
-    public class PipelineTests
+    public class ImperativeShellPipelineTests
     {
         private readonly IConfig _config = Substitute.For<IConfig>();
         private readonly CapturingLogger _log = new();
         private readonly IEmailer _emailer = Substitute.For<IEmailer>();
-        private readonly Pipeline _pipeline;
+        private readonly ImperativeShellPipeline _imperativeShellPipeline;
 
-        public PipelineTests() => _pipeline = new Pipeline(_config, _emailer, _log);
+        public ImperativeShellPipelineTests() => _imperativeShellPipeline = new ImperativeShellPipeline(_config, _emailer, _log);
 
         [Fact]
         public void Project_With_Tests_That_Deploys_Successfully_With_Email_Notification()
@@ -28,7 +28,7 @@ namespace Day07.Tests
                 .Deployed(true)
                 .Build();
 
-            _pipeline.Run(project);
+            _imperativeShellPipeline.Run(project);
 
             _log.LoggedLines
                 .Should()
@@ -49,7 +49,7 @@ namespace Day07.Tests
                 .Deployed(true)
                 .Build();
 
-            _pipeline.Run(project);
+            _imperativeShellPipeline.Run(project);
 
             _log.LoggedLines
                 .Should()
@@ -70,7 +70,7 @@ namespace Day07.Tests
                 .Deployed(true)
                 .Build();
 
-            _pipeline.Run(project);
+            _imperativeShellPipeline.Run(project);
 
             _log.LoggedLines
                 .Should()
@@ -91,7 +91,7 @@ namespace Day07.Tests
                 .Deployed(true)
                 .Build();
 
-            _pipeline.Run(project);
+            _imperativeShellPipeline.Run(project);
 
             _log.LoggedLines
                 .Should()
@@ -110,7 +110,7 @@ namespace Day07.Tests
                 .With(FailingTests)
                 .Build();
 
-            _pipeline.Run(project);
+            _imperativeShellPipeline.Run(project);
 
             _log.LoggedLines
                 .Should()
@@ -130,7 +130,7 @@ namespace Day07.Tests
                 .Deployed(false)
                 .Build();
 
-            _pipeline.Run(project);
+            _imperativeShellPipeline.Run(project);
 
             _log.LoggedLines
                 .Should()
@@ -151,7 +151,7 @@ namespace Day07.Tests
                 .Deployed(false)
                 .Build();
 
-            _pipeline.Run(project);
+            _imperativeShellPipeline.Run(project);
 
             _log.LoggedLines
                 .Should()
@@ -172,7 +172,7 @@ namespace Day07.Tests
                 .Deployed(false)
                 .Build();
 
-            _pipeline.Run(project);
+            _imperativeShellPipeline.Run(project);
 
             _log.LoggedLines
                 .Should()
@@ -193,7 +193,7 @@ namespace Day07.Tests
                 .Deployed(false)
                 .Build();
 
-            _pipeline.Run(project);
+            _imperativeShellPipeline.Run(project);
 
             _log.LoggedLines
                 .Should()
