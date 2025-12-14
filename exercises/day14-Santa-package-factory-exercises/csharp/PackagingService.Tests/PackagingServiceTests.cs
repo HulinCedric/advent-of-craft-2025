@@ -84,19 +84,9 @@ public class PackagingServiceTests
     public void ShouldNotPackageGiftForChildTooYoung()
     {
         // Arrange
-        var gift = new Gift(
-            name: "Complex Building Set",
-            size: GiftSize.LARGE,
-            isFragile: false,
-            recommendedMinAge: 8 // too old for this child
-        );
+        var gift = AGift().RecommendedForAgesAndUp(8).Build();
 
-        var child = new Child(
-            name: "Lily",
-            age: 4,
-            gender: ChildGender.GIRL,
-            hasBeenNice: true,
-            assignedGift: gift);
+        var child = AChild().Aged(4).Build();
 
         // Act
         var result = _service.CanPackageGift(gift, child);
@@ -119,9 +109,11 @@ public class ChildBuilder
         return this;
     }
 
-    public ChildBuilder Young()
+    public ChildBuilder Young() => Aged(3);
+
+    public ChildBuilder Aged(int age)
     {
-        _age = 3;
+        _age = age;
         return this;
     }
 
