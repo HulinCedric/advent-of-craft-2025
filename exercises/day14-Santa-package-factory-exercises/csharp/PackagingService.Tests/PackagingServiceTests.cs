@@ -73,12 +73,8 @@ public class PackagingServiceTests
     public void ShouldNotPackageGiftForNaughtyChild()
     {
         // Arrange
-        var gift = new Gift(
-            name: "Video Game Console",
-            size: GiftSize.MEDIUM,
-            isFragile: false,
-            recommendedMinAge: 6);
-
+        var gift = AGift().Build();
+        
         var child = new Child(
             name: "Bobby",
             age: 7,
