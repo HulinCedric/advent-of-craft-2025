@@ -56,12 +56,7 @@ public class PackagingServiceTests
         // Arrange
         var gift = AGift().Build();
 
-        var child = new Child(
-            name: "Emma",
-            age: 3,
-            gender: ChildGender.GIRL,
-            hasBeenNice: true,
-            assignedGift: gift);
+        var child = AChild().Young().Build();
 
         // Act
         var result = _service.DeterminePackageType(gift, child);
@@ -113,6 +108,7 @@ public class PackagingServiceTests
 
 public class ChildBuilder
 {
+    private int _age = 7;
     private bool _hasBeenNice;
 
     public static ChildBuilder AChild() => new();
@@ -123,10 +119,16 @@ public class ChildBuilder
         return this;
     }
 
+    public ChildBuilder Young()
+    {
+        _age = 3;
+        return this;
+    }
+
     public Child Build()
         => new(
             name: "Bobby",
-            age: 7,
+            age: _age,
             gender: ChildGender.BOY,
             hasBeenNice: _hasBeenNice,
             assignedGift: AGift().Build());
