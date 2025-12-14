@@ -141,6 +141,11 @@ public class GiftBuilder
 {
     public static Gift AGift()
     {
+        return Build();
+    }
+
+    private static Gift Build()
+    {
         var gift = new Gift(
             name: "Action Figure",
             size: GiftSize.SMALL,
