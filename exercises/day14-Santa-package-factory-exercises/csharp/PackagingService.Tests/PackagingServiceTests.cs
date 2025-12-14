@@ -15,7 +15,7 @@ public class PackagingServiceTests
     public void ShouldUseSmallBoxForSmallNonFragileGift()
     {
         // Arrange
-        var gift = GiftBuilder.AGift().Small().Build();
+        var gift = GiftBuilder.AGift().Small().NonFragile().Build();
             
         var child = new Child(
             name: "Tommy",
@@ -140,6 +140,8 @@ public class PackagingServiceTests
 public class GiftBuilder
 {
     private GiftSize _size = GiftSize.SMALL;
+    private bool _isFragile = false;
+    
     public static GiftBuilder AGift() => new();
 
     public GiftBuilder Small()
@@ -147,11 +149,19 @@ public class GiftBuilder
         _size = GiftSize.SMALL;
         return this;
     }
+    
+    public GiftBuilder NonFragile()
+    {
+        _isFragile = false;
+        return this;
+    }
 
     public Gift Build()
         => new(
             name: "Action Figure",
             size: _size,
-            isFragile: false,
+            isFragile: _isFragile,
             recommendedMinAge: 5);
+
+    
 }
