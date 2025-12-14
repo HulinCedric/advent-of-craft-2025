@@ -38,4 +38,6 @@ public class GiftBuilder
             size: _size,
             isFragile: _isFragile,
             recommendedMinAge: _recommendedMinAge);
+
+    public static implicit operator Gift(GiftBuilder builder) => builder.Build();
 }

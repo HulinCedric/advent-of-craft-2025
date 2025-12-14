@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Xunit;
 using static PackagingService.Tests.ChildBuilder;
 using static PackagingService.Tests.GiftBuilder;
@@ -72,16 +73,9 @@ public class PackagingServiceTests
 
     [Fact]
     public void ShouldNotPackageGiftForChildTooYoung()
-    {
-        // Arrange
-        var gift = AGift().RecommendedForAgesAndUp(8).Build();
-
-        var child = AChild().Aged(4).Build();
-
-        // Act
-        var result = _service.CanPackageGift(gift, child);
-
-        // Assert
-        Assert.False(result);
-    }
+        => _service.CanPackageGift(
+                AGift().RecommendedForAgesAndUp(8),
+                AChild().Aged(4))
+            .Should()
+            .BeFalse();
 }

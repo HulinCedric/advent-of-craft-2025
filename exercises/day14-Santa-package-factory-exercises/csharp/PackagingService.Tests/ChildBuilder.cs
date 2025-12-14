@@ -28,4 +28,7 @@ public class ChildBuilder
             gender: ChildGender.BOY,
             hasBeenNice: _hasBeenNice,
             assignedGift: GiftBuilder.AGift().Build());
+    
+    public static implicit operator Child(ChildBuilder builder) => builder.Build();
+
 }
