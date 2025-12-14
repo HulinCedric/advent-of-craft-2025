@@ -15,12 +15,7 @@ public class PackagingServiceTests
     public void ShouldUseSmallBoxForSmallNonFragileGift()
     {
         // Arrange
-        var gift = new Gift(
-            name: "Action Figure",
-            size: GiftSize.SMALL,
-            isFragile: false,
-            recommendedMinAge: 5
-        );
+        var gift = AGift();
             
         var child = new Child(
             name: "Tommy",
@@ -36,7 +31,18 @@ public class PackagingServiceTests
         // Assert
         Assert.Equal(PackageType.BOX_SMALL, result);
     }
-        
+
+    private static Gift AGift()
+    {
+        var gift = new Gift(
+            name: "Action Figure",
+            size: GiftSize.SMALL,
+            isFragile: false,
+            recommendedMinAge: 5
+        );
+        return gift;
+    }
+
     [Fact]
     public void ShouldUseSpecialContainerForExtraLargeGift()
     {
