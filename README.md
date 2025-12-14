@@ -149,6 +149,7 @@ After each day you participate, jot down:
 - [Day 11 - A world without mock](challenges/day11/README.md)
 - [Day 12 - Human password policy.](challenges/day12/README.md)
 - [Day 13 - Keyboard-first refactoring.](challenges/day13/README.md)
+- [Day 14 - Your tests tell a story](challenges/day14/README.md)
 
 ## Who are we?
 

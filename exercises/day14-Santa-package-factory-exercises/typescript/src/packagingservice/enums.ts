@@ -1,0 +1,22 @@
+export enum GiftSize {
+  SMALL = "SMALL",
+  MEDIUM = "MEDIUM",
+  LARGE = "LARGE",
+  EXTRA_LARGE = "EXTRA_LARGE",
+}
+
+export enum PackageType {
+  BOX_SMALL = "BOX_SMALL",
+  BOX_MEDIUM = "BOX_MEDIUM",
+  BOX_LARGE = "BOX_LARGE",
+  GIFT_BAG = "GIFT_BAG",
+  WRAPPER_PAPER = "WRAPPER_PAPER",
+  SPECIAL_CONTAINER = "SPECIAL_CONTAINER",
+}
+
+export enum ChildGender {
+  BOY = "BOY",
+  GIRL = "GIRL",
+  NON_BINARY = "NON_BINARY",
+  PREFER_NOT_TO_SAY = "PREFER_NOT_TO_SAY",
+}
