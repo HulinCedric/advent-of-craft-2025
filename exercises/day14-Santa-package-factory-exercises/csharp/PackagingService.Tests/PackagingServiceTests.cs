@@ -1,4 +1,5 @@
 using Xunit;
+using static PackagingService.Tests.GiftBuilder;
 
 namespace PackagingService.Tests;
 
@@ -12,7 +13,7 @@ public class PackagingServiceTests
     public void ShouldUseSmallBoxForSmallNonFragileGift()
     {
         // Arrange
-        var gift = GiftBuilder.AGift().Small().NonFragile().Build();
+        var gift = AGift().Small().NonFragile().Build();
 
         var child = new Child(
             name: "Tommy",
