@@ -58,18 +58,11 @@ public class PackagingServiceTests
 
     [Fact]
     public void ShouldNotPackageGiftForNaughtyChild()
-    {
-        // Arrange
-        var gift = AGift().Build();
-
-        var child = AChild().Naughty().Build();
-
-        // Act
-        var result = _service.CanPackageGift(gift, child);
-
-        // Assert
-        Assert.False(result);
-    }
+        => _service.CanPackageGift(
+                AGift(),
+                AChild().Naughty())
+            .Should()
+            .BeFalse();
 
     [Fact]
     public void ShouldNotPackageGiftForChildTooYoung()
