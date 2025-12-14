@@ -7,11 +7,17 @@ public class ChildBuilder
     private static readonly Faker Faker = new();
 
     private int _age;
+    private readonly Gift _assignedGift;
+    private readonly ChildGender _gender;
     private bool _hasBeenNice;
+    private readonly string _name;
 
     public ChildBuilder()
     {
         _age = Faker.Random.Int(1, 18);
+        _name = Faker.Name.FirstName();
+        _gender = Faker.Random.Enum<ChildGender>();
+        _assignedGift = GiftBuilder.AGift().Build();
         _hasBeenNice = Faker.Random.Bool();
     }
 
@@ -25,6 +31,8 @@ public class ChildBuilder
 
     public ChildBuilder Young() => Aged(3);
 
+    public Child NotYoung() => Aged(8);
+
     public ChildBuilder Aged(int age)
     {
         _age = age;
@@ -33,11 +41,11 @@ public class ChildBuilder
 
     public Child Build()
         => new(
-            name: "Bobby",
+            name: _name,
             age: _age,
-            gender: ChildGender.BOY,
+            gender: _gender,
             hasBeenNice: _hasBeenNice,
-            assignedGift: GiftBuilder.AGift().Build());
+            assignedGift: _assignedGift);
 
     public static implicit operator Child(ChildBuilder builder) => builder.Build();
 }

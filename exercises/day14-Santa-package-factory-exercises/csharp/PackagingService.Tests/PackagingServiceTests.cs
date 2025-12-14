@@ -14,7 +14,7 @@ public class PackagingServiceTests
     public void ShouldUseSmallBoxForSmallNonFragileGift()
         => _service.DeterminePackageType(
                 AGift().Small().NonFragile(),
-                AChild())
+                AChild().NotYoung())
             .Should()
             .Be(BOX_SMALL);
 
