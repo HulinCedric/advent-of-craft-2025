@@ -1,18 +1,27 @@
-﻿namespace Gifts;
+﻿using LanguageExt;
 
-public class Child
+namespace Gifts;
+
+public sealed class Child
 {
-    public string Name { get; }
-    public string Behavior { get; }
-    public List<Toy> Wishlist { get; private set; }
+    private readonly Behavior _behavior;
+    private readonly WishList _wishlist;
 
-    public Child(string name, string behavior)
+    public Child(ChildName name, Behavior behavior) : this(name, behavior, WishList.Empty())
     {
-        Name = name;
-        Behavior = behavior;
-        Wishlist = [];
     }
 
-    public void SetWishList(Toy firstChoice, Toy secondChoice, Toy thirdChoice)
-        => Wishlist = [firstChoice, secondChoice, thirdChoice];
+    private Child(ChildName name, Behavior behavior, WishList wishlist)
+    {
+        Name = name;
+        _behavior = behavior;
+        _wishlist = wishlist;
+    }
+
+    public ChildName Name { get; }
+
+    public Child SetWishList(Toy firstChoice, Toy secondChoice, Toy thirdChoice)
+        => new(Name, _behavior, WishList.WithThreeChoices(firstChoice, secondChoice, thirdChoice));
+
+    internal Option<Toy> GetChoice() => _behavior.GetChoice(_wishlist);
 }
