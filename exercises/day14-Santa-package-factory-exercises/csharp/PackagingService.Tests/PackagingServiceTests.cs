@@ -4,7 +4,7 @@ namespace PackagingService.Tests;
 
 public class PackagingServiceTests
 {
-    private PackagingService _service;
+    private readonly PackagingService _service;
         
     public PackagingServiceTests()
     {
