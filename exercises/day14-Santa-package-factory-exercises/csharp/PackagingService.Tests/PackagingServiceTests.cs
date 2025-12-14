@@ -8,39 +8,23 @@ namespace PackagingService.Tests;
 
 public class PackagingServiceTests
 {
-    private readonly PackagingService _service;
-
-    public PackagingServiceTests() => _service = new PackagingService();
+    private readonly PackagingService _service = new();
 
     [Fact]
     public void ShouldUseSmallBoxForSmallNonFragileGift()
-    {
-        // Arrange
-        var gift = AGift().Small().NonFragile().Build();
-
-        var child = AChild().Build();
-
-        // Act
-        var result = _service.DeterminePackageType(gift, child);
-
-        // Assert
-        Assert.Equal(BOX_SMALL, result);
-    }
+        => _service.DeterminePackageType(
+                AGift().Small().NonFragile(),
+                AChild())
+            .Should()
+            .Be(BOX_SMALL);
 
     [Fact]
     public void ShouldUseSpecialContainerForExtraLargeGift()
-    {
-        // Arrange
-        var gift = AGift().ExtraLarge().Build();
-
-        var child = AChild().Build();
-
-        // Act
-        var result = _service.DeterminePackageType(gift, child);
-
-        // Assert
-        Assert.Equal(SPECIAL_CONTAINER, result);
-    }
+        => _service.DeterminePackageType(
+                AGift().ExtraLarge(),
+                AChild())
+            .Should()
+            .Be(SPECIAL_CONTAINER);
 
     [Fact]
     public void ShouldUseGiftBagForYoungChildren()
