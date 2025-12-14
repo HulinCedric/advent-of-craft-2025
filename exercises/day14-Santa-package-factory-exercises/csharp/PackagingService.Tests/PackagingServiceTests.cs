@@ -1,144 +1,52 @@
+using FluentAssertions;
 using Xunit;
+using static PackagingService.PackageType;
+using static PackagingService.Tests.Builders.ChildBuilder;
+using static PackagingService.Tests.Builders.GiftBuilder;
 
-namespace PackagingService.Tests
+namespace PackagingService.Tests;
+
+public class PackagingServiceTests
 {
-    public class PackagingServiceTests
-    {
-        private PackagingService _service;
-        
-        public PackagingServiceTests()
-        {
-            _service = new PackagingService();
-        }
-        
-        [Fact]
-        public void ShouldUseSmallBoxForSmallNonFragileGift()
-        {
-            // Arrange
-            var gift = new Gift(
-                name: "Action Figure",
-                size: GiftSize.SMALL,
-                isFragile: false,
-                recommendedMinAge: 5
-            );
-            
-            var child = new Child(
-                name: "Tommy",
-                age: 8,
-                gender: ChildGender.BOY,
-                hasBeenNice: true,
-                assignedGift: gift
-            );
-            
-            // Act
-            var result = _service.DeterminePackageType(gift, child);
-            
-            // Assert
-            Assert.Equal(PackageType.BOX_SMALL, result);
-        }
-        
-        [Fact]
-        public void ShouldUseSpecialContainerForExtraLargeGift()
-        {
-            // Arrange
-            var gift = new Gift(
-                name: "Bicycle",
-                size: GiftSize.EXTRA_LARGE,
-                isFragile: false,
-                recommendedMinAge: 8
-            );
-            
-            var child = new Child(
-                name: "Sarah",
-                age: 10,
-                gender: ChildGender.GIRL,
-                hasBeenNice: true,
-                assignedGift: gift
-            );
-            
-            // Act
-            var result = _service.DeterminePackageType(gift, child);
-            
-            // Assert
-            Assert.Equal(PackageType.SPECIAL_CONTAINER, result);
-        }
-        
-        [Fact]
-        public void ShouldUseGiftBagForYoungChildren()
-        {
-            // Arrange
-            var gift = new Gift(
-                name: "Teddy Bear",
-                size: GiftSize.MEDIUM,
-                isFragile: false,
-                recommendedMinAge: 1
-            );
-            
-            var child = new Child(
-                name: "Emma",
-                age: 3,
-                gender: ChildGender.GIRL,
-                hasBeenNice: true,
-                assignedGift: gift
-            );
-            
-            // Act
-            var result = _service.DeterminePackageType(gift, child);
-            
-            // Assert
-            Assert.Equal(PackageType.GIFT_BAG, result);
-        }
-        
-        [Fact]
-        public void ShouldNotPackageGiftForNaughtyChild()
-        {
-            // Arrange
-            var gift = new Gift(
-                name: "Video Game Console",
-                size: GiftSize.MEDIUM,
-                isFragile: false,
-                recommendedMinAge: 6
-            );
-            
-            var child = new Child(
-                name: "Bobby",
-                age: 7,
-                gender: ChildGender.BOY,
-                hasBeenNice: false, // naughty!
-                assignedGift: gift
-            );
-            
-            // Act
-            var result = _service.CanPackageGift(gift, child);
-            
-            // Assert
-            Assert.False(result);
-        }
-        
-        [Fact]
-        public void ShouldNotPackageGiftForChildTooYoung()
-        {
-            // Arrange
-            var gift = new Gift(
-                name: "Complex Building Set",
-                size: GiftSize.LARGE,
-                isFragile: false,
-                recommendedMinAge: 8 // too old for this child
-            );
-            
-            var child = new Child(
-                name: "Lily",
-                age: 4,
-                gender: ChildGender.GIRL,
-                hasBeenNice: true,
-                assignedGift: gift
-            );
-            
-            // Act
-            var result = _service.CanPackageGift(gift, child);
-            
-            // Assert
-            Assert.False(result);
-        }
-    }
+    private readonly PackagingService _service = new();
+
+    [Fact]
+    public void ShouldUseSmallBoxForSmallNonFragileGift()
+        => _service.DeterminePackageType(
+                AGift().Small().NonFragile(),
+                AChild().NotYoung())
+            .Should()
+            .Be(BOX_SMALL);
+
+    [Fact]
+    public void ShouldUseSpecialContainerForExtraLargeGift()
+        => _service.DeterminePackageType(
+                AGift().ExtraLarge(),
+                AChild())
+            .Should()
+            .Be(SPECIAL_CONTAINER);
+
+    [Fact]
+    public void ShouldUseGiftBagForYoungChildren()
+        => _service.DeterminePackageType(
+                AGift().Small().NonFragile(),
+                AChild().Young())
+            .Should()
+            .Be(GIFT_BAG);
+
+    [Fact]
+    public void ShouldNotPackageGiftForNaughtyChild()
+        => _service.CanPackageGift(
+                AGift(),
+                AChild().Naughty())
+            .Should()
+            .BeFalse();
+
+    [Fact]
+    public void ShouldNotPackageGiftForChildTooYoung()
+        => _service.CanPackageGift(
+                AGift().RecommendedForAgesAndUp(8),
+                AChild().Aged(4))
+            .Should()
+            .BeFalse();
 }
