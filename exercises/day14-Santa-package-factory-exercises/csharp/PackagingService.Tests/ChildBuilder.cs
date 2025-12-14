@@ -1,9 +1,19 @@
+using Bogus;
+
 namespace PackagingService.Tests;
 
 public class ChildBuilder
 {
-    private int _age = 7;
+    private static readonly Faker Faker = new();
+
+    private int _age;
     private bool _hasBeenNice;
+
+    public ChildBuilder()
+    {
+        _age = Faker.Random.Int(1, 18);
+        _hasBeenNice = Faker.Random.Bool();
+    }
 
     public static ChildBuilder AChild() => new();
 
@@ -28,7 +38,6 @@ public class ChildBuilder
             gender: ChildGender.BOY,
             hasBeenNice: _hasBeenNice,
             assignedGift: GiftBuilder.AGift().Build());
-    
-    public static implicit operator Child(ChildBuilder builder) => builder.Build();
 
+    public static implicit operator Child(ChildBuilder builder) => builder.Build();
 }
