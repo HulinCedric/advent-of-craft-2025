@@ -29,7 +29,7 @@ public class PackagingServiceTests
     [Fact]
     public void ShouldUseGiftBagForYoungChildren()
         => _service.DeterminePackageType(
-                AGift(),
+                AGift().Small().NonFragile(),
                 AChild().Young())
             .Should()
             .Be(GIFT_BAG);
