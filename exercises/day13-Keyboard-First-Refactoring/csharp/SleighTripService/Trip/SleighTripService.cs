@@ -23,7 +23,7 @@ public class SleighTripService
             }
             if (isWorkshopFriend)
             {
-                sleighTrips = SleighTripDAO.FindTripsByUser(targetElf);
+                sleighTrips = FindTripsByUser(targetElf);
             }
             return sleighTrips;
         }
@@ -31,6 +31,11 @@ public class SleighTripService
         {
             throw new ElfNotLoggedInException();
         }
+    }
+
+    protected virtual List<SleightTrip> FindTripsByUser(Elf.Elf targetElf)
+    {
+        return SleighTripDAO.FindTripsByUser(targetElf);
     }
 
     protected virtual Elf.Elf? GetLoggedUser()
