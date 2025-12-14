@@ -33,11 +33,7 @@ public class PackagingServiceTests
     public void ShouldUseSpecialContainerForExtraLargeGift()
     {
         // Arrange
-        var gift = new Gift(
-            name: "Bicycle",
-            size: GiftSize.EXTRA_LARGE,
-            isFragile: false,
-            recommendedMinAge: 8);
+        var gift = AGift().ExtraLarge().Build();
 
         var child = new Child(
             name: "Sarah",
@@ -137,6 +133,12 @@ public class GiftBuilder
     public GiftBuilder Small()
     {
         _size = GiftSize.SMALL;
+        return this;
+    }
+
+    public GiftBuilder ExtraLarge()
+    {
+        _size = GiftSize.EXTRA_LARGE;
         return this;
     }
 
