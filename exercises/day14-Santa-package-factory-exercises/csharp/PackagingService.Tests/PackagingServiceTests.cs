@@ -53,11 +53,7 @@ public class PackagingServiceTests
     public void ShouldUseGiftBagForYoungChildren()
     {
         // Arrange
-        var gift = new Gift(
-            name: "Teddy Bear",
-            size: GiftSize.MEDIUM,
-            isFragile: false,
-            recommendedMinAge: 1);
+        var gift = AGift().Build();
 
         var child = new Child(
             name: "Emma",
