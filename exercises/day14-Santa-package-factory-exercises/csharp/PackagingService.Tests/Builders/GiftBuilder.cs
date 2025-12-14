@@ -1,6 +1,6 @@
 using Bogus;
 
-namespace PackagingService.Tests;
+namespace PackagingService.Tests.Builders;
 
 public class GiftBuilder
 {

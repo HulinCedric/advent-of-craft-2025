@@ -1,8 +1,8 @@
 using FluentAssertions;
 using Xunit;
 using static PackagingService.PackageType;
-using static PackagingService.Tests.ChildBuilder;
-using static PackagingService.Tests.GiftBuilder;
+using static PackagingService.Tests.Builders.ChildBuilder;
+using static PackagingService.Tests.Builders.GiftBuilder;
 
 namespace PackagingService.Tests;
 
