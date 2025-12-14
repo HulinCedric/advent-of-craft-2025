@@ -1,10 +1,23 @@
+using Bogus;
+
 namespace PackagingService.Tests;
 
 public class GiftBuilder
 {
+    private static readonly Faker Faker = new();
+
     private bool _isFragile;
-    private int _recommendedMinAge = 5;
-    private GiftSize _size = GiftSize.SMALL;
+    private int _recommendedMinAge;
+    private string _name;
+    private GiftSize _size;
+
+    public GiftBuilder()
+    {
+        _isFragile = Faker.Random.Bool();
+        _recommendedMinAge = Faker.Random.Int(1, 18);
+        _name = Faker.Commerce.ProductName();
+        _size = Faker.Random.Enum<GiftSize>();
+    }
 
     public static GiftBuilder AGift() => new();
 
@@ -34,7 +47,7 @@ public class GiftBuilder
 
     public Gift Build()
         => new(
-            name: "Action Figure",
+            name: _name,
             size: _size,
             isFragile: _isFragile,
             recommendedMinAge: _recommendedMinAge);
