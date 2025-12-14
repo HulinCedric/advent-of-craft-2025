@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Xunit;
+using static PackagingService.PackageType;
 using static PackagingService.Tests.ChildBuilder;
 using static PackagingService.Tests.GiftBuilder;
 
@@ -23,7 +24,7 @@ public class PackagingServiceTests
         var result = _service.DeterminePackageType(gift, child);
 
         // Assert
-        Assert.Equal(PackageType.BOX_SMALL, result);
+        Assert.Equal(BOX_SMALL, result);
     }
 
     [Fact]
@@ -38,23 +39,16 @@ public class PackagingServiceTests
         var result = _service.DeterminePackageType(gift, child);
 
         // Assert
-        Assert.Equal(PackageType.SPECIAL_CONTAINER, result);
+        Assert.Equal(SPECIAL_CONTAINER, result);
     }
 
     [Fact]
     public void ShouldUseGiftBagForYoungChildren()
-    {
-        // Arrange
-        var gift = AGift().Build();
-
-        var child = AChild().Young().Build();
-
-        // Act
-        var result = _service.DeterminePackageType(gift, child);
-
-        // Assert
-        Assert.Equal(PackageType.GIFT_BAG, result);
-    }
+        => _service.DeterminePackageType(
+                AGift(),
+                AChild().Young())
+            .Should()
+            .Be(GIFT_BAG);
 
     [Fact]
     public void ShouldNotPackageGiftForNaughtyChild()
