@@ -1,4 +1,5 @@
 using Xunit;
+using static PackagingService.Tests.ChildBuilder;
 using static PackagingService.Tests.GiftBuilder;
 
 namespace PackagingService.Tests;
@@ -74,13 +75,8 @@ public class PackagingServiceTests
     {
         // Arrange
         var gift = AGift().Build();
-        
-        var child = new Child(
-            name: "Bobby",
-            age: 7,
-            gender: ChildGender.BOY,
-            hasBeenNice: false, // naughty!
-            assignedGift: gift);
+
+        var child = AChild().Naughty().Build();
 
         // Act
         var result = _service.CanPackageGift(gift, child);
@@ -113,4 +109,25 @@ public class PackagingServiceTests
         // Assert
         Assert.False(result);
     }
+}
+
+public class ChildBuilder
+{
+    private bool _hasBeenNice;
+
+    public static ChildBuilder AChild() => new();
+
+    public ChildBuilder Naughty()
+    {
+        _hasBeenNice = false;
+        return this;
+    }
+
+    public Child Build()
+        => new(
+            name: "Bobby",
+            age: 7,
+            gender: ChildGender.BOY,
+            hasBeenNice: _hasBeenNice,
+            assignedGift: AGift().Build());
 }
