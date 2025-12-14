@@ -1,27 +1,38 @@
 using static System.Environment;
-using static System.Globalization.CultureInfo;
+using static System.FormattableString;
 using static System.String;
 
-namespace Day09.Accountability
+namespace Day09.Accountability;
+
+public class Client
 {
-    public class Client(IReadOnlyDictionary<string, double> orderLines)
+    private readonly IReadOnlyDictionary<string, double> _orderLines;
+
+    public Client(IReadOnlyDictionary<string, double> orderLines)
     {
-        private double _totalAmount;
+        ArgumentNullException.ThrowIfNull(orderLines);
 
-        public string ToStatement()
-            => $"{Join(
-                NewLine,
-                orderLines
-                    .Select(kvp => FormatLine(kvp.Key, kvp.Value))
-                    .ToList()
-            )}{NewLine}Total : {_totalAmount.ToString(InvariantCulture)}€";
-
-        private string FormatLine(string name, double value)
-        {
-            _totalAmount += value;
-            return name + " for " + value.ToString(InvariantCulture) + "€";
-        }
-
-        public double TotalAmount() => _totalAmount;
+        _orderLines = orderLines.ToDictionary();
     }
+
+    public string ToStatement()
+    {
+        var result = $"{Join(
+            NewLine,
+            _orderLines
+                .Select(kvp => FormatLine(kvp.Key, kvp.Value))
+        )}";
+
+        if (_orderLines.Any()) result += NewLine;
+
+        result += $"Total : {FormatAmount(TotalAmount())}";
+
+        return result;
+    }
+
+    private static string FormatLine(string name, double value) => $"{name} for {FormatAmount(value)}";
+
+    private static string FormatAmount(double value) => Invariant($"{value:0.##}€");
+
+    public double TotalAmount() => _orderLines.Sum(kvp => kvp.Value);
 }
