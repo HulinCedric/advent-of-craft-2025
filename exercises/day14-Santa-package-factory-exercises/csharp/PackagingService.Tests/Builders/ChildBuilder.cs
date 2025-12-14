@@ -31,7 +31,7 @@ public class ChildBuilder
 
     public ChildBuilder Young() => Aged(3);
 
-    public Child NotYoung() => Aged(8);
+    public ChildBuilder NotYoung() => Aged(8);
 
     public ChildBuilder Aged(int age)
     {
