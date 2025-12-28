@@ -21,24 +21,25 @@ public class Business
 
         foreach (var child in children)
         {
-            var result = ProcessGift(child);
+            var processResult = ProcessGift(child);
 
-            if (result.IsLeft)
-                return result.LeftToSeq().First();
-
-            var finalGift = result.RightToSeq().First();
-
-            sleigh.Put(child, $"Gift: {finalGift.Name} has been loaded!");
+            if (processResult.IsLeft)
+                return processResult.LeftToSeq().First();
+            
+            processResult.Do(r => LoadGiftInSleigh(sleigh, r));
         }
 
         return sleigh;
     }
 
-    private Either<string, Gift> ProcessGift(Child child)
+    private static void LoadGiftInSleigh(Sleigh sleigh, (Child child, Gift finalGift) result)
+        => sleigh.Put(result.child, $"Gift: {result.finalGift.Name} has been loaded!");
+
+    private Either<string, (Child child, Gift finalGift)> ProcessGift(Child child)
         => from gift in IdentifyGift(child)
             from manufacturedGift in FindManufacturedGift(gift)
             from finalGift in PickUpGift(manufacturedGift)
-            select finalGift;
+            select (child, finalGift);
 
     private Either<string, Gift> PickUpGift(Gift manufacturedGift)
     {
