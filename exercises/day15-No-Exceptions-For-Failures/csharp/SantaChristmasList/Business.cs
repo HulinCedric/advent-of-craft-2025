@@ -35,22 +35,10 @@ public class Business
     }
 
     private Either<string, Gift> ProcessGift(Child child)
-    {
-        var identificationResult = IdentifyGift(child);
-        if (identificationResult.IsLeft) return identificationResult.LeftToSeq().First();
-
-        var gift = identificationResult.RightToSeq().First();
-
-        var manufacturedGiftResult = FindManufacturedGift(gift);
-        if (manufacturedGiftResult.IsLeft) return manufacturedGiftResult.LeftToSeq().First();
-
-        var manufacturedGift = manufacturedGiftResult.RightToSeq().First();
-
-        var finalGiftResult = PickUpGift(manufacturedGift);
-        if (finalGiftResult.IsLeft) return finalGiftResult.LeftToSeq().First();
-
-        return finalGiftResult.RightToSeq().First();
-    }
+        => from gift in IdentifyGift(child)
+            from manufacturedGift in FindManufacturedGift(gift)
+            from finalGift in PickUpGift(manufacturedGift)
+            select finalGift;
 
     private Either<string, Gift> PickUpGift(Gift manufacturedGift)
     {
