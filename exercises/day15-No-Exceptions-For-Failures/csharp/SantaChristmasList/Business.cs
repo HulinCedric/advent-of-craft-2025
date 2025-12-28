@@ -33,14 +33,24 @@ public class Business
 
             var manufacturedGift = manufacturedGiftResult.RightToSeq().First();
 
-            var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
-            if (finalGift is null)
-                return $"Gift out of stock: {gift.Name}";
+            var finalGiftResult = PickUpGift(manufacturedGift);
+            if (finalGiftResult.IsLeft)
+                return finalGiftResult.LeftToSeq().First();
+
+            var finalGift = finalGiftResult.RightToSeq().First();
 
             sleigh.Put(child, $"Gift: {finalGift.Name} has been loaded!");
         }
 
         return sleigh;
+    }
+
+    private Either<string, Gift> PickUpGift(Gift manufacturedGift)
+    {
+        var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
+        if (finalGift is null) return $"Gift out of stock: {manufacturedGift.Name}";
+
+        return finalGift;
     }
 
     private Either<string, Gift> FindManufacturedGift(Gift gift)
