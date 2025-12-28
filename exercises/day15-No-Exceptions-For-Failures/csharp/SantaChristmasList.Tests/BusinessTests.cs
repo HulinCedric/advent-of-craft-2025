@@ -1,3 +1,5 @@
+using FluentAssertions;
+using FluentAssertions.LanguageExt;
 using Xunit;
 
 namespace SantaChristmasList.Tests;
@@ -15,9 +17,9 @@ public class BusinessTests
 
         var business = new Business(factory, inventory, wishList);
 
-        var failure = business.LoadGiftsInSleigh(timmy);
+        var result = business.LoadGiftsInSleigh(timmy);
 
-        Assert.Equal("No wish found for child: Timmy", failure.LeftToSeq().First());
+        result.Should().Be("No wish found for child: Timmy");
     }
 
     [Fact]
@@ -32,9 +34,9 @@ public class BusinessTests
 
         var business = new Business(factory, inventory, wishList);
 
-        var failure = business.LoadGiftsInSleigh(timmy);
+        var result = business.LoadGiftsInSleigh(timmy);
 
-        Assert.Equal("Gift has not been manufactured: Lego Death Star", failure.LeftToSeq().First());
+        result.Should().Be("Gift has not been manufactured: Lego Death Star");
     }
 
     [Fact]
@@ -50,9 +52,9 @@ public class BusinessTests
 
         var business = new Business(factory, inventory, wishList);
 
-        var failure = business.LoadGiftsInSleigh(timmy);
+        var result = business.LoadGiftsInSleigh(timmy);
 
-        Assert.Equal("Gift out of stock: Red Bike", failure.LeftToSeq().First());
+        result.Should().Be("Gift out of stock: Red Bike");
     }
 
     [Fact]
@@ -69,9 +71,9 @@ public class BusinessTests
 
         var business = new Business(factory, inventory, wishList);
 
-        var sleigh = business.LoadGiftsInSleigh(timmy).RightToSeq().First();
+        var result = business.LoadGiftsInSleigh(timmy);
 
-        Assert.Equivalent("Gift: Red Bike has been loaded!", sleigh.Messages[timmy]);
+        result.Should().BeRight(sleigh => sleigh.Messages[timmy].Should().Be("Gift: Red Bike has been loaded!"));
     }
 
     [Fact]
@@ -89,11 +91,13 @@ public class BusinessTests
 
         var business = new Business(factory, inventory, wishList);
 
-        var sleigh = business.LoadGiftsInSleigh(timmy, eloise).RightToSeq().First();
+        var result = business.LoadGiftsInSleigh(timmy, eloise);
 
-        Assert.Equivalent(
-            sleigh.Messages.Values,
-            new List<string> { "Gift: Red Bike has been loaded!", "Gift: Red Bike has been loaded!" });
+        result.Should()
+            .BeRight(sleigh => sleigh.Messages.Values.Should()
+                .BeEquivalentTo(
+                    "Gift: Red Bike has been loaded!",
+                    "Gift: Red Bike has been loaded!"));
     }
 
     private class StubWishList : IWishList
