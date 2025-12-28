@@ -74,6 +74,28 @@ public class BusinessTests
         Assert.Equivalent(sleigh.Messages[timmy], "Gift: Red Bike has been loaded!");
     }
 
+    [Fact]
+    public void Load_many_wished_gift_in_sleigh()
+    {
+        var timmy = new Child("Timmy");
+        var eloise = new Child("Eloise");
+        var wishedGift = new Gift("Red Bike", "BARCODE-456");
+        var manufacturedGift = new Gift("Red Bike", "BARCODE-456");
+        var inventoriedGift = new Gift("Red Bike", "BARCODE-456");
+
+        IWishList wishList = new StubWishList(child => wishedGift);
+        IFactory factory = new StubFactory(gift => manufacturedGift);
+        IInventory inventory = new StubInventory(barCode => inventoriedGift);
+
+        var business = new Business(factory, inventory, wishList);
+
+        var sleigh = business.LoadGiftsInSleigh(timmy, eloise).Success;
+
+        Assert.Equivalent(
+            sleigh.Messages.Values,
+            new List<string> { "Gift: Red Bike has been loaded!", "Gift: Red Bike has been loaded!" });
+    }
+
     private class StubWishList : IWishList
     {
         private readonly Func<Child, Gift?> _fn;
