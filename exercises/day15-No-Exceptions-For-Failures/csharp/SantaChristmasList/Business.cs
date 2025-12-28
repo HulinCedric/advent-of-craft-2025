@@ -13,7 +13,7 @@ public class Business
         _wishList = wishList;
     }
 
-    public Sleigh LoadGiftsInSleigh(params Child[] children)
+    public Sleigh LoadGiftsInSleighUnsafe(params Child[] children)
     {
         var sleigh = new Sleigh();
 

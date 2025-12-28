@@ -59,7 +59,7 @@ public class BusinessTests
     {
         try
         {
-            business.LoadGiftsInSleigh(child);
+            business.LoadGiftsInSleighUnsafe(child);
         }
         catch (BusinessException ex)
         {
