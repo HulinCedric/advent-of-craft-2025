@@ -55,23 +55,6 @@ public class BusinessTests
         Assert.Equal("Gift out of stock: Red Bike", failure);
     }
 
-    private static string LoadGiftAndExtractInnerErrorMessage(Business business, Child child)
-    {
-        try
-        {
-            business.LoadGiftsInSleighUnsafe(child);
-        }
-        catch (BusinessException ex)
-        {
-            if (ex.InnerException == null)
-                throw;
-
-            return ex.InnerException.Message!;
-        }
-
-        throw new Exception("Expected BusinessException to be thrown");
-    }
-
     private class StubWishList : IWishList
     {
         private readonly Func<Child, Gift?> _fn;
