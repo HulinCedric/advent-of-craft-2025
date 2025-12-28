@@ -50,9 +50,9 @@ public class BusinessTests
 
         var business = new Business(factory, inventory, wishList);
 
-        var message = LoadGiftAndExtractInnerErrorMessage(business, timmy);
+        var failure = business.LoadGiftsInSleigh(timmy).Failure;
 
-        Assert.Equal("Gift out of stock: Red Bike", message);
+        Assert.Equal("Gift out of stock: Red Bike", failure);
     }
 
     private static string LoadGiftAndExtractInnerErrorMessage(Business business, Child child)
