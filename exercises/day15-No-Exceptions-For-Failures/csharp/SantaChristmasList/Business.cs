@@ -1,3 +1,5 @@
+using LanguageExt;
+
 namespace SantaChristmasList;
 
 public class Business
@@ -13,7 +15,7 @@ public class Business
         _wishList = wishList;
     }
 
-    public Result<Sleigh> LoadGiftsInSleigh(params Child[] children)
+    public Either<string, Sleigh> LoadGiftsInSleigh(params Child[] children)
     {
         var sleigh = new Sleigh();
 
@@ -21,30 +23,19 @@ public class Business
         {
             var gift = _wishList.IdentifyGift(child);
             if (gift is null)
-                return new Result<Sleigh>($"No wish found for child: {child.Name}");
+                return $"No wish found for child: {child.Name}";
 
             var manufacturedGift = _factory.FindManufacturedGift(gift);
             if (manufacturedGift is null)
-                return new Result<Sleigh>($"Gift has not been manufactured: {gift.Name}");
+                return $"Gift has not been manufactured: {gift.Name}";
 
             var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
             if (finalGift is null)
-                return new Result<Sleigh>($"Gift out of stock: {gift.Name}");
+                return $"Gift out of stock: {gift.Name}";
 
             sleigh.Put(child, $"Gift: {finalGift.Name} has been loaded!");
         }
 
-        return new Result<Sleigh>(sleigh);
+        return sleigh;
     }
-}
-
-public class Result<T>
-{
-    public Result(T success) => Success = success;
-
-    public Result(string failure) => Failure = failure;
-
-    public string? Failure { get; }
-
-    public T? Success { get; }
 }
