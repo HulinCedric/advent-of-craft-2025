@@ -1,4 +1,5 @@
 using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace SantaChristmasList;
 
@@ -25,7 +26,7 @@ public class Business
 
             if (processResult.IsLeft)
                 return processResult.LeftToSeq().First();
-            
+
             processResult.Do(r => LoadGiftInSleigh(sleigh, r));
         }
 
@@ -41,27 +42,15 @@ public class Business
             from finalGift in PickUpGift(manufacturedGift)
             select (child, finalGift);
 
-    private Either<string, Gift> PickUpGift(Gift manufacturedGift)
-    {
-        var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
-        if (finalGift is null) return $"Gift out of stock: {manufacturedGift.Name}";
-
-        return finalGift;
-    }
+    private Either<string, Gift> IdentifyGift(Child child)
+        => Optional(_wishList.IdentifyGift(child))
+            .ToEither($"No wish found for child: {child.Name}");
 
     private Either<string, Gift> FindManufacturedGift(Gift gift)
-    {
-        var manufacturedGift = _factory.FindManufacturedGift(gift);
-        if (manufacturedGift is null) return $"Gift has not been manufactured: {gift.Name}";
+        => Optional(_factory.FindManufacturedGift(gift))
+            .ToEither($"Gift has not been manufactured: {gift.Name}");
 
-        return manufacturedGift;
-    }
-
-    private Either<string, Gift> IdentifyGift(Child child)
-    {
-        var gift = _wishList.IdentifyGift(child);
-        if (gift is null) return $"No wish found for child: {child.Name}";
-
-        return gift;
-    }
+    private Either<string, Gift> PickUpGift(Gift manufacturedGift)
+        => Optional(_inventory.PickUpGift(manufacturedGift.BarCode))
+            .ToEither($"Gift out of stock: {manufacturedGift.Name}");
 }
