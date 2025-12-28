@@ -21,28 +21,35 @@ public class Business
 
         foreach (var child in children)
         {
-            var identificationResult = IdentifyGift(child);
-            if (identificationResult.IsLeft)
-                return identificationResult.LeftToSeq().First();
+            var result = ProcessGift(child);
 
-            var gift = identificationResult.RightToSeq().First();
+            if (result.IsLeft)
+                return result.LeftToSeq().First();
 
-            var manufacturedGiftResult = FindManufacturedGift(gift);
-            if (manufacturedGiftResult.IsLeft)
-                return manufacturedGiftResult.LeftToSeq().First();
-
-            var manufacturedGift = manufacturedGiftResult.RightToSeq().First();
-
-            var finalGiftResult = PickUpGift(manufacturedGift);
-            if (finalGiftResult.IsLeft)
-                return finalGiftResult.LeftToSeq().First();
-
-            var finalGift = finalGiftResult.RightToSeq().First();
+            var finalGift = result.RightToSeq().First();
 
             sleigh.Put(child, $"Gift: {finalGift.Name} has been loaded!");
         }
 
         return sleigh;
+    }
+
+    private Either<string, Gift> ProcessGift(Child child)
+    {
+        var identificationResult = IdentifyGift(child);
+        if (identificationResult.IsLeft) return identificationResult.LeftToSeq().First();
+
+        var gift = identificationResult.RightToSeq().First();
+
+        var manufacturedGiftResult = FindManufacturedGift(gift);
+        if (manufacturedGiftResult.IsLeft) return manufacturedGiftResult.LeftToSeq().First();
+
+        var manufacturedGift = manufacturedGiftResult.RightToSeq().First();
+
+        var finalGiftResult = PickUpGift(manufacturedGift);
+        if (finalGiftResult.IsLeft) return finalGiftResult.LeftToSeq().First();
+
+        return finalGiftResult.RightToSeq().First();
     }
 
     private Either<string, Gift> PickUpGift(Gift manufacturedGift)
