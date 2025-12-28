@@ -13,7 +13,7 @@ public class Business
         _wishList = wishList;
     }
 
-    public Error<Sleigh> LoadGiftsInSleigh(Child child)
+    public Result<Sleigh> LoadGiftsInSleigh(Child child)
     {
         var children = new[] { child };
         var sleigh = new Sleigh();
@@ -22,28 +22,28 @@ public class Business
         {
             var gift = _wishList.IdentifyGift(child1);
             if (gift is null)
-                return new Error<Sleigh>($"No wish found for child: {child.Name}");
+                return new Result<Sleigh>($"No wish found for child: {child.Name}");
 
             var manufacturedGift = _factory.FindManufacturedGift(gift);
             if (manufacturedGift is null)
-                return new Error<Sleigh>($"Gift has not been manufactured: {gift.Name}");
+                return new Result<Sleigh>($"Gift has not been manufactured: {gift.Name}");
 
             var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
             if (finalGift is null)
-                return new Error<Sleigh>($"Gift out of stock: {gift.Name}");
+                return new Result<Sleigh>($"Gift out of stock: {gift.Name}");
 
             sleigh.Put(child1, $"Gift: {finalGift.Name} has been loaded!");
         }
 
-        return new Error<Sleigh>(sleigh);
+        return new Result<Sleigh>(sleigh);
     }
 }
 
-public class Error<T>
+public class Result<T>
 {
-    public Error(T success) => Success = success;
+    public Result(T success) => Success = success;
 
-    public Error(string failure) => Failure = failure;
+    public Result(string failure) => Failure = failure;
 
     public string? Failure { get; }
 
