@@ -30,7 +30,7 @@ public class Business
 
                     var manufacturedGift = _factory.FindManufacturedGift(gift);
                     if (manufacturedGift is null)
-                        throw new GiftNotManufacturedException(gift);
+                        return new Error<Sleigh>($"Gift has not been manufactured: {gift.Name}");
 
                     var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
                     if (finalGift is null)
@@ -38,8 +38,7 @@ public class Business
 
                     sleigh.Put(child1, $"Gift: {finalGift.Name} has been loaded!");
                 }
-                catch (Exception e) when (e is GiftNotManufacturedException
-                                              or GiftOutOfStockException)
+                catch (Exception e) when (e is GiftOutOfStockException)
                 {
                     throw new BusinessException("Unexpected error while loading sleigh", e);
                 }
