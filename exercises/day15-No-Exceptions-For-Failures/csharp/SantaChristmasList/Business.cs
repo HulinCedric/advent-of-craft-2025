@@ -21,7 +21,19 @@ public class Business
         {
             try
             {
-                LoadGiftForChild(sleigh, child);
+                var gift = _wishList.IdentifyGift(child);
+                if (gift is null)
+                    throw new ChildWishNotFoundException(child);
+
+                var manufacturedGift = _factory.FindManufacturedGift(gift);
+                if (manufacturedGift is null)
+                    throw new GiftNotManufacturedException(gift);
+
+                var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
+                if (finalGift is null)
+                    throw new GiftOutOfStockException(manufacturedGift);
+
+                sleigh.Put(child, $"Gift: {finalGift.Name} has been loaded!");
             }
             catch (Exception e) when (e is ChildWishNotFoundException
                                           or GiftNotManufacturedException
@@ -32,23 +44,6 @@ public class Business
         }
 
         return sleigh;
-    }
-
-    private void LoadGiftForChild(Sleigh sleigh, Child child)
-    {
-        var gift = _wishList.IdentifyGift(child);
-        if (gift is null)
-            throw new ChildWishNotFoundException(child);
-
-        var manufacturedGift = _factory.FindManufacturedGift(gift);
-        if (manufacturedGift is null)
-            throw new GiftNotManufacturedException(gift);
-
-        var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
-        if (finalGift is null)
-            throw new GiftOutOfStockException(manufacturedGift);
-
-        sleigh.Put(child, $"Gift: {finalGift.Name} has been loaded!");
     }
 
     public Error<Sleigh> LoadGiftsInSleigh(Child child)
