@@ -17,24 +17,12 @@ public class Business
     }
 
     public Either<string, Sleigh> LoadGiftsInSleigh(params Child[] children)
-    {
-        var sleigh = new Sleigh();
+        => ProcessGiftsFor(children)
+            .Sequence()
+            .Map(gifts => gifts.Fold(new Sleigh(), LoadGiftInSleigh));
 
-        foreach (var child in children)
-        {
-            var processResult = ProcessGift(child);
-
-            if (processResult.IsLeft)
-                return processResult.LeftToSeq().First();
-
-            processResult.Do(r => LoadGiftInSleigh(sleigh, r));
-        }
-
-        return sleigh;
-    }
-
-    private static void LoadGiftInSleigh(Sleigh sleigh, (Child child, Gift finalGift) result)
-        => sleigh.Put(result.child, $"Gift: {result.finalGift.Name} has been loaded!");
+    private IEnumerable<Either<string, (Child child, Gift finalGift)>> ProcessGiftsFor(Child[] children)
+        => children.Map(ProcessGift);
 
     private Either<string, (Child child, Gift finalGift)> ProcessGift(Child child)
         => from gift in IdentifyGift(child)
@@ -53,4 +41,10 @@ public class Business
     private Either<string, Gift> PickUpGift(Gift manufacturedGift)
         => Optional(_inventory.PickUpGift(manufacturedGift.BarCode))
             .ToEither($"Gift out of stock: {manufacturedGift.Name}");
+
+    private static Sleigh LoadGiftInSleigh(Sleigh sleigh, (Child child, Gift finalGift) result)
+    {
+        sleigh.Put(result.child, $"Gift: {result.finalGift.Name} has been loaded!");
+        return sleigh;
+    }
 }
