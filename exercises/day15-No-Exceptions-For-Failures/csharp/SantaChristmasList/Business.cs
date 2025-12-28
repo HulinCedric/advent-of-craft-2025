@@ -50,4 +50,31 @@ public class Business
 
         sleigh.Put(child, $"Gift: {finalGift.Name} has been loaded!");
     }
+
+    public Error<Sleigh> LoadGiftsInSleigh(Child child)
+    {
+        try
+        {
+            return new Error<Sleigh>(LoadGiftsInSleighUnsafe(child));
+        }
+        catch (BusinessException ex) when (ex.InnerException is not null)
+        {
+            return new Error<Sleigh>(ex.InnerException.Message);
+        }
+        catch (Exception ex)
+        {
+            return new Error<Sleigh>(ex.Message);
+        }
+    }
+}
+
+public class Error<T>
+{
+    public Error(T success) => Success = success;
+
+    public Error(string failure) => Failure = failure;
+
+    public string? Failure { get; }
+
+    public T? Success { get; }
 }

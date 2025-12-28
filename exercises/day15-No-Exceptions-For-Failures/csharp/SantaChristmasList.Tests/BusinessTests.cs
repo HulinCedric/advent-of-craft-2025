@@ -15,9 +15,9 @@ public class BusinessTests
 
         var business = new Business(factory, inventory, wishList);
 
-        var message = LoadGiftAndExtractInnerErrorMessage(business, timmy);
+        var failure = business.LoadGiftsInSleigh(timmy).Failure;
 
-        Assert.Equal("No wish found for child: Timmy", message);
+        Assert.Equal("No wish found for child: Timmy", failure);
     }
 
     [Fact]
