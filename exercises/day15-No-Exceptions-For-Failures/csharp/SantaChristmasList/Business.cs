@@ -34,11 +34,11 @@ public class Business
 
                     var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
                     if (finalGift is null)
-                        throw new GiftOutOfStockException(manufacturedGift);
+                        return new Error<Sleigh>($"Gift out of stock: {gift.Name}");
 
                     sleigh.Put(child1, $"Gift: {finalGift.Name} has been loaded!");
                 }
-                catch (Exception e) when (e is GiftOutOfStockException)
+                catch (Exception e)
                 {
                     throw new BusinessException("Unexpected error while loading sleigh", e);
                 }
