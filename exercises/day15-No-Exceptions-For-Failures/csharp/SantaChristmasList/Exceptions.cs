@@ -1,13 +1,5 @@
 ﻿namespace SantaChristmasList;
 
-public class ChildWishNotFoundException : Exception
-{
-    public ChildWishNotFoundException(Child child)
-        : base($"No wish found for child: {child.Name}")
-    {
-    }
-}
-
 public class GiftNotManufacturedException : Exception
 {
     public GiftNotManufacturedException(Gift gift)

@@ -17,7 +17,7 @@ public class Business
     {
         try
         {
-            Child[] children = new[] { child };
+            var children = new[] { child };
             var sleigh = new Sleigh();
 
             foreach (var child1 in children)
@@ -26,7 +26,7 @@ public class Business
                 {
                     var gift = _wishList.IdentifyGift(child1);
                     if (gift is null)
-                        throw new ChildWishNotFoundException(child1);
+                        return new Error<Sleigh>($"No wish found for child: {child.Name}");
 
                     var manufacturedGift = _factory.FindManufacturedGift(gift);
                     if (manufacturedGift is null)
@@ -38,8 +38,7 @@ public class Business
 
                     sleigh.Put(child1, $"Gift: {finalGift.Name} has been loaded!");
                 }
-                catch (Exception e) when (e is ChildWishNotFoundException
-                                              or GiftNotManufacturedException
+                catch (Exception e) when (e is GiftNotManufacturedException
                                               or GiftOutOfStockException)
                 {
                     throw new BusinessException("Unexpected error while loading sleigh", e);
