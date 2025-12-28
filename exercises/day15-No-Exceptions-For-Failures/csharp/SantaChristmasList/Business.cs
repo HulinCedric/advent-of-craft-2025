@@ -13,14 +13,13 @@ public class Business
         _wishList = wishList;
     }
 
-    public Result<Sleigh> LoadGiftsInSleigh(Child child)
+    public Result<Sleigh> LoadGiftsInSleigh(params Child[] children)
     {
-        var children = new[] { child };
         var sleigh = new Sleigh();
 
-        foreach (var child1 in children)
+        foreach (var child in children)
         {
-            var gift = _wishList.IdentifyGift(child1);
+            var gift = _wishList.IdentifyGift(child);
             if (gift is null)
                 return new Result<Sleigh>($"No wish found for child: {child.Name}");
 
@@ -32,7 +31,7 @@ public class Business
             if (finalGift is null)
                 return new Result<Sleigh>($"Gift out of stock: {gift.Name}");
 
-            sleigh.Put(child1, $"Gift: {finalGift.Name} has been loaded!");
+            sleigh.Put(child, $"Gift: {finalGift.Name} has been loaded!");
         }
 
         return new Result<Sleigh>(sleigh);
