@@ -27,9 +27,11 @@ public class Business
 
             var gift = identificationResult.RightToSeq().First();
 
-            var manufacturedGift = _factory.FindManufacturedGift(gift);
-            if (manufacturedGift is null)
-                return $"Gift has not been manufactured: {gift.Name}";
+            var manufacturedGiftResult = FindManufacturedGift(gift);
+            if (manufacturedGiftResult.IsLeft)
+                return manufacturedGiftResult.LeftToSeq().First();
+
+            var manufacturedGift = manufacturedGiftResult.RightToSeq().First();
 
             var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
             if (finalGift is null)
@@ -39,6 +41,14 @@ public class Business
         }
 
         return sleigh;
+    }
+
+    private Either<string, Gift> FindManufacturedGift(Gift gift)
+    {
+        var manufacturedGift = _factory.FindManufacturedGift(gift);
+        if (manufacturedGift is null) return $"Gift has not been manufactured: {gift.Name}";
+
+        return manufacturedGift;
     }
 
     private Either<string, Gift> IdentifyGift(Child child)
