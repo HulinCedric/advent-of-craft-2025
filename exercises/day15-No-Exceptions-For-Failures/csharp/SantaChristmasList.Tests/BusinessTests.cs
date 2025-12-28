@@ -32,9 +32,9 @@ public class BusinessTests
 
         var business = new Business(factory, inventory, wishList);
 
-        var message = LoadGiftAndExtractInnerErrorMessage(business, timmy);
+        var failure = business.LoadGiftsInSleigh(timmy).Failure;
 
-        Assert.Equal("Gift has not been manufactured: Lego Death Star", message);
+        Assert.Equal("Gift has not been manufactured: Lego Death Star", failure);
     }
 
     [Fact]
