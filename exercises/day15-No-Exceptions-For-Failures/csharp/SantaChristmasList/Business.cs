@@ -21,9 +21,11 @@ public class Business
 
         foreach (var child in children)
         {
-            var gift = _wishList.IdentifyGift(child);
-            if (gift is null)
-                return $"No wish found for child: {child.Name}";
+            var identificationResult = IdentifyGift(child);
+            if (identificationResult.IsLeft)
+                return identificationResult.LeftToSeq().First();
+
+            var gift = identificationResult.RightToSeq().First();
 
             var manufacturedGift = _factory.FindManufacturedGift(gift);
             if (manufacturedGift is null)
@@ -37,5 +39,13 @@ public class Business
         }
 
         return sleigh;
+    }
+
+    private Either<string, Gift> IdentifyGift(Child child)
+    {
+        var gift = _wishList.IdentifyGift(child);
+        if (gift is null) return $"No wish found for child: {child.Name}";
+
+        return gift;
     }
 }
