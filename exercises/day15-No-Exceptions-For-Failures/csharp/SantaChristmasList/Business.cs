@@ -13,44 +13,40 @@ public class Business
         _wishList = wishList;
     }
 
-    public Sleigh LoadGiftsInSleighUnsafe(params Child[] children)
-    {
-        var sleigh = new Sleigh();
-
-        foreach (var child in children)
-        {
-            try
-            {
-                var gift = _wishList.IdentifyGift(child);
-                if (gift is null)
-                    throw new ChildWishNotFoundException(child);
-
-                var manufacturedGift = _factory.FindManufacturedGift(gift);
-                if (manufacturedGift is null)
-                    throw new GiftNotManufacturedException(gift);
-
-                var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
-                if (finalGift is null)
-                    throw new GiftOutOfStockException(manufacturedGift);
-
-                sleigh.Put(child, $"Gift: {finalGift.Name} has been loaded!");
-            }
-            catch (Exception e) when (e is ChildWishNotFoundException
-                                          or GiftNotManufacturedException
-                                          or GiftOutOfStockException)
-            {
-                throw new BusinessException("Unexpected error while loading sleigh", e);
-            }
-        }
-
-        return sleigh;
-    }
-
     public Error<Sleigh> LoadGiftsInSleigh(Child child)
     {
         try
         {
-            return new Error<Sleigh>(LoadGiftsInSleighUnsafe(child));
+            Child[] children = new[] { child };
+            var sleigh = new Sleigh();
+
+            foreach (var child1 in children)
+            {
+                try
+                {
+                    var gift = _wishList.IdentifyGift(child1);
+                    if (gift is null)
+                        throw new ChildWishNotFoundException(child1);
+
+                    var manufacturedGift = _factory.FindManufacturedGift(gift);
+                    if (manufacturedGift is null)
+                        throw new GiftNotManufacturedException(gift);
+
+                    var finalGift = _inventory.PickUpGift(manufacturedGift.BarCode);
+                    if (finalGift is null)
+                        throw new GiftOutOfStockException(manufacturedGift);
+
+                    sleigh.Put(child1, $"Gift: {finalGift.Name} has been loaded!");
+                }
+                catch (Exception e) when (e is ChildWishNotFoundException
+                                              or GiftNotManufacturedException
+                                              or GiftOutOfStockException)
+                {
+                    throw new BusinessException("Unexpected error while loading sleigh", e);
+                }
+            }
+
+            return new Error<Sleigh>(sleigh);
         }
         catch (BusinessException ex) when (ex.InnerException is not null)
         {
