@@ -1,7 +1,10 @@
 using LanguageExt;
+using LanguageExt.Common;
 using static LanguageExt.Prelude;
 
 namespace SantaChristmasList;
+
+using GiftProcessResult = (Child child, Gift gift);
 
 public class Business
 {
@@ -16,35 +19,34 @@ public class Business
         _wishList = wishList;
     }
 
-    public Either<string, Sleigh> LoadGiftsInSleigh(params Child[] children)
+    public Either<Error, Sleigh> LoadGiftsInSleigh(params Child[] children)
         => ProcessGiftsFor(children)
-            .Sequence()
             .Map(gifts => gifts.Fold(new Sleigh(), LoadGiftInSleigh));
 
-    private IEnumerable<Either<string, (Child child, Gift finalGift)>> ProcessGiftsFor(Child[] children)
-        => children.Map(ProcessGift);
+    private Either<Error, IEnumerable<GiftProcessResult>> ProcessGiftsFor(Child[] children)
+        => children.Map(ProcessGift).Sequence();
 
-    private Either<string, (Child child, Gift finalGift)> ProcessGift(Child child)
+    private Either<Error, GiftProcessResult> ProcessGift(Child child)
         => from gift in IdentifyGift(child)
             from manufacturedGift in FindManufacturedGift(gift)
             from finalGift in PickUpGift(manufacturedGift)
             select (child, finalGift);
 
-    private Either<string, Gift> IdentifyGift(Child child)
+    private Either<Error, Gift> IdentifyGift(Child child)
         => Optional(_wishList.IdentifyGift(child))
-            .ToEither($"No wish found for child: {child.Name}");
+            .ToEither<Error>($"No wish found for child: {child.Name}");
 
-    private Either<string, Gift> FindManufacturedGift(Gift gift)
+    private Either<Error, Gift> FindManufacturedGift(Gift gift)
         => Optional(_factory.FindManufacturedGift(gift))
-            .ToEither($"Gift has not been manufactured: {gift.Name}");
+            .ToEither<Error>($"Gift has not been manufactured: {gift.Name}");
 
-    private Either<string, Gift> PickUpGift(Gift manufacturedGift)
+    private Either<Error, Gift> PickUpGift(Gift manufacturedGift)
         => Optional(_inventory.PickUpGift(manufacturedGift.BarCode))
-            .ToEither($"Gift out of stock: {manufacturedGift.Name}");
+            .ToEither<Error>($"Gift out of stock: {manufacturedGift.Name}");
 
-    private static Sleigh LoadGiftInSleigh(Sleigh sleigh, (Child child, Gift finalGift) result)
+    private static Sleigh LoadGiftInSleigh(Sleigh sleigh, GiftProcessResult result)
     {
-        sleigh.Put(result.child, $"Gift: {result.finalGift.Name} has been loaded!");
+        sleigh.Put(result.child, $"Gift: {result.gift.Name} has been loaded!");
         return sleigh;
     }
 }
