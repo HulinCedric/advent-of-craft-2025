@@ -1,3 +1,3 @@
 ﻿namespace Gifts;
 
-public record Toy(string Description);
+public sealed record Toy(string Description);
