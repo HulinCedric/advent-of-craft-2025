@@ -52,15 +52,13 @@ public sealed class SantaGiftDispatcher
         return assignments;
     }
 
-    private bool TryPickOneGiftFor(ChildWishlistRequest child, out object? pickedGift)
+    private bool TryPickOneGiftFor(ChildWishlistRequest child, out string? pickedGift)
     {
         pickedGift = null;
 
         // 1) Wishlist in order.
         foreach (var wishedGift in child.Wishlist)
         {
-            if (wishedGift == null) continue;
-
             if (_inventory.TryTakeOne(wishedGift))
             {
                 pickedGift = wishedGift;
@@ -102,7 +100,7 @@ public sealed class SantaGiftDispatcher
             return true;
         }
 
-        public bool TryTakeAnyOne(out object? giftKey)
+        public bool TryTakeAnyOne(out string? giftKey)
         {
             foreach (var kvp in _remainingByGift)
             {
