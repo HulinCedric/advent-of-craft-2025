@@ -85,6 +85,7 @@ public class BusinessTests
     {
         var timmy = new Child("Timmy");
         var eloise = new Child("Eloise");
+        var mike = new Child("Mike");
         var wishedGift = new Gift("Red Bike", "BARCODE-456");
         var manufacturedGift = new Gift("Red Bike", "BARCODE-456");
         var inventoriedGift = new Gift("Red Bike", "BARCODE-456");
@@ -95,9 +96,14 @@ public class BusinessTests
 
         var business = new Business(factory, inventory, wishList);
 
-        var result = business.LoadGiftsInSleigh(timmy, eloise);
+        var result = business.LoadGiftsInSleigh(timmy, eloise, mike);
 
-        result.Failures.Should().BeEquivalentTo([Error.New("No wish found for child: Timmy")]);
+        result.Failures.Should()
+            .BeEquivalentTo(
+            [
+                Error.New("No wish found for child: Timmy"),
+                Error.New("No wish found for child: Mike")
+            ]);
         result.Sleigh.Messages[eloise].Should().Be("Gift: Red Bike has been loaded!");
     }
 
