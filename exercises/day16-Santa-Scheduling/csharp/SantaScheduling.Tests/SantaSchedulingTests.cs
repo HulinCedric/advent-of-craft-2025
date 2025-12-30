@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Xunit;
 
 namespace SantaScheduling.Tests;
@@ -26,17 +25,12 @@ public class SantaSchedulingTests
     [Fact]
     public void DepartureTestHarness()
     {
-        using var santaSchedule = Process.Start(
-            new ProcessStartInfo
-            {
-                FileName = "SantaScheduling",
-                Arguments = "l 0",
-                RedirectStandardOutput = true
-            })!;
+        var output = new StringWriter();
+        Console.SetOut(output);
 
-        santaSchedule.WaitForExit();
+        SantaSchedulingApplication.Run(["l", "0"]);
 
-        var consoleOutput = santaSchedule.StandardOutput.ReadToEnd();
+        var consoleOutput = output.ToString();
 
         Assert.Equal($"Santa departs: 25/12/2024 02:00:00{Environment.NewLine}", consoleOutput);
     }
@@ -44,17 +38,12 @@ public class SantaSchedulingTests
     [Fact]
     public void HelpTestHarness()
     {
-        using var santaSchedule = Process.Start(
-            new ProcessStartInfo
-            {
-                FileName = "SantaScheduling",
-                Arguments = "",
-                RedirectStandardOutput = true
-            })!;
+        var output = new StringWriter();
+        Console.SetOut(output);
 
-        santaSchedule.WaitForExit();
+        SantaSchedulingApplication.Run([]);
 
-        var consoleOutput = santaSchedule.StandardOutput.ReadToEnd();
+        var consoleOutput = output.ToString();
 
         Assert.Equal(
             $"Usage: SantaScheduling <command> <timezone>{Environment.NewLine}" +
@@ -68,17 +57,12 @@ public class SantaSchedulingTests
     [Fact]
     public void UnknownCommandTestHarness()
     {
-        using var santaSchedule = Process.Start(
-            new ProcessStartInfo
-            {
-                FileName = "SantaScheduling",
-                Arguments = "u 0",
-                RedirectStandardOutput = true
-            })!;
+        var output = new StringWriter();
+        Console.SetOut(output);
 
-        santaSchedule.WaitForExit();
+        SantaSchedulingApplication.Run(["u", "0"]);
 
-        var consoleOutput = santaSchedule.StandardOutput.ReadToEnd();
+        var consoleOutput = output.ToString();
 
         Assert.Equal($"Unknown command: u{Environment.NewLine}", consoleOutput);
     }
