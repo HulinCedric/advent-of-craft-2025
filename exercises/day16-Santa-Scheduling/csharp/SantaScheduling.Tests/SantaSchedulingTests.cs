@@ -10,7 +10,7 @@ public class SantaSchedulingTests
      */
 
     [Fact]
-    public void ArrivalTestHarness()
+    public void Should_return_santa_arrival_date()
     {
         var consoleOutput = RunSantaSchedulingApplication(["a", "0"]);
 
@@ -18,7 +18,7 @@ public class SantaSchedulingTests
     }
 
     [Fact]
-    public void DepartureTestHarness()
+    public void Should_return_santa_departure_date()
     {
         var consoleOutput = RunSantaSchedulingApplication(["l", "0"]);
 
@@ -26,7 +26,7 @@ public class SantaSchedulingTests
     }
 
     [Fact]
-    public void HelpTestHarness()
+    public void Should_return_help_on_missing_command()
     {
         var consoleOutput = RunSantaSchedulingApplication([]);
         
@@ -40,7 +40,7 @@ public class SantaSchedulingTests
     }
 
     [Fact]
-    public void UnknownCommandTestHarness()
+    public void Should_return_failure_on_unknown_command()
     {
         var consoleOutput = RunSantaSchedulingApplication(["u", "0"]);
         
