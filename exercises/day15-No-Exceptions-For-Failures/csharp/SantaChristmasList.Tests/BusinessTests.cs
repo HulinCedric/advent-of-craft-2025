@@ -1,5 +1,5 @@
 using FluentAssertions;
-using FluentAssertions.LanguageExt;
+using LanguageExt.Common;
 using Xunit;
 
 namespace SantaChristmasList.Tests;
@@ -19,7 +19,8 @@ public class BusinessTests
 
         var result = business.LoadGiftsInSleigh(timmy);
 
-        result.Should().Be("No wish found for child: Timmy");
+        result.Failures.Should().BeEquivalentTo([Error.New("No wish found for child: Timmy")]);
+        result.Sleigh.Messages.Should().BeEmpty();
     }
 
     [Fact]
@@ -36,7 +37,8 @@ public class BusinessTests
 
         var result = business.LoadGiftsInSleigh(timmy);
 
-        result.Should().Be("Gift has not been manufactured: Lego Death Star");
+        result.Failures.Should().BeEquivalentTo([Error.New("Gift has not been manufactured: Lego Death Star")]);
+        result.Sleigh.Messages.Should().BeEmpty();
     }
 
     [Fact]
@@ -54,7 +56,8 @@ public class BusinessTests
 
         var result = business.LoadGiftsInSleigh(timmy);
 
-        result.Should().Be("Gift out of stock: Red Bike");
+        result.Failures.Should().BeEquivalentTo([Error.New("Gift out of stock: Red Bike")]);
+        result.Sleigh.Messages.Should().BeEmpty();
     }
 
     [Fact]
@@ -73,11 +76,12 @@ public class BusinessTests
 
         var result = business.LoadGiftsInSleigh(timmy);
 
-        result.Should().BeRight(sleigh => sleigh.Messages[timmy].Should().Be("Gift: Red Bike has been loaded!"));
+        result.Failures.Should().BeEmpty();
+        result.Sleigh.Messages[timmy].Should().Be("Gift: Red Bike has been loaded!");
     }
 
     [Fact]
-    public void Load_many_wished_gift_in_sleigh()
+    public void Load_wished_gift_in_sleigh_and_return_failure()
     {
         var timmy = new Child("Timmy");
         var eloise = new Child("Eloise");
@@ -85,7 +89,7 @@ public class BusinessTests
         var manufacturedGift = new Gift("Red Bike", "BARCODE-456");
         var inventoriedGift = new Gift("Red Bike", "BARCODE-456");
 
-        IWishList wishList = new StubWishList(child => wishedGift);
+        IWishList wishList = new StubWishList(child => child == eloise ? wishedGift : null);
         IFactory factory = new StubFactory(gift => manufacturedGift);
         IInventory inventory = new StubInventory(barCode => inventoriedGift);
 
@@ -93,11 +97,8 @@ public class BusinessTests
 
         var result = business.LoadGiftsInSleigh(timmy, eloise);
 
-        result.Should()
-            .BeRight(sleigh => sleigh.Messages.Values.Should()
-                .BeEquivalentTo(
-                    "Gift: Red Bike has been loaded!",
-                    "Gift: Red Bike has been loaded!"));
+        result.Failures.Should().BeEquivalentTo([Error.New("No wish found for child: Timmy")]);
+        result.Sleigh.Messages[eloise].Should().Be("Gift: Red Bike has been loaded!");
     }
 
     private class StubWishList : IWishList

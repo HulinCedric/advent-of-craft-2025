@@ -19,12 +19,14 @@ public class Business
         _wishList = wishList;
     }
 
-    public Either<Error, Sleigh> LoadGiftsInSleigh(params Child[] children)
+    public LoadGiftsInSleighResult LoadGiftsInSleigh(params Child[] children)
         => ProcessGiftsFor(children)
-            .Map(gifts => gifts.Fold(new Sleigh(), LoadGiftInSleigh));
+            .Map(tuple => new LoadGiftsInSleighResult(
+                tuple.Item1,
+                tuple.Item2.Fold(new Sleigh(), LoadGiftInSleigh)));
 
-    private Either<Error, IEnumerable<GiftProcessResult>> ProcessGiftsFor(Child[] children)
-        => children.Map(ProcessGift).Sequence();
+    private (IEnumerable<Error>, IEnumerable<GiftProcessResult> ) ProcessGiftsFor(Child[] children)
+        => children.Map(ProcessGift).Partition();
 
     private Either<Error, GiftProcessResult> ProcessGift(Child child)
         => from gift in IdentifyGift(child)
@@ -50,3 +52,5 @@ public class Business
         return sleigh;
     }
 }
+
+public record LoadGiftsInSleighResult(IEnumerable<Error> Failures, Sleigh Sleigh);
