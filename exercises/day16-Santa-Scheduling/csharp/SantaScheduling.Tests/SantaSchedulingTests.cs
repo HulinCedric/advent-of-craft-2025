@@ -4,23 +4,18 @@ namespace SantaScheduling.Tests;
 
 public class SantaSchedulingTests
 {
-    /*
-     * TODO: Before you can write meaningful tests, you'll need to extract
-     * the scheduling logic from Program.cs into a testable method.
-     */
-
     [Fact]
     public void Should_return_santa_arrival_date()
     {
-        var consoleOutput = RunSantaSchedulingApplication(["a", "0"]);
+        var consoleOutput = SantaSchedulingArrival(timezone: 0);
 
         Assert.Equal($"Santa arrives: 24/12/2024 20:00:00{Environment.NewLine}", consoleOutput);
     }
-
+    
     [Fact]
     public void Should_return_santa_departure_date()
     {
-        var consoleOutput = RunSantaSchedulingApplication(["l", "0"]);
+        var consoleOutput = SantaSchedulingDeparture(timezone: 0);
 
         Assert.Equal($"Santa departs: 25/12/2024 02:00:00{Environment.NewLine}", consoleOutput);
     }
@@ -29,7 +24,7 @@ public class SantaSchedulingTests
     public void Should_return_help_on_missing_command()
     {
         var consoleOutput = RunSantaSchedulingApplication([]);
-        
+
         Assert.Equal(
             $"Usage: SantaScheduling <command> <timezone>{Environment.NewLine}" +
             $"Commands:{Environment.NewLine}" +
@@ -43,7 +38,7 @@ public class SantaSchedulingTests
     public void Should_return_failure_on_unknown_command()
     {
         var consoleOutput = RunSantaSchedulingApplication(["u", "0"]);
-        
+
         Assert.Equal($"Unknown command: u{Environment.NewLine}", consoleOutput);
     }
 
@@ -90,6 +85,10 @@ public class SantaSchedulingTests
 
         Assert.True(true, "Extract logic, then map the rules");
     }
+
+    private static string SantaSchedulingArrival(int timezone) => RunSantaSchedulingApplication(["a", $"{timezone}"]);
+   
+    private static string SantaSchedulingDeparture(int timezone) => RunSantaSchedulingApplication(["l", $"{timezone}"]);
     
     private static string RunSantaSchedulingApplication(string[] args)
     {
