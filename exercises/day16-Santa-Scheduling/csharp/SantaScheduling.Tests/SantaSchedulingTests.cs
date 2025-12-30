@@ -11,7 +11,7 @@ public class SantaSchedulingTests
 
         Assert.Equal($"Santa arrives: 24/12/2024 20:00:00{Environment.NewLine}", consoleOutput);
     }
-    
+
     [Fact]
     public void Should_return_santa_departure_date()
     {
@@ -50,7 +50,13 @@ public class SantaSchedulingTests
         // - New York (UTC-5) arrival time
         // - Why the 3-hour difference?
 
-        Assert.True(true, "Extract the logic first, then investigate");
+        var londonArrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone: 0);
+
+        Assert.Equal(new DateTime(year: 2024, month: 12, day: 24, hour: 20, minute: 0, second: 0), londonArrivalTime);
+
+        var newYorkArrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone: -5);
+
+        Assert.Equal(new DateTime(year: 2024, month: 12, day: 24, hour: 23, minute: 0, second: 0), newYorkArrivalTime);
     }
 
     [Fact(DisplayName = "TICKET-103: Investigation - Test boundary points")]
@@ -87,9 +93,9 @@ public class SantaSchedulingTests
     }
 
     private static string SantaSchedulingArrival(int timezone) => RunSantaSchedulingApplication(["a", $"{timezone}"]);
-   
+
     private static string SantaSchedulingDeparture(int timezone) => RunSantaSchedulingApplication(["l", $"{timezone}"]);
-    
+
     private static string RunSantaSchedulingApplication(string[] args)
     {
         var output = new StringWriter();
