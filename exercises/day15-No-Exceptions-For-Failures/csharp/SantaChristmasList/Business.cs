@@ -21,9 +21,7 @@ public class Business
 
     public LoadGiftsInSleighResult LoadGiftsInSleigh(params Child[] children)
         => ProcessGiftsFor(children)
-            .Map(tuple => new LoadGiftsInSleighResult(
-                tuple.Item1,
-                tuple.Item2.Fold(new Sleigh(), LoadGiftInSleigh)));
+            .Map(LoadGiftsInSleighResult.Create);
 
     private (IEnumerable<Error>, IEnumerable<GiftProcessResult> ) ProcessGiftsFor(Child[] children)
         => children.Map(ProcessGift).Partition();
@@ -45,12 +43,4 @@ public class Business
     private Either<Error, Gift> PickUpGift(Gift manufacturedGift)
         => Optional(_inventory.PickUpGift(manufacturedGift.BarCode))
             .ToEither<Error>($"Gift out of stock: {manufacturedGift.Name}");
-
-    private static Sleigh LoadGiftInSleigh(Sleigh sleigh, GiftProcessResult result)
-    {
-        sleigh.Put(result.child, $"Gift: {result.gift.Name} has been loaded!");
-        return sleigh;
-    }
 }
-
-public record LoadGiftsInSleighResult(IEnumerable<Error> Failures, Sleigh Sleigh);
