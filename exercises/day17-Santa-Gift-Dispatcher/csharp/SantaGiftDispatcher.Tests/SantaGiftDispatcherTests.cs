@@ -32,4 +32,33 @@ public class SantaGiftDispatcherTests
                 ],
                 options => options.WithStrictOrdering());
     }
+
+    [Fact]
+    public void Behavior_of_original_refactored_app()
+    {
+        var inventory = new Hashtable
+        {
+            ["Train"] = 1,
+            ["Doll"] = 2,
+            ["Coal"] = 0
+        };
+
+        var dispatcher = new D(inventory);
+
+        dispatcher.A("Alice", new ArrayList { "Doll", "Train" });
+        dispatcher.A("Bob", new ArrayList { "Train", "Doll" });
+        dispatcher.A("Charlie", new ArrayList { "Puzzle" });
+
+        var results = dispatcher.B(z: 2);
+
+        results.Should()
+            .BeEquivalentTo(
+                new ArrayList
+                {
+                    new D.G("Alice", "Doll"),
+                    new D.G("Alice", "Doll"),
+                    new D.G("Bob", "Train")
+                },
+                options => options.WithStrictOrdering());
+    }
 }

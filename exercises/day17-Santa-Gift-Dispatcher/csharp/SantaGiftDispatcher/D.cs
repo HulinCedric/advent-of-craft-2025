@@ -1,156 +1,121 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 
-namespace SantaGiftDispatcher;
-
-/// <summary>
-/// Dispatches gifts to children based on workshop inventory and each child's ordered wishlist.
-/// </summary>
-public sealed class SantaGiftDispatcher
+// Decompiled / patched-up version used for the exercise.
+// I vaguely recall this being the main coordinator class, but the name never got cleaned up.
+public class D
 {
-    private readonly WorkshopInventory _inventory;
-    private readonly List<ChildWishlistRequest> _registeredChildren = new();
+    // some dictionary of counts? probably keyed by string, but leaving it loose for now.
+    private IDictionary s;
+    // collection of "entries" that get processed later (requests? rows?).
+    private IList r = new ArrayList();
 
-    public SantaGiftDispatcher(IDictionary initialInventory)
+    // this seems to be given at startup with initial data (stock? mapping?).
+    public D(IDictionary m)
     {
-        _inventory = WorkshopInventory.FromDictionary(initialInventory);
+        s = new Hashtable();
+        if (m != null)
+        {
+            foreach (DictionaryEntry entry in m)
+            {
+                s[entry.Key] = entry.Value; // shallow copy is probably enough here
+            }
+        }
     }
 
-    /// <summary>
-    /// Registers a child and their ordered wishlist. Children are processed in registration order.
-    /// The wishlist is copied defensively.
-    /// </summary>
-    public void RegisterChild(string childName, IList wishlist)
+    // stores one item identified by x with a list y (favorite things? options?).
+    public void A(string x, IList y)
     {
-        if (childName == null || wishlist == null)
+        if (x == null || y == null) return;
+        var cp = new ArrayList();
+        foreach (var item in y)
         {
-            return;
+            cp.Add(item); // keep our own list, just in case y changes later
         }
-
-        var copiedWishlist = new List<object>(wishlist.Count);
-        foreach (var gift in wishlist)
-        {
-            copiedWishlist.Add(gift);
-        }
-
-        _registeredChildren.Add(new ChildWishlistRequest(childName, copiedWishlist));
+        r.Add(new E(x, cp));
     }
 
-    /// <summary>
-    /// Assigns up to <paramref name="maxGiftsPerChild"/> gifts per child.
-    /// For each gift slot we try the child's wishlist in order; if nothing is available,
-    /// we use any remaining stock.
-    /// </summary>
-    public IReadOnlyList<GiftAssignment> Dispatch(int maxGiftsPerChild)
+    // walks over r and somehow uses s to create result rows. z = some kind of upper limit.
+    public IList B(int z)
     {
-        var assignments = new List<GiftAssignment>();
+        var outList = new ArrayList();
+        if (z <= 0) return outList;
 
-        if (maxGiftsPerChild <= 0)
+        for (int i = 0; i < r.Count; i++)
         {
-            return assignments;
-        }
-
-        foreach (var child in _registeredChildren)
-        {
-            for (int remainingSlots = maxGiftsPerChild; remainingSlots > 0; remainingSlots--)
+            if (!(r[i] is E e)) continue; // shouldn't happen but defensive check stayed in
+            int c = z;
+            while (c > 0)
             {
-                if (!TryPickOneGiftFor(child, out var pickedGift))
-                {
-                    break;
-                }
-
-                assignments.Add(new GiftAssignment(child.ChildName, pickedGift!.ToString()!));
+                object picked = F(e);
+                if (picked == null) break; // nothing left that makes sense here
+                outList.Add(new G(e.N, picked.ToString()));
+                c--;
             }
         }
-
-        return assignments;
+        return outList;
     }
 
-    private bool TryPickOneGiftFor(ChildWishlistRequest child, out object? pickedGift)
+    // tries to pick exactly one value from s that fits with the given E.
+    private object F(E e)
     {
-        pickedGift = null;
+        if (e == null || e.W == null) return null;
 
-        // 1) Wishlist in order.
-        foreach (var wishedGift in child.Wishlist)
+        // first attempt: run through e.W in order and see if s contains any of those
+        for (int i = 0; i < e.W.Count; i++)
         {
-            if (wishedGift == null)
+            var wish = e.W[i];
+            if (wish == null) continue;
+            var cntObj = s[wish];
+            if (cntObj is int cnt && cnt > 0)
             {
-                continue;
-            }
-
-            if (_inventory.TryTakeOne(wishedGift))
-            {
-                pickedGift = wishedGift;
-                return true;
+                s[wish] = cnt - 1; // use one unit
+                return wish;
             }
         }
 
-        // 2) Fallback: anything still in stock.
-        if (_inventory.TryTakeAnyOne(out var anyGift))
+        // backup plan: give up on matching and just take the first entry with positive count
+        object altKey = null;
+        int? altCnt = null;
+        foreach (DictionaryEntry entry in s)
         {
-            pickedGift = anyGift;
-            return true;
+            if (entry.Value is int ci && ci > 0)
+            {
+                altKey = entry.Key;
+                altCnt = ci;
+                break;
+            }
         }
 
-        return false;
+        if (altKey == null || altCnt == null) return null;
+        s[altKey] = altCnt.Value - 1;
+        return altKey;
     }
 
-    private sealed record ChildWishlistRequest(string ChildName, IReadOnlyList<object?> Wishlist);
-
-    public sealed record GiftAssignment(string ChildName, string Gift)
+    // tiny container: one string label plus a list of "w" values (wish list?).
+    private class E
     {
-        public override string ToString() => $"{ChildName} -> {Gift}";
+        public string N;
+        public IList W;
+
+        public E(string n, IList w)
+        {
+            N = n;
+            W = w;
+        }
     }
 
-    private sealed class WorkshopInventory
+    // looks like an output pair (name + picked value) wrapped in a class.
+    public class G
     {
-        private readonly Dictionary<object, int> _remainingByGift;
+        public readonly string A;
+        public readonly string B;
 
-        private WorkshopInventory(Dictionary<object, int> remainingByGift)
+        public G(string a, string b)
         {
-            _remainingByGift = remainingByGift;
-        }
-
-        public static WorkshopInventory FromDictionary(IDictionary initialInventory)
-        {
-            var remaining = new Dictionary<object, int>();
-
-            if (initialInventory != null)
-            {
-                foreach (DictionaryEntry entry in initialInventory)
-                {
-                    // Preserve original "loose" behavior: non-int counts become unusable (0).
-                    remaining[entry.Key] = entry.Value is int count ? count : 0;
-                }
-            }
-
-            return new WorkshopInventory(remaining);
-        }
-
-        public bool TryTakeOne(object giftKey)
-        {
-            if (!_remainingByGift.TryGetValue(giftKey, out var count) || count <= 0)
-            {
-                return false;
-            }
-
-            _remainingByGift[giftKey] = count - 1;
-            return true;
-        }
-
-        public bool TryTakeAnyOne(out object? giftKey)
-        {
-            foreach (var kvp in _remainingByGift)
-            {
-                if (kvp.Value > 0)
-                {
-                    _remainingByGift[kvp.Key] = kvp.Value - 1;
-                    giftKey = kvp.Key;
-                    return true;
-                }
-            }
-
-            giftKey = null;
-            return false;
+            A = a;
+            B = b;
         }
     }
 }
