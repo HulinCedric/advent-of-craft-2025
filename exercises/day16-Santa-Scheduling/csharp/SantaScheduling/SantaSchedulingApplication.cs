@@ -20,13 +20,7 @@ public static class SantaSchedulingApplication
         if (cmd == "a")
         {
             // NOTE: Your task is to document THIS arrival calculation only
-            var arrival = new DateTime(
-                2024,
-                12,
-                24 + (tz < -5 ? 1 : 0),
-                tz < 0 ? 23 : 20,
-                0,
-                0);
+            var arrival = SantaSchedulingArrivalCommand.ComputeArrival(tz);
             Console.WriteLine($"Santa arrives: {arrival}");
         }
         else if (cmd == "l")
