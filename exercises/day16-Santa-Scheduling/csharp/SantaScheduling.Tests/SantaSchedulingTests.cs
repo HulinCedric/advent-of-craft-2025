@@ -1,15 +1,18 @@
+using System.Globalization;
 using Xunit;
 
 namespace SantaScheduling.Tests;
 
 public class SantaSchedulingTests
 {
+    public SantaSchedulingTests() => CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+
     [Fact]
     public void Should_return_santa_arrival_date()
     {
         var consoleOutput = SantaSchedulingArrival(timezone: 0);
 
-        Assert.Equal($"Santa arrives: 24/12/2024 20:00:00{Environment.NewLine}", consoleOutput);
+        Assert.Equal($"Santa arrives: 12/24/2024 20:00:00{Environment.NewLine}", consoleOutput);
     }
 
     [Fact]
@@ -17,7 +20,7 @@ public class SantaSchedulingTests
     {
         var consoleOutput = SantaSchedulingDeparture(timezone: 0);
 
-        Assert.Equal($"Santa departs: 25/12/2024 02:00:00{Environment.NewLine}", consoleOutput);
+        Assert.Equal($"Santa departs: 12/25/2024 02:00:00{Environment.NewLine}", consoleOutput);
     }
 
     [Fact]
@@ -48,7 +51,7 @@ public class SantaSchedulingTests
     {
         var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
 
-        Assert.Equal("25/12/2024 23:00:00", $"{arrivalTime:dd/MM/yyyy HH:mm:ss}");
+        Assert.Equal("12/25/2024 23:00:00", $"{arrivalTime}");
     }
 
     [Theory]
@@ -57,7 +60,7 @@ public class SantaSchedulingTests
     {
         var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
 
-        Assert.Equal("24/12/2024 23:00:00", $"{arrivalTime:dd/MM/yyyy HH:mm:ss}");
+        Assert.Equal("12/24/2024 23:00:00", $"{arrivalTime}");
     }
 
     [Theory]
@@ -66,7 +69,7 @@ public class SantaSchedulingTests
     {
         var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
 
-        Assert.Equal("24/12/2024 20:00:00", $"{arrivalTime:dd/MM/yyyy HH:mm:ss}");
+        Assert.Equal("12/24/2024 20:00:00", $"{arrivalTime}");
     }
 
     private static string SantaSchedulingArrival(int timezone) => RunSantaSchedulingApplication(["a", $"{timezone}"]);
