@@ -42,96 +42,31 @@ public class SantaSchedulingTests
         Assert.Equal($"Unknown command: u{Environment.NewLine}", consoleOutput);
     }
 
-    [Fact(DisplayName = "TICKET-102: Investigation - Compare arrival times")]
-    public void Ticket102_Investigation()
+    [Theory]
+    [ClassData(typeof(WesternZones))]
+    public void Should_arrive_the_25th_at_11pm_in_western_timezones(TimeZoneInfo timezone)
     {
-        // After refactoring, investigate:
-        // - London (UTC+0) arrival time
-        // - New York (UTC-5) arrival time
-        // - Why the 3-hour difference?
+        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
 
-        var londonArrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone: 0);
-
-        Assert.Equal("24/12/2024 20:00:00", $"{londonArrivalTime}");
-
-        var newYorkArrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone: -5);
-
-        Assert.Equal("24/12/2024 23:00:00", $"{newYorkArrivalTime}");
+        Assert.Equal("25/12/2024 23:00:00", $"{arrivalTime:dd/MM/yyyy HH:mm:ss}");
     }
 
     [Theory]
-    [InlineData(-7, "25/12/2024 23:00:00")]
-    [InlineData(-6, "25/12/2024 23:00:00")]
-    [InlineData(-5, "24/12/2024 23:00:00")]
-    [InlineData(-4, "24/12/2024 23:00:00")]
-    [InlineData(-1, "24/12/2024 23:00:00")]
-    [InlineData(0, "24/12/2024 20:00:00")]
-    [InlineData(1, "24/12/2024 20:00:00")]
-    public void Ticket103_Investigation(double timezone, string expectedArrival)
+    [ClassData(typeof(CentralZones))]
+    public void Should_arrive_the_24th_at_11pm_in_central_timezones(TimeZoneInfo timezone)
     {
-        // After refactoring, test:
-        // - What happens at exactly -5?
-        // - What happens at exactly 0?
-        // - Are they grouped with the zones before or after?
+        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
 
-        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone);
-
-        Assert.Equal(expectedArrival, $"{arrivalTime}");
+        Assert.Equal("24/12/2024 23:00:00", $"{arrivalTime:dd/MM/yyyy HH:mm:ss}");
     }
 
-    [Theory(DisplayName = "TICKET-104: Investigation - Mumbai and Newfoundland")]
-    [InlineData(+5.5, "24/12/2024 20:00:00")]
-    [InlineData(+0.1, "24/12/2024 20:00:00")]
-    [InlineData(+0, "24/12/2024 20:00:00")]
-    [InlineData(-0.1, "24/12/2024 23:00:00")]
-    [InlineData(-3.5, "24/12/2024 23:00:00")]
-    [InlineData(-5.0, "24/12/2024 23:00:00")]
-    [InlineData(-5.1, "25/12/2024 23:00:00")]
-    public void Ticket104_Investigation(double timezone, string expectedArrival)
+    [Theory]
+    [ClassData(typeof(EasternZones))]
+    public void Should_arrive_the_24th_at_8pm_in_eastern_timezones(TimeZoneInfo timezone)
     {
-        // After refactoring, test:
-        // - Mumbai: UTC+5.5
-        // - Newfoundland: UTC-3.5
-        // - How are half-hour offsets handled?
+        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
 
-        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone);
-
-        Assert.Equal(expectedArrival, $"{arrivalTime}");
-    }
-
-    [Fact(DisplayName = "TICKET-105: Investigation - Map all regions")]
-    public void Ticket105_Investigation()
-    {
-        var timeZones = TimeZoneInfo.GetSystemTimeZones().ToArray();
-        
-        var westernOffsetBand = timeZones.Where(tz => tz.BaseUtcOffset < TimeSpan.FromHours(-5.0)).ToList();
-
-        foreach (var timeZoneInfo in westernOffsetBand)
-        {
-            var timezone = timeZoneInfo.BaseUtcOffset.TotalHours;
-
-            var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone);
-
-            Assert.Equal("25/12/2024 23:00:00", $"{arrivalTime}");
-        }
-
-        var centralOffsetBand = timeZones.Where(tz => tz.BaseUtcOffset >= TimeSpan.FromHours(-5.0) &&
-                                                      tz.BaseUtcOffset < TimeSpan.FromHours(0))
-            .ToList();
-        foreach (var timeZoneInfo in centralOffsetBand)
-        {
-            var timezone = timeZoneInfo.BaseUtcOffset.TotalHours;
-            var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone);
-            Assert.Equal("24/12/2024 23:00:00", $"{arrivalTime}");
-        }
-
-        var easternOffsetBand = timeZones.Where(tz => tz.BaseUtcOffset >= TimeSpan.FromHours(0)).ToList();
-        foreach (var timeZoneInfo in easternOffsetBand)
-        {
-            var timezone = timeZoneInfo.BaseUtcOffset.TotalHours;
-            var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone);
-            Assert.Equal("24/12/2024 20:00:00", $"{arrivalTime}");
-        }
+        Assert.Equal("24/12/2024 20:00:00", $"{arrivalTime:dd/MM/yyyy HH:mm:ss}");
     }
 
     private static string SantaSchedulingArrival(int timezone) => RunSantaSchedulingApplication(["a", $"{timezone}"]);
@@ -146,5 +81,42 @@ public class SantaSchedulingTests
         SantaSchedulingApplication.Run(args);
 
         return output.ToString();
+    }
+}
+
+public class CentralZones : TheoryData<TimeZoneInfo>
+{
+    public CentralZones()
+    {
+        foreach (var timeZoneInfo in TimeZoneInfo.GetSystemTimeZones()
+                     .Where(tz => tz.BaseUtcOffset >= TimeSpan.FromHours(-5.0) &&
+                                  tz.BaseUtcOffset < TimeSpan.FromHours(+0.0)))
+        {
+            Add(timeZoneInfo);
+        }
+    }
+}
+
+public class EasternZones : TheoryData<TimeZoneInfo>
+{
+    public EasternZones()
+    {
+        foreach (var timeZoneInfo in TimeZoneInfo.GetSystemTimeZones()
+                     .Where(tz => tz.BaseUtcOffset >= TimeSpan.FromHours(+0.0)))
+        {
+            Add(timeZoneInfo);
+        }
+    }
+}
+
+public class WesternZones : TheoryData<TimeZoneInfo>
+{
+    public WesternZones()
+    {
+        foreach (var timeZoneInfo in TimeZoneInfo.GetSystemTimeZones()
+                     .Where(tz => tz.BaseUtcOffset < TimeSpan.FromHours(-5.0)))
+        {
+            Add(timeZoneInfo);
+        }
     }
 }
