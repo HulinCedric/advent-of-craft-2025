@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Xunit;
 
 namespace SantaScheduling.Tests;
@@ -9,11 +10,80 @@ public class SantaSchedulingTests
      * the scheduling logic from Program.cs into a testable method.
      */
     
-    [Fact(DisplayName = "TICKET-101: Investigation - Understand the pattern")]
-    public void Ticket101_Investigation()
+    [Fact]
+    public void ArrivalTestHarness()
     {
-        // For now, this test reminds you to refactor first
-        Assert.True(true, "Refactor Program.cs to make the logic testable");
+        using var santaSchedule = Process.Start(
+            new ProcessStartInfo
+            {
+                FileName = "SantaScheduling",
+                Arguments = "a 0",
+                RedirectStandardOutput = true
+            })!;
+
+        santaSchedule.WaitForExit();
+
+        var consoleOutput = santaSchedule.StandardOutput.ReadToEnd();
+
+        Assert.Equal($"Santa arrives: 24/12/2024 20:00:00{Environment.NewLine}", consoleOutput);
+    }
+    
+    [Fact]
+    public void DepartureTestHarness()
+    {
+        using var santaSchedule = Process.Start(
+            new ProcessStartInfo
+            {
+                FileName = "SantaScheduling",
+                Arguments = "l 0",
+                RedirectStandardOutput = true
+            })!;
+
+        santaSchedule.WaitForExit();
+
+        var consoleOutput = santaSchedule.StandardOutput.ReadToEnd();
+
+        Assert.Equal($"Santa departs: 25/12/2024 02:00:00{Environment.NewLine}", consoleOutput);
+    }
+    
+    [Fact]
+    public void HelpTestHarness()
+    {
+        using var santaSchedule = Process.Start(
+            new ProcessStartInfo
+            {
+                FileName = "SantaScheduling",
+                Arguments = "",
+                RedirectStandardOutput = true
+            })!;
+
+        santaSchedule.WaitForExit();
+
+        var consoleOutput = santaSchedule.StandardOutput.ReadToEnd();
+
+        Assert.Equal($"Usage: SantaScheduling <command> <timezone>{Environment.NewLine}" +
+                     $"Commands:{Environment.NewLine}" +
+                     $"  a - Show arrival time{Environment.NewLine}" +
+                     $"  l - Show departure time{Environment.NewLine}" +
+                     $"Example: SantaScheduling a -5{Environment.NewLine}", consoleOutput);
+    }
+    
+    [Fact]
+    public void UnknownCommandTestHarness()
+    {
+        using var santaSchedule = Process.Start(
+            new ProcessStartInfo
+            {
+                FileName = "SantaScheduling",
+                Arguments = "u 0",
+                RedirectStandardOutput = true
+            })!;
+
+        santaSchedule.WaitForExit();
+
+        var consoleOutput = santaSchedule.StandardOutput.ReadToEnd();
+
+        Assert.Equal($"Unknown command: u{Environment.NewLine}", consoleOutput);
     }
     
     [Fact(DisplayName = "TICKET-102: Investigation - Compare arrival times")]
