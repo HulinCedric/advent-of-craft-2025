@@ -45,33 +45,6 @@ public class SantaSchedulingTests
         Assert.Equal($"Unknown command: u{Environment.NewLine}", consoleOutput);
     }
 
-    [Theory]
-    [ClassData(typeof(WesternZones))]
-    public void Should_arrive_the_25th_at_11pm_in_western_timezones(TimeZoneInfo timezone)
-    {
-        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
-
-        Assert.Equal("12/25/2024 23:00:00", $"{arrivalTime}");
-    }
-
-    [Theory]
-    [ClassData(typeof(CentralZones))]
-    public void Should_arrive_the_24th_at_11pm_in_central_timezones(TimeZoneInfo timezone)
-    {
-        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
-
-        Assert.Equal("12/24/2024 23:00:00", $"{arrivalTime}");
-    }
-
-    [Theory]
-    [ClassData(typeof(EasternZones))]
-    public void Should_arrive_the_24th_at_8pm_in_eastern_timezones(TimeZoneInfo timezone)
-    {
-        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
-
-        Assert.Equal("12/24/2024 20:00:00", $"{arrivalTime}");
-    }
-
     private static string SantaSchedulingArrival(int timezone) => RunSantaSchedulingApplication(["a", $"{timezone}"]);
 
     private static string SantaSchedulingDeparture(int timezone) => RunSantaSchedulingApplication(["l", $"{timezone}"]);
@@ -84,6 +57,36 @@ public class SantaSchedulingTests
         SantaSchedulingApplication.Run(args);
 
         return output.ToString();
+    }
+}
+
+public class SantaShould
+{
+    [Theory]
+    [ClassData(typeof(WesternZones))]
+    public void Arrive_the_25th_at_11pm_in_western_timezones(TimeZoneInfo timezone)
+    {
+        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
+
+        Assert.Equal("12/25/2024 23:00:00", $"{arrivalTime}");
+    }
+
+    [Theory]
+    [ClassData(typeof(CentralZones))]
+    public void Arrive_the_24th_at_11pm_in_central_timezones(TimeZoneInfo timezone)
+    {
+        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
+
+        Assert.Equal("12/24/2024 23:00:00", $"{arrivalTime}");
+    }
+
+    [Theory]
+    [ClassData(typeof(EasternZones))]
+    public void Arrive_the_24th_at_8pm_in_eastern_timezones(TimeZoneInfo timezone)
+    {
+        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone.BaseUtcOffset.TotalHours);
+
+        Assert.Equal("12/24/2024 20:00:00", $"{arrivalTime}");
     }
 }
 
