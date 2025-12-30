@@ -1,13 +1,10 @@
 namespace SantaGiftDispatcher;
 
-using System;
-using System.Collections;
-
 internal static class Program
 {
     private static void Main()
     {
-        var inventory = new Hashtable
+        var inventory = new Dictionary<string, int>
         {
             ["Train"] = 1,
             ["Doll"] = 2,
@@ -16,9 +13,9 @@ internal static class Program
 
         var dispatcher = new SantaGiftDispatcher(inventory);
 
-        dispatcher.RegisterChild("Alice", new ArrayList { "Doll", "Train" });
-        dispatcher.RegisterChild("Bob", new ArrayList { "Train", "Doll" });
-        dispatcher.RegisterChild("Charlie", new ArrayList { "Puzzle" });
+        dispatcher.RegisterChild("Alice", ["Doll", "Train"]);
+        dispatcher.RegisterChild("Bob", ["Train", "Doll"]);
+        dispatcher.RegisterChild("Charlie", ["Puzzle"]);
 
         var results = dispatcher.Dispatch(maxGiftsPerChild: 2);
 
