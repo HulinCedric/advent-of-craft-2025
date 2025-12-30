@@ -52,33 +52,51 @@ public class SantaSchedulingTests
 
         var londonArrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone: 0);
 
-        Assert.Equal(new DateTime(year: 2024, month: 12, day: 24, hour: 20, minute: 0, second: 0), londonArrivalTime);
+        Assert.Equal("24/12/2024 20:00:00", $"{londonArrivalTime}");
 
         var newYorkArrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone: -5);
 
-        Assert.Equal(new DateTime(year: 2024, month: 12, day: 24, hour: 23, minute: 0, second: 0), newYorkArrivalTime);
+        Assert.Equal("24/12/2024 23:00:00", $"{newYorkArrivalTime}");
     }
 
-    [Fact(DisplayName = "TICKET-103: Investigation - Test boundary points")]
-    public void Ticket103_Investigation()
+    [Theory]
+    [InlineData(-7, "25/12/2024 23:00:00")]
+    [InlineData(-6, "25/12/2024 23:00:00")]
+    [InlineData(-5, "24/12/2024 23:00:00")]
+    [InlineData(-4, "24/12/2024 23:00:00")]
+    [InlineData(-1, "24/12/2024 23:00:00")]
+    [InlineData(0, "24/12/2024 20:00:00")]
+    [InlineData(1, "24/12/2024 20:00:00")]
+    public void Ticket103_Investigation(double timezone, string expectedArrival)
     {
         // After refactoring, test:
         // - What happens at exactly -5?
         // - What happens at exactly 0?
         // - Are they grouped with the zones before or after?
 
-        Assert.True(true, "Make it testable first");
+        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone);
+
+        Assert.Equal(expectedArrival, $"{arrivalTime}");
     }
 
-    [Fact(DisplayName = "TICKET-104: Investigation - Mumbai and Newfoundland")]
-    public void Ticket104_Investigation()
+    [Theory(DisplayName = "TICKET-104: Investigation - Mumbai and Newfoundland")]
+    [InlineData(+5.5, "24/12/2024 20:00:00")]
+    [InlineData(+0.1, "24/12/2024 20:00:00")]
+    [InlineData(+0, "24/12/2024 20:00:00")]
+    [InlineData(-0.1, "24/12/2024 23:00:00")]
+    [InlineData(-3.5, "24/12/2024 23:00:00")]
+    [InlineData(-5.0, "24/12/2024 23:00:00")]
+    [InlineData(-5.1, "25/12/2024 23:00:00")]
+    public void Ticket104_Investigation(double timezone, string expectedArrival)
     {
         // After refactoring, test:
         // - Mumbai: UTC+5.5
         // - Newfoundland: UTC-3.5
         // - How are half-hour offsets handled?
 
-        Assert.True(true, "Refactor, then investigate");
+        var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone);
+
+        Assert.Equal(expectedArrival, $"{arrivalTime}");
     }
 
     [Fact(DisplayName = "TICKET-105: Investigation - Map all regions")]
