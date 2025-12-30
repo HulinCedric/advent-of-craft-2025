@@ -12,12 +12,7 @@ public class SantaSchedulingTests
     [Fact]
     public void ArrivalTestHarness()
     {
-        var output = new StringWriter();
-        Console.SetOut(output);
-
-        SantaSchedulingApplication.Run(["a", "0"]);
-
-        var consoleOutput = output.ToString();
+        var consoleOutput = RunSantaSchedulingApplication(["a", "0"]);
 
         Assert.Equal($"Santa arrives: 24/12/2024 20:00:00{Environment.NewLine}", consoleOutput);
     }
@@ -25,12 +20,7 @@ public class SantaSchedulingTests
     [Fact]
     public void DepartureTestHarness()
     {
-        var output = new StringWriter();
-        Console.SetOut(output);
-
-        SantaSchedulingApplication.Run(["l", "0"]);
-
-        var consoleOutput = output.ToString();
+        var consoleOutput = RunSantaSchedulingApplication(["l", "0"]);
 
         Assert.Equal($"Santa departs: 25/12/2024 02:00:00{Environment.NewLine}", consoleOutput);
     }
@@ -38,13 +28,8 @@ public class SantaSchedulingTests
     [Fact]
     public void HelpTestHarness()
     {
-        var output = new StringWriter();
-        Console.SetOut(output);
-
-        SantaSchedulingApplication.Run([]);
-
-        var consoleOutput = output.ToString();
-
+        var consoleOutput = RunSantaSchedulingApplication([]);
+        
         Assert.Equal(
             $"Usage: SantaScheduling <command> <timezone>{Environment.NewLine}" +
             $"Commands:{Environment.NewLine}" +
@@ -57,13 +42,8 @@ public class SantaSchedulingTests
     [Fact]
     public void UnknownCommandTestHarness()
     {
-        var output = new StringWriter();
-        Console.SetOut(output);
-
-        SantaSchedulingApplication.Run(["u", "0"]);
-
-        var consoleOutput = output.ToString();
-
+        var consoleOutput = RunSantaSchedulingApplication(["u", "0"]);
+        
         Assert.Equal($"Unknown command: u{Environment.NewLine}", consoleOutput);
     }
 
@@ -109,5 +89,15 @@ public class SantaSchedulingTests
         // - UTC-12 to UTC+14 - what's the complete picture?
 
         Assert.True(true, "Extract logic, then map the rules");
+    }
+    
+    private static string RunSantaSchedulingApplication(string[] args)
+    {
+        var output = new StringWriter();
+        Console.SetOut(output);
+
+        SantaSchedulingApplication.Run(args);
+
+        return output.ToString();
     }
 }
