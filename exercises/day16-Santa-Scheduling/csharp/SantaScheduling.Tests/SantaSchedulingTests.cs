@@ -102,12 +102,36 @@ public class SantaSchedulingTests
     [Fact(DisplayName = "TICKET-105: Investigation - Map all regions")]
     public void Ticket105_Investigation()
     {
-        // After refactoring, document:
-        // - How many different rules are there?
-        // - What timezone ranges does each rule cover?
-        // - UTC-12 to UTC+14 - what's the complete picture?
+        var timeZones = TimeZoneInfo.GetSystemTimeZones().ToArray();
+        
+        var westernOffsetBand = timeZones.Where(tz => tz.BaseUtcOffset < TimeSpan.FromHours(-5.0)).ToList();
 
-        Assert.True(true, "Extract logic, then map the rules");
+        foreach (var timeZoneInfo in westernOffsetBand)
+        {
+            var timezone = timeZoneInfo.BaseUtcOffset.TotalHours;
+
+            var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone);
+
+            Assert.Equal("25/12/2024 23:00:00", $"{arrivalTime}");
+        }
+
+        var centralOffsetBand = timeZones.Where(tz => tz.BaseUtcOffset >= TimeSpan.FromHours(-5.0) &&
+                                                      tz.BaseUtcOffset < TimeSpan.FromHours(0))
+            .ToList();
+        foreach (var timeZoneInfo in centralOffsetBand)
+        {
+            var timezone = timeZoneInfo.BaseUtcOffset.TotalHours;
+            var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone);
+            Assert.Equal("24/12/2024 23:00:00", $"{arrivalTime}");
+        }
+
+        var easternOffsetBand = timeZones.Where(tz => tz.BaseUtcOffset >= TimeSpan.FromHours(0)).ToList();
+        foreach (var timeZoneInfo in easternOffsetBand)
+        {
+            var timezone = timeZoneInfo.BaseUtcOffset.TotalHours;
+            var arrivalTime = SantaSchedulingArrivalCommand.ComputeArrival(timezone);
+            Assert.Equal("24/12/2024 20:00:00", $"{arrivalTime}");
+        }
     }
 
     private static string SantaSchedulingArrival(int timezone) => RunSantaSchedulingApplication(["a", $"{timezone}"]);
