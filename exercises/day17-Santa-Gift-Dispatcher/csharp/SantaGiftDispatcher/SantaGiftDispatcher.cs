@@ -71,37 +71,34 @@ public sealed class SantaGiftDispatcher
             // 1) Wishlist in order.
             foreach (var wishedGift in child.Wishlist)
             {
-                if (TryTakeOne(wishedGift)) return wishedGift;
+                var picked = TakeOne(wishedGift);
+                if (picked.IsSome) return picked;
             }
 
             // 2) Fallback: anything still in stock.
-            if (TryTakeAnyOne(out var anyGift)) return anyGift;
-
-            return None;
+            return TakeAnyOne();
         }
 
-        private bool TryTakeOne(string giftKey)
+        private Option<string> TakeOne(string gift)
         {
-            if (!_remainingByGift.TryGetValue(giftKey, out var count) || count <= 0) return false;
+            if (!_remainingByGift.TryGetValue(gift, out var count) || count <= 0) return None;
 
-            _remainingByGift[giftKey] = count - 1;
-            return true;
+            _remainingByGift[gift] = count - 1;
+            return gift;
         }
 
-        private bool TryTakeAnyOne(out string? giftKey)
+        private Option<string> TakeAnyOne()
         {
             foreach (var kvp in _remainingByGift)
             {
                 if (kvp.Value > 0)
                 {
                     _remainingByGift[kvp.Key] = kvp.Value - 1;
-                    giftKey = kvp.Key;
-                    return true;
+                    return kvp.Key;
                 }
             }
 
-            giftKey = null;
-            return false;
+            return None;
         }
     }
 }
