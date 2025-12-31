@@ -39,16 +39,15 @@ public sealed class SantaGiftDispatcher
         return assignments;
     }
 
-    private IEnumerable<GiftAssignment> AssignGifts(ChildWishlistRequest child, int maxGiftsPerChild)
-    {
-        var assignments = new List<GiftAssignment>();
-        for (var remainingSlots = maxGiftsPerChild; remainingSlots > 0; remainingSlots--)
-        {
-            AssignGift(child).Do(assignments.Add);
-        }
-
-        return assignments;
-    }
+    private Seq<GiftAssignment> AssignGifts(ChildWishlistRequest child, int maxGiftsPerChild)
+        => Enumerable.Repeat(child, maxGiftsPerChild)
+            .Fold(
+                new Seq<GiftAssignment>(),
+                (assignments, childRequest)
+                    => AssignGift(childRequest)
+                        .Match(
+                            Some: assignments.Add,
+                            None: () => assignments));
 
     private Option<GiftAssignment> AssignGift(ChildWishlistRequest child)
     {
