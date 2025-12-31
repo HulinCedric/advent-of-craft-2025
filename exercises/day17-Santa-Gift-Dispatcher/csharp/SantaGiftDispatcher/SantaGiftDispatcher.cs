@@ -28,22 +28,17 @@ public sealed class SantaGiftDispatcher
     /// </summary>
     public IReadOnlyList<GiftAssignment> Dispatch(int maxGiftsPerChild)
     {
-        var assignments = new List<GiftAssignment>();
+        if (maxGiftsPerChild <= 0) return [];
 
-        if (maxGiftsPerChild <= 0) return assignments;
-
-        foreach (var child in _registeredChildren)
-        {
-            assignments.AddRange(AssignGifts(child, maxGiftsPerChild));
-        }
-
-        return assignments;
+        return _registeredChildren.Fold(
+            new Lst<GiftAssignment>(),
+            (assignments, child) => assignments.AddRange(AssignGifts(child, maxGiftsPerChild)));
     }
 
-    private Seq<GiftAssignment> AssignGifts(ChildWishlistRequest child, int maxGiftsPerChild)
+    private Lst<GiftAssignment> AssignGifts(ChildWishlistRequest child, int maxGiftsPerChild)
         => Enumerable.Repeat(child, maxGiftsPerChild)
             .Fold(
-                new Seq<GiftAssignment>(),
+                new Lst<GiftAssignment>(),
                 (assignments, childRequest)
                     => AssignGift(childRequest)
                         .Match(
@@ -71,6 +66,20 @@ public sealed class SantaGiftDispatcher
         public static WorkshopInventory FromDictionary(IDictionary<string, int> initialInventory)
             => new(new Dictionary<string, int>(initialInventory));
 
+        public Option<string> PickOnePotentialGiftFor(ChildWishlistRequest child)
+        {
+            // 1) Wishlist in order.
+            foreach (var wishedGift in child.Wishlist)
+            {
+                if (TryTakeOne(wishedGift)) return wishedGift;
+            }
+
+            // 2) Fallback: anything still in stock.
+            if (TryTakeAnyOne(out var anyGift)) return anyGift;
+
+            return None;
+        }
+
         private bool TryTakeOne(string giftKey)
         {
             if (!_remainingByGift.TryGetValue(giftKey, out var count) || count <= 0) return false;
@@ -93,20 +102,6 @@ public sealed class SantaGiftDispatcher
 
             giftKey = null;
             return false;
-        }
-
-        public Option<string> PickOnePotentialGiftFor(ChildWishlistRequest child)
-        {
-            // 1) Wishlist in order.
-            foreach (var wishedGift in child.Wishlist)
-            {
-                if (TryTakeOne(wishedGift)) return wishedGift;
-            }
-
-            // 2) Fallback: anything still in stock.
-            if (TryTakeAnyOne(out var anyGift)) return anyGift;
-
-            return None;
         }
     }
 }
