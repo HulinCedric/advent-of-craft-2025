@@ -39,16 +39,16 @@ public sealed class SantaGiftDispatcher
 
     private IEnumerable<GiftAssignment> AssignGifts(ChildWishlistRequest child, int maxGiftsPerChild)
     {
-        var childAssignments = new List<GiftAssignment>();
+        var assignments = new List<GiftAssignment>();
         for (var remainingSlots = maxGiftsPerChild; remainingSlots > 0; remainingSlots--)
         {
             var giftAssignment = AssignGift(child);
             if (giftAssignment is null) break;
 
-            childAssignments.Add(giftAssignment);
+            assignments.Add(giftAssignment);
         }
 
-        return childAssignments;
+        return assignments;
     }
 
     private GiftAssignment? AssignGift(ChildWishlistRequest child)
