@@ -45,7 +45,7 @@ public sealed class SantaGiftDispatcher
             {
                 if (!TryPickOneGiftFor(child, out var pickedGift)) break;
 
-                assignments.Add(new GiftAssignment(child.ChildName, pickedGift!.ToString()!));
+                assignments.Add(new GiftAssignment(child.ChildName, pickedGift));
             }
         }
 
