@@ -33,14 +33,22 @@ public sealed class SantaGiftDispatcher
         {
             for (var remainingSlots = maxGiftsPerChild; remainingSlots > 0; remainingSlots--)
             {
-                var pickedGift = _inventory.PickOnePotentialGiftFor(child);
-                if (pickedGift is null) break;
+                var giftAssignment = AssignGift(child);
+                if (giftAssignment is null) break;
 
-                assignments.Add(new GiftAssignment(child.ChildName, pickedGift));
+                assignments.Add(giftAssignment);
             }
         }
 
         return assignments;
+    }
+
+    private GiftAssignment? AssignGift(ChildWishlistRequest child)
+    {
+        var pickedGift = _inventory.PickOnePotentialGiftFor(child);
+        return pickedGift is null
+            ? null
+            : new GiftAssignment(child.ChildName, pickedGift);
     }
 
     private sealed record ChildWishlistRequest(string ChildName, IReadOnlyList<string> Wishlist);
