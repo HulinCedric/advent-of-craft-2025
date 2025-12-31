@@ -15,18 +15,8 @@ public sealed class SantaGiftDispatcher
     ///     Registers a child and their ordered wishlist. Children are processed in registration order.
     ///     The wishlist is copied defensively.
     /// </summary>
-    public void RegisterChild(string childName, IList<string> wishlist)
-    {
-        if (childName == null || wishlist == null) return;
-
-        var copiedWishlist = new List<string>(wishlist.Count);
-        foreach (var gift in wishlist)
-        {
-            copiedWishlist.Add(gift);
-        }
-
-        _registeredChildren.Add(new ChildWishlistRequest(childName, copiedWishlist));
-    }
+    public void RegisterChild(string childName, IEnumerable<string> wishlist)
+        => _registeredChildren.Add(new ChildWishlistRequest(childName, new List<string>(wishlist)));
 
     /// <summary>
     ///     Assigns up to <paramref name="maxGiftsPerChild" /> gifts per child.
