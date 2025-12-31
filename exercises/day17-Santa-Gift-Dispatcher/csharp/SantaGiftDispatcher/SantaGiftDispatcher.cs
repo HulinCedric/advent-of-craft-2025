@@ -42,24 +42,23 @@ public sealed class SantaGiftDispatcher
     private Lst<GiftAssignment> DispatchForChild(
         Lst<GiftAssignment> giftAssignments,
         ChildWishlist child,
-        int maxGiftsPerChild)
-        => giftAssignments.AddRange(AssignGiftsForChild(child, maxGiftsPerChild));
+        int numberOfGifts)
+        => giftAssignments.AddRange(AssignGiftsForChild(child, numberOfGifts));
 
-    private Lst<GiftAssignment> AssignGiftsForChild(ChildWishlist wishList, int maxGiftsPerChild)
-        => GiftSlots(maxGiftsPerChild)
+    private Lst<GiftAssignment> AssignGiftsForChild(ChildWishlist wishList, int numberOfGifts)
+        => GiftSlots(numberOfGifts)
             .Fold(
                 new Lst<GiftAssignment>(),
                 (giftAssignments, _) => AssignGiftForChild(giftAssignments, wishList));
 
-    private static IEnumerable<Unit> GiftSlots(int maxGiftsPerChild) => Enumerable.Repeat(unit, maxGiftsPerChild);
+    private static IEnumerable<Unit> GiftSlots(int numberOfGifts) => Enumerable.Repeat(unit, numberOfGifts);
 
     private Lst<GiftAssignment> AssignGiftForChild(Lst<GiftAssignment> giftAssignments, ChildWishlist child)
-        => PickOneGiftForChild(child)
+        => _inventory
+            .PickOneGift(child)
             .Match(
                 Some: giftAssignments.Add,
                 None: () => giftAssignments);
-
-    private Option<GiftAssignment> PickOneGiftForChild(ChildWishlist child) => _inventory.PickOneGift(child);
 
     private sealed record Gift(string Name);
 
