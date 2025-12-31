@@ -68,36 +68,20 @@ public sealed class SantaGiftDispatcher
 
         public Option<string> PickOnePotentialGiftFor(ChildWishlistRequest child)
         {
-            // 1) Wishlist in order.
-            foreach (var wishedGift in child.Wishlist)
-            {
-                var picked = TakeOne(wishedGift);
-                if (picked.IsSome) return picked;
-            }
+            var potentialGift =
+                // 1) Wishlist in order.
+                child.Wishlist.Map(PotentialWishedGift)
+                    // 2) Fallback: anything still in stock.
+                    .Append(PotentialAvailableGift())
+                    .Somes()
+                    .HeadOrNone();
 
-            // 2) Fallback: anything still in stock.
-            return TakeAnyOne();
+            PickInInventory(potentialGift);
+
+            return potentialGift.Map(gift => gift.Key);
         }
 
-        private Option<string> TakeOne(string giftName)
-        {
-            var potentialWishedGift = PotentialWishedGift(giftName);
-
-            Pick(potentialWishedGift);
-
-            return potentialWishedGift.Map(gift => gift.Key);
-        }
-
-        private Option<string> TakeAnyOne()
-        {
-            var potentialAvailableGift = PotentialAvailableGift();
-
-            Pick(potentialAvailableGift);
-
-            return potentialAvailableGift.Map(f => f.Key);
-        }
-
-        private void Pick(Option<(string Key, int Value)> potentialWishedGift)
+        private void PickInInventory(Option<(string Key, int Value)> potentialWishedGift)
             => _remainingByGift = potentialWishedGift
                 .Map(gift => _remainingByGift.AddOrUpdate(gift.Key, gift.Value - 1))
                 .IfNone(_remainingByGift);
