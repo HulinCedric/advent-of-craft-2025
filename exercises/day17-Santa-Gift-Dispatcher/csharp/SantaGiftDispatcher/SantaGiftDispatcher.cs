@@ -1,3 +1,5 @@
+using LanguageExt;
+
 namespace SantaGiftDispatcher;
 
 /// <summary>
@@ -42,20 +44,17 @@ public sealed class SantaGiftDispatcher
         var assignments = new List<GiftAssignment>();
         for (var remainingSlots = maxGiftsPerChild; remainingSlots > 0; remainingSlots--)
         {
-            var giftAssignment = AssignGift(child);
-            if (giftAssignment is null) break;
-
-            assignments.Add(giftAssignment);
+            AssignGift(child).Do(assignments.Add);
         }
 
         return assignments;
     }
 
-    private GiftAssignment? AssignGift(ChildWishlistRequest child)
+    private Option<GiftAssignment> AssignGift(ChildWishlistRequest child)
     {
         var pickedGift = _inventory.PickOnePotentialGiftFor(child);
         return pickedGift is null
-            ? null
+            ? Prelude.None
             : new GiftAssignment(child.ChildName, pickedGift);
     }
 
