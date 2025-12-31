@@ -10,8 +10,8 @@ public class SantaGiftDispatcherTests
     {
         var inventory = new Dictionary<string, int>
         {
-            ["Train"] = 2,
-            ["Doll"] = 1,
+            ["Train"] = 1,
+            ["Doll"] = 2,
             ["Coal"] = 1
         };
 
@@ -27,7 +27,7 @@ public class SantaGiftDispatcherTests
             .BeEquivalentTo(
                 [
                     new SantaGiftDispatcher.GiftAssignment("Alice", "Doll"),
-                    new SantaGiftDispatcher.GiftAssignment("Alice", "Train"),
+                    new SantaGiftDispatcher.GiftAssignment("Alice", "Doll"),
                     new SantaGiftDispatcher.GiftAssignment("Bob", "Train"),
                     new SantaGiftDispatcher.GiftAssignment("Bob", "Coal"),
                 ],
@@ -39,8 +39,8 @@ public class SantaGiftDispatcherTests
     {
         var inventory = new Hashtable
         {
-            ["Train"] = 2,
-            ["Doll"] = 1,
+            ["Train"] = 1,
+            ["Doll"] = 2,
             ["Coal"] = 1
         };
 
@@ -57,7 +57,7 @@ public class SantaGiftDispatcherTests
                 new ArrayList
                 {
                     new D.G("Alice", "Doll"),
-                    new D.G("Alice", "Train"),
+                    new D.G("Alice", "Doll"),
                     new D.G("Bob", "Train"),
                     new D.G("Bob", "Coal")
                 },

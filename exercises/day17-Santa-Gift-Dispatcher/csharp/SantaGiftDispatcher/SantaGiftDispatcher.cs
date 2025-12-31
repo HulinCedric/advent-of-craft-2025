@@ -43,37 +43,14 @@ public sealed class SantaGiftDispatcher
         {
             for (var remainingSlots = maxGiftsPerChild; remainingSlots > 0; remainingSlots--)
             {
-                if (!TryPickOneGiftFor(child, out var pickedGift)) break;
+                var pickedGift = _inventory.PickOnePotentialGiftFor(child);
+                if (pickedGift is null) break;
 
                 assignments.Add(new GiftAssignment(child.ChildName, pickedGift));
             }
         }
 
         return assignments;
-    }
-
-    private bool TryPickOneGiftFor(ChildWishlistRequest child, out string? pickedGift)
-    {
-        pickedGift = null;
-
-        // 1) Wishlist in order.
-        foreach (var wishedGift in child.Wishlist)
-        {
-            if (_inventory.TryTakeOne(wishedGift))
-            {
-                pickedGift = wishedGift;
-                return true;
-            }
-        }
-
-        // 2) Fallback: anything still in stock.
-        if (_inventory.TryTakeAnyOne(out var anyGift))
-        {
-            pickedGift = anyGift;
-            return true;
-        }
-
-        return false;
     }
 
     private sealed record ChildWishlistRequest(string ChildName, IReadOnlyList<string> Wishlist);
@@ -114,6 +91,20 @@ public sealed class SantaGiftDispatcher
 
             giftKey = null;
             return false;
+        }
+
+        public string? PickOnePotentialGiftFor(ChildWishlistRequest child)
+        {
+            // 1) Wishlist in order.
+            foreach (var wishedGift in child.Wishlist)
+            {
+                if (TryTakeOne(wishedGift)) return wishedGift;
+            }
+
+            // 2) Fallback: anything still in stock.
+            if (TryTakeAnyOne(out var anyGift)) return anyGift;
+
+            return null;
         }
     }
 }
