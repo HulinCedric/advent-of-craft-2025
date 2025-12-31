@@ -8,8 +8,8 @@ namespace SantaGiftDispatcher;
 /// </summary>
 public sealed class SantaGiftDispatcher
 {
+    private readonly List<ChildWishlistRequest> _children = new();
     private readonly WorkshopInventory _inventory;
-    private readonly List<ChildWishlistRequest> _registeredChildren = new();
 
     public SantaGiftDispatcher(IDictionary<string, int> initialInventory)
         => _inventory = WorkshopInventory.FromDictionary(initialInventory);
@@ -19,7 +19,7 @@ public sealed class SantaGiftDispatcher
     ///     The wishlist is copied defensively.
     /// </summary>
     public void RegisterChild(string childName, IEnumerable<string> wishlist)
-        => _registeredChildren.Add(new ChildWishlistRequest(childName, new List<string>(wishlist)));
+        => _children.Add(new ChildWishlistRequest(childName, new List<string>(wishlist)));
 
     /// <summary>
     ///     Assigns up to <paramref name="maxGiftsPerChild" /> gifts per child.
@@ -30,22 +30,22 @@ public sealed class SantaGiftDispatcher
     {
         if (maxGiftsPerChild <= 0) return [];
 
-        return _registeredChildren.Fold(
+        return _children.Fold(
             new Lst<GiftAssignment>(),
-            (assignments, child) => assignments.AddRange(AssignGifts(child, maxGiftsPerChild)));
+            (giftAssignments, child) => giftAssignments.AddRange(AssignGiftsForChild(child, maxGiftsPerChild)));
     }
 
-    private Lst<GiftAssignment> AssignGifts(ChildWishlistRequest child, int maxGiftsPerChild)
+    private Lst<GiftAssignment> AssignGiftsForChild(ChildWishlistRequest child, int maxGiftsPerChild)
         => Enumerable.Repeat(child, maxGiftsPerChild)
             .Fold(
                 new Lst<GiftAssignment>(),
-                (assignments, childRequest)
-                    => AssignGift(childRequest)
+                (giftAssignments, childRequest)
+                    => AssignGiftForChild(childRequest)
                         .Match(
-                            Some: assignments.Add,
-                            None: () => assignments));
+                            Some: giftAssignments.Add,
+                            None: () => giftAssignments));
 
-    private Option<GiftAssignment> AssignGift(ChildWishlistRequest child)
+    private Option<GiftAssignment> AssignGiftForChild(ChildWishlistRequest child)
         => _inventory
             .PickOnePotentialGiftFor(child)
             .Map(pickedGift => new GiftAssignment(child.ChildName, pickedGift));
