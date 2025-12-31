@@ -68,33 +68,33 @@ public sealed class SantaGiftDispatcher
 
         public Option<string> PickOnePotentialGiftFor(ChildWishlistRequest child)
         {
-            var potentialGift =
-                // 1) Wishlist in order.
-                child.Wishlist.Map(PotentialWishedGift)
-                    // 2) Fallback: anything still in stock.
-                    .Append(PotentialAvailableGift())
+            var gift =
+                AvailableWishedGiftsInOrder(child.Wishlist)
+                    .Append(FirstGiftInStock())
                     .Somes()
                     .HeadOrNone();
 
-            PickInInventory(potentialGift);
+            PickOneInInventory(gift);
 
-            return potentialGift.Map(gift => gift.Key);
+            return gift;
         }
 
-        private void PickInInventory(Option<(string Key, int Value)> potentialWishedGift)
-            => _remainingByGift = potentialWishedGift
-                .Map(gift => _remainingByGift.AddOrUpdate(gift.Key, gift.Value - 1))
-                .IfNone(_remainingByGift);
+        private IEnumerable<Option<string>> AvailableWishedGiftsInOrder(IReadOnlyList<string> wishedGifts)
+            => wishedGifts.Map(WishedGiftInStock);
 
-        private Option<(string Key, int Value)> PotentialWishedGift(string giftName)
+        private Option<string> WishedGiftInStock(string giftName)
             => _remainingByGift
-                .Find(gift => gift.Key == giftName && gift.Value > 0);
+                .Find(gift => gift.Key == giftName && gift.Value > 0)
+                .Map(gift => gift.Key);
 
-        private Option<(string Key, int Value)> PotentialAvailableGift()
-        {
-            var potentialAvailableGift = _remainingByGift
-                .Find(gift => gift.Value > 0);
-            return potentialAvailableGift;
-        }
+        private Option<string> FirstGiftInStock()
+            => _remainingByGift
+                .Find(gift => gift.Value > 0)
+                .Map(gift => gift.Key);
+
+        private void PickOneInInventory(Option<string> potentialGift)
+            => _remainingByGift = potentialGift
+                .Map(gift => _remainingByGift.AddOrUpdate(gift, availableInStock => availableInStock - 1, 0))
+                .IfNone(_remainingByGift);
     }
 }
