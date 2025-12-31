@@ -59,12 +59,12 @@ public sealed class SantaGiftDispatcher
 
     private sealed class WorkshopInventory
     {
-        private readonly Dictionary<string, int> _remainingByGift;
+        private Map<string, int> _remainingByGift;
 
-        private WorkshopInventory(Dictionary<string, int> remainingByGift) => _remainingByGift = remainingByGift;
+        private WorkshopInventory(Map<string, int> remainingByGift) => _remainingByGift = remainingByGift;
 
         public static WorkshopInventory FromDictionary(IDictionary<string, int> initialInventory)
-            => new(new Dictionary<string, int>(initialInventory));
+            => new(toMap(initialInventory));
 
         public Option<string> PickOnePotentialGiftFor(ChildWishlistRequest child)
         {
@@ -79,26 +79,38 @@ public sealed class SantaGiftDispatcher
             return TakeAnyOne();
         }
 
-        private Option<string> TakeOne(string gift)
+        private Option<string> TakeOne(string giftName)
         {
-            if (!_remainingByGift.TryGetValue(gift, out var count) || count <= 0) return None;
+            var potentialWishedGift = PotentialWishedGift(giftName);
 
-            _remainingByGift[gift] = count - 1;
-            return gift;
+            Pick(potentialWishedGift);
+
+            return potentialWishedGift.Map(gift => gift.Key);
         }
 
         private Option<string> TakeAnyOne()
         {
-            foreach (var kvp in _remainingByGift)
-            {
-                if (kvp.Value > 0)
-                {
-                    _remainingByGift[kvp.Key] = kvp.Value - 1;
-                    return kvp.Key;
-                }
-            }
+            var potentialAvailableGift = PotentialAvailableGift();
 
-            return None;
+            Pick(potentialAvailableGift);
+
+            return potentialAvailableGift.Map(f => f.Key);
+        }
+
+        private void Pick(Option<(string Key, int Value)> potentialWishedGift)
+            => _remainingByGift = potentialWishedGift
+                .Map(gift => _remainingByGift.AddOrUpdate(gift.Key, gift.Value - 1))
+                .IfNone(_remainingByGift);
+
+        private Option<(string Key, int Value)> PotentialWishedGift(string giftName)
+            => _remainingByGift
+                .Find(gift => gift.Key == giftName && gift.Value > 0);
+
+        private Option<(string Key, int Value)> PotentialAvailableGift()
+        {
+            var potentialAvailableGift = _remainingByGift
+                .Find(gift => gift.Value > 0);
+            return potentialAvailableGift;
         }
     }
 }
