@@ -1,4 +1,5 @@
 using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace SantaGiftDispatcher;
 
@@ -50,12 +51,9 @@ public sealed class SantaGiftDispatcher
                             None: () => assignments));
 
     private Option<GiftAssignment> AssignGift(ChildWishlistRequest child)
-    {
-        var pickedGift = _inventory.PickOnePotentialGiftFor(child);
-        return pickedGift is null
-            ? Prelude.None
-            : new GiftAssignment(child.ChildName, pickedGift);
-    }
+        => _inventory
+            .PickOnePotentialGiftFor(child)
+            .Map(pickedGift => new GiftAssignment(child.ChildName, pickedGift));
 
     private sealed record ChildWishlistRequest(string ChildName, IReadOnlyList<string> Wishlist);
 
@@ -97,7 +95,7 @@ public sealed class SantaGiftDispatcher
             return false;
         }
 
-        public string? PickOnePotentialGiftFor(ChildWishlistRequest child)
+        public Option<string> PickOnePotentialGiftFor(ChildWishlistRequest child)
         {
             // 1) Wishlist in order.
             foreach (var wishedGift in child.Wishlist)
@@ -108,7 +106,7 @@ public sealed class SantaGiftDispatcher
             // 2) Fallback: anything still in stock.
             if (TryTakeAnyOne(out var anyGift)) return anyGift;
 
-            return null;
+            return None;
         }
     }
 }
