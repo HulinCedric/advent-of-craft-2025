@@ -33,9 +33,7 @@ public sealed class SantaGiftDispatcher
     ///     we use any remaining stock.
     /// </summary>
     public IReadOnlyList<GiftAssignment> Dispatch(int maxGiftsPerChild)
-        => maxGiftsPerChild <= 0
-            ? []
-            : DispatchForAllChildren(maxGiftsPerChild);
+        => DispatchForAllChildren(maxGiftsPerChild);
 
     private Lst<GiftAssignment> DispatchForAllChildren(int maxGiftsPerChild)
         => _children.Fold(

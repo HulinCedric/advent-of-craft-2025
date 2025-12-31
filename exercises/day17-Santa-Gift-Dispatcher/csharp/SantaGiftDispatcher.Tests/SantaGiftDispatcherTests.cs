@@ -29,9 +29,46 @@ public class SantaGiftDispatcherTests
                     new SantaGiftDispatcher.GiftAssignment("Alice", "Doll"),
                     new SantaGiftDispatcher.GiftAssignment("Alice", "Doll"),
                     new SantaGiftDispatcher.GiftAssignment("Bob", "Train"),
-                    new SantaGiftDispatcher.GiftAssignment("Bob", "Coal"),
+                    new SantaGiftDispatcher.GiftAssignment("Bob", "Coal")
                 ],
                 options => options.WithStrictOrdering());
+    }
+
+    [Fact]
+    public void Max_gift_is_zero()
+    {
+        var inventory = new Dictionary<string, int>
+        {
+            ["Train"] = 1,
+            ["Doll"] = 2,
+            ["Coal"] = 1
+        };
+
+        var dispatcher = new SantaGiftDispatcher(inventory);
+
+        dispatcher.RegisterChild("Alice", ["Doll", "Train"]);
+        dispatcher.RegisterChild("Bob", ["Train", "Doll"]);
+        dispatcher.RegisterChild("Charlie", ["Puzzle"]);
+
+        var results = dispatcher.Dispatch(maxGiftsPerChild: 0);
+
+        results.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Empty_inventory()
+    {
+        var inventory = new Dictionary<string, int>();
+
+        var dispatcher = new SantaGiftDispatcher(inventory);
+
+        dispatcher.RegisterChild("Alice", ["Doll", "Train"]);
+        dispatcher.RegisterChild("Bob", ["Train", "Doll"]);
+        dispatcher.RegisterChild("Charlie", ["Puzzle"]);
+
+        var results = dispatcher.Dispatch(maxGiftsPerChild: 2);
+
+        results.Should().BeEmpty();
     }
 
     [Fact]
