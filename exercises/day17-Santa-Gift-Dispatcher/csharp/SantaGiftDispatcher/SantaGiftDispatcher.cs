@@ -8,18 +8,24 @@ namespace SantaGiftDispatcher;
 /// </summary>
 public sealed class SantaGiftDispatcher
 {
-    private readonly List<ChildWishlistRequest> _children = new();
+    private readonly List<ChildWishlistRequest> _children;
     private readonly WorkshopInventory _inventory;
 
     public SantaGiftDispatcher(IDictionary<string, int> initialInventory)
-        => _inventory = WorkshopInventory.FromDictionary(initialInventory);
+    {
+        _children = [];
+        _inventory = WorkshopInventory.FromDictionary(initialInventory);
+    }
 
     /// <summary>
     ///     Registers a child and their ordered wishlist. Children are processed in registration order.
     ///     The wishlist is copied defensively.
     /// </summary>
     public void RegisterChild(string childName, IEnumerable<string> wishlist)
-        => _children.Add(new ChildWishlistRequest(childName, new List<string>(wishlist)));
+        => _children.Add(
+            new ChildWishlistRequest(
+                childName,
+                wishlist.Select(giftName => new Gift(giftName)).ToList()));
 
     /// <summary>
     ///     Assigns up to <paramref name="maxGiftsPerChild" /> gifts per child.
@@ -48,51 +54,52 @@ public sealed class SantaGiftDispatcher
     private Option<GiftAssignment> AssignGiftForChild(ChildWishlistRequest child)
         => _inventory
             .PickOnePotentialGiftFor(child)
-            .Map(pickedGift => new GiftAssignment(child.ChildName, pickedGift));
+            .Map(pickedGift => new GiftAssignment(child.ChildName, pickedGift.Name));
 
-    private sealed record ChildWishlistRequest(string ChildName, IReadOnlyList<string> Wishlist);
+    private sealed record Gift(string Name);
 
-    public sealed record GiftAssignment(string ChildName, string Gift)
+    private sealed record ChildWishlistRequest(string ChildName, IReadOnlyList<Gift> Wishlist);
+
+    public sealed record GiftAssignment(string ChildName, string GiftName)
     {
-        public override string ToString() => $"{ChildName} -> {Gift}";
+        public override string ToString() => $"{ChildName} -> {GiftName}";
     }
 
     private sealed class WorkshopInventory
     {
-        private Map<string, int> _remainingByGift;
+        private HashMap<Gift, int> _remainingByGift;
 
-        private WorkshopInventory(Map<string, int> remainingByGift) => _remainingByGift = remainingByGift;
+        private WorkshopInventory(HashMap<Gift, int> remainingByGift) => _remainingByGift = remainingByGift;
 
         public static WorkshopInventory FromDictionary(IDictionary<string, int> initialInventory)
-            => new(toMap(initialInventory));
+            => new(toHashMap(initialInventory.ToDictionary(kvp => new Gift(kvp.Key), kvp => kvp.Value)));
 
-        public Option<string> PickOnePotentialGiftFor(ChildWishlistRequest child)
+        public Option<Gift> PickOnePotentialGiftFor(ChildWishlistRequest child)
         {
-            var gift =
-                AvailableWishedGiftsInOrder(child.Wishlist)
-                    .Append(FirstGiftInStock())
-                    .Somes()
-                    .HeadOrNone();
+            var gift = AvailableWishedGiftsInOrder(child.Wishlist)
+                .Append(FirstGiftInStock())
+                .Somes()
+                .HeadOrNone();
 
             PickOneInInventory(gift);
 
             return gift;
         }
 
-        private IEnumerable<Option<string>> AvailableWishedGiftsInOrder(IReadOnlyList<string> wishedGifts)
+        private IEnumerable<Option<Gift>> AvailableWishedGiftsInOrder(IReadOnlyList<Gift> wishedGifts)
             => wishedGifts.Map(WishedGiftInStock);
 
-        private Option<string> WishedGiftInStock(string giftName)
+        private Option<Gift> WishedGiftInStock(Gift wishedGift)
             => _remainingByGift
-                .Find(gift => gift.Key == giftName && gift.Value > 0)
+                .Find(gift => gift.Key == wishedGift && gift.Value > 0)
                 .Map(gift => gift.Key);
 
-        private Option<string> FirstGiftInStock()
+        private Option<Gift> FirstGiftInStock()
             => _remainingByGift
                 .Find(gift => gift.Value > 0)
                 .Map(gift => gift.Key);
 
-        private void PickOneInInventory(Option<string> potentialGift)
+        private void PickOneInInventory(Option<Gift> potentialGift)
             => _remainingByGift = potentialGift
                 .Map(gift => _remainingByGift.AddOrUpdate(gift, availableInStock => availableInStock - 1, 0))
                 .IfNone(_remainingByGift);
