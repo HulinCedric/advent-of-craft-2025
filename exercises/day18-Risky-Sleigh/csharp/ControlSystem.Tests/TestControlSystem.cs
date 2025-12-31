@@ -24,7 +24,10 @@ namespace ControlSystem.Tests
             controlSystem.Status = SleighEngineStatus.Off;
             controlSystem.StartSystem();
             controlSystem.Status.Should().Be(SleighEngineStatus.On);
-            _output.ToString().Trim().Should().Be("Starting the sleigh...\r\nSystem ready.");
+            _output.ToString().Trim().Should().Be("""
+                                                  Starting the sleigh...
+                                                  System ready.
+                                                  """);
         }
 
         [Fact]
@@ -34,7 +37,11 @@ namespace ControlSystem.Tests
             controlSystem.StartSystem();
             controlSystem.Ascend();
             controlSystem.Action.Should().Be(SleighAction.Flying);
-            _output.ToString().Trim().Should().Be("Starting the sleigh...\r\nSystem ready.\r\nAscending...");
+            _output.ToString().Trim().Should().Be($"""
+                                                   Starting the sleigh...
+                                                   System ready.
+                                                   Ascending...
+                                                   """);
         }
 
         [Fact]
@@ -46,7 +53,12 @@ namespace ControlSystem.Tests
             controlSystem.Invoking(cs => cs.Descend()).Should().NotThrow<SleighNotStartedException>();
             controlSystem.Action.Should().Be(SleighAction.Hovering);
             _output.ToString().Trim().Should()
-                .Be("Starting the sleigh...\r\nSystem ready.\r\nAscending...\r\nDescending...");
+                .Be("""
+                    Starting the sleigh...
+                    System ready.
+                    Ascending...
+                    Descending...
+                    """);
         }
 
         [Fact]
@@ -63,14 +75,16 @@ namespace ControlSystem.Tests
 
             Assert.True(controlSystem.Action == SleighAction.Flying);
             _output.ToString().Trim().Should()
-                .Be("Starting the sleigh...\r\n" +
-                    "System ready.\r\n" +
-                    "Ascending...\r\n" +
-                    "Ascending...\r\n" +
-                    "Ascending...\r\n" +
-                    "Ascending...\r\n" +
-                    "Parking...\r\n" +
-                    "Ascending...");
+                .Be("""
+                    Starting the sleigh...
+                    System ready.
+                    Ascending...
+                    Ascending...
+                    Ascending...
+                    Ascending...
+                    Parking...
+                    Ascending...
+                    """);
         }
         
         [Fact]
@@ -83,7 +97,10 @@ namespace ControlSystem.Tests
             controlSystem.StopSystem();
             Assert.True(controlSystem.Status == SleighEngineStatus.Off);
             _output.ToString().Trim().Should()
-                .Be("Stopping the sleigh...\r\nSystem shutdown.");
+                .Be("""
+                    Stopping the sleigh...
+                    System shutdown.
+                    """);
         }
 
         public void Dispose()
