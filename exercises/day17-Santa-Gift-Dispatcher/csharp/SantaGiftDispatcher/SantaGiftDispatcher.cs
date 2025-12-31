@@ -31,16 +31,24 @@ public sealed class SantaGiftDispatcher
 
         foreach (var child in _registeredChildren)
         {
-            for (var remainingSlots = maxGiftsPerChild; remainingSlots > 0; remainingSlots--)
-            {
-                var giftAssignment = AssignGift(child);
-                if (giftAssignment is null) break;
-
-                assignments.Add(giftAssignment);
-            }
+            assignments.AddRange(AssignGifts(child, maxGiftsPerChild));
         }
 
         return assignments;
+    }
+
+    private IEnumerable<GiftAssignment> AssignGifts(ChildWishlistRequest child, int maxGiftsPerChild)
+    {
+        var childAssignments = new List<GiftAssignment>();
+        for (var remainingSlots = maxGiftsPerChild; remainingSlots > 0; remainingSlots--)
+        {
+            var giftAssignment = AssignGift(child);
+            if (giftAssignment is null) break;
+
+            childAssignments.Add(giftAssignment);
+        }
+
+        return childAssignments;
     }
 
     private GiftAssignment? AssignGift(ChildWishlistRequest child)
@@ -67,7 +75,7 @@ public sealed class SantaGiftDispatcher
         public static WorkshopInventory FromDictionary(IDictionary<string, int> initialInventory)
             => new(new Dictionary<string, int>(initialInventory));
 
-        public bool TryTakeOne(string giftKey)
+        private bool TryTakeOne(string giftKey)
         {
             if (!_remainingByGift.TryGetValue(giftKey, out var count) || count <= 0) return false;
 
@@ -75,7 +83,7 @@ public sealed class SantaGiftDispatcher
             return true;
         }
 
-        public bool TryTakeAnyOne(out string? giftKey)
+        private bool TryTakeAnyOne(out string? giftKey)
         {
             foreach (var kvp in _remainingByGift)
             {
