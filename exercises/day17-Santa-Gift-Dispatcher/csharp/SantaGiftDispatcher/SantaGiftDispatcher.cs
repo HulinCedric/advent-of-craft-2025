@@ -81,7 +81,7 @@ public sealed class SantaGiftDispatcher
 
         public Option<GiftAssignment> PickOneGift(ChildWishlist wishlist)
         {
-            var giftInStock = AvailableWishedGiftsInOrder(wishlist.OrderedWishedGifts)
+            var giftInStock = RemainingWishedGiftsInOrder(wishlist.OrderedWishedGifts)
                 .Append(FirstRemainingGiftInStock())
                 .Somes()
                 .HeadOrNone();
@@ -91,7 +91,7 @@ public sealed class SantaGiftDispatcher
             return giftInStock.Map(pickedGift => new GiftAssignment(wishlist.ChildName, pickedGift.Name));
         }
 
-        private IEnumerable<Option<Gift>> AvailableWishedGiftsInOrder(IReadOnlyList<Gift> wishedGifts)
+        private IEnumerable<Option<Gift>> RemainingWishedGiftsInOrder(IReadOnlyList<Gift> wishedGifts)
             => wishedGifts.Map(WishedGiftInStock);
 
         private Option<Gift> WishedGiftInStock(Gift wishedGift)
@@ -106,7 +106,7 @@ public sealed class SantaGiftDispatcher
 
         private void PickOneInInventory(Option<Gift> potentialGift)
             => _remainingByGift = potentialGift
-                .Map(gift => _remainingByGift.AddOrUpdate(gift, availableInStock => availableInStock - 1, 0))
+                .Map(gift => _remainingByGift.AddOrUpdate(gift, remainingInStock => remainingInStock - 1, 0))
                 .IfNone(_remainingByGift);
     }
 }
