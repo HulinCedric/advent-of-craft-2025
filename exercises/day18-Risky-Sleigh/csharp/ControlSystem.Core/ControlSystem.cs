@@ -40,7 +40,7 @@ namespace ControlSystem.Core
             if (_sleigh.Status == SleighEngineStatus.On) return;
             
             _dashboard.DisplayStatus("Starting the sleigh...");
-            _sleigh.Status = SleighEngineStatus.On;
+            _sleigh.TurnOn();
             _dashboard.DisplayStatus("System ready.");
         }
 
@@ -105,7 +105,7 @@ namespace ControlSystem.Core
             if (_sleigh.Status == SleighEngineStatus.Off) return;
             
             _dashboard.DisplayStatus("Stopping the sleigh...");
-            _sleigh.Status = SleighEngineStatus.Off;
+            _sleigh.TurnOff();
             _dashboard.DisplayStatus("System shutdown.");
         }
     }
