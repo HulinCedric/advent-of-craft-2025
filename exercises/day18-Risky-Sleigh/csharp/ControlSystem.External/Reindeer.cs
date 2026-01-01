@@ -2,6 +2,9 @@ namespace ControlSystem.External
 {
     public class Reindeer
     {
+        private const float NoMagicPower = 0;
+        private const int NoHarnessing = 0;
+        
         private readonly int _age;
         private readonly int _powerPullLimit;
         private readonly bool _sick;
@@ -21,19 +24,17 @@ namespace ControlSystem.External
 
         public float GetMagicPower()
         {
-            if (!_sick && !NeedsRest())
-            {
-                if (_age == 1)
-                    return _spirit * 0.5f;
-                if (_age <= 5)
-                    return _spirit;
-                return _spirit * 0.25f;
-            }
+            if (_sick || NeedsRest()) return NoMagicPower;
+            
+            
+            if (_age == 1)
+                return _spirit * 0.5f;
+            if (_age <= 5)
+                return _spirit;
+            return _spirit * 0.25f;
 
-            return 0;
         }
-
-
+        
         public bool NeedsRest()
         {
             if (!_sick) return _timesHarnessing == _powerPullLimit;
@@ -42,6 +43,7 @@ namespace ControlSystem.External
         }
 
         public void IncrementHarnessing() => _timesHarnessing++;
-        public void Rest() => _timesHarnessing = 0;
+        
+        public void Rest() => _timesHarnessing = NoHarnessing;
     }
 }
