@@ -5,13 +5,13 @@ namespace ControlSystem.Infrastructure;
 
 public class ReindeerAdapter(Reindeer externalReindeer) : IReindeer
 {
-    public int TimesHarnessing
-    {
-        get => externalReindeer.TimesHarnessing;
-        set => externalReindeer.TimesHarnessing = value;
-    }
+    private const int NoHarnessing = 0;
 
     public float GetMagicPower() => externalReindeer.GetMagicPower();
 
     public bool NeedsRest() => externalReindeer.NeedsRest();
+
+    public void Rest() => externalReindeer.TimesHarnessing = NoHarnessing;
+
+    public void Harness() => externalReindeer.TimesHarnessing++;
 }
