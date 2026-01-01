@@ -4,6 +4,7 @@ namespace ControlSystem.Core
 {
     public class ReindeerPowerUnit
     {
+        private const float NoMagicPower = 0;
         private readonly Reindeer _reindeer;
         private readonly MagicPowerAmplifier _amplifier;
 
@@ -21,7 +22,7 @@ namespace ControlSystem.Core
                 return _amplifier.Amplify(_reindeer.GetMagicPower());
             }
 
-            return 0;
+            return NoMagicPower;
         }
 
         public float CheckMagicPower()
