@@ -9,8 +9,8 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
     private const string SleighNotStartedFailure =
         "The sleigh is not started. Please start the sleigh before any other action...";
 
-    public SleighEngineStatus Status { get; set; } = Status;
-    public SleighAction Action { get; set; } = Action;
+    public SleighEngineStatus Status { get; private set; } = Status;
+    public SleighAction Action { get; private set; } = Action;
 
     public static Sleigh New() => new(SleighEngineStatus.Off, SleighAction.Parked);
 
