@@ -97,6 +97,8 @@ namespace ControlSystem.Core
 
         public void StopSystem()
         {
+            if (Status == SleighEngineStatus.Off) return;
+            
             _dashboard.DisplayStatus("Stopping the sleigh...");
             Status = SleighEngineStatus.Off;
             _dashboard.DisplayStatus("System shutdown.");

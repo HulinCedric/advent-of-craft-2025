@@ -111,6 +111,15 @@ namespace ControlSystem.Tests
                     System shutdown.
                     """);
         }
+        
+        [Fact]
+        public void TestAlreadyStop()
+        {
+            var controlSystem = new Core.ControlSystem(SleighEngineStatus.Off, SleighAction.Parked);
+            controlSystem.StopSystem();
+            controlSystem.Status .Should().Be(SleighEngineStatus.Off);
+            _output.ToString().Trim().Should().BeEmpty();
+        }
 
         public void Dispose()
         {
