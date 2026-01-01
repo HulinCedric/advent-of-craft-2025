@@ -16,18 +16,19 @@ namespace ControlSystem.Core
         };
         
         public SleighEngineStatus Status { get; private set; }
-        public SleighAction Action { get; set; }
+        public SleighAction Action { get; private set; }
         private float _controlMagicPower = 0;
 
-        public ControlSystem() : this(SleighEngineStatus.Off)
+        public ControlSystem() : this(SleighEngineStatus.Off, SleighAction.Flying)
         {
         }
 
-        public ControlSystem(SleighEngineStatus status)
+        public ControlSystem(SleighEngineStatus status, SleighAction action)
         {
             _dashboard = new Dashboard();
             _reindeerPowerUnits = BringAllReindeers();
             Status = status;
+            Action = action;
         }
 
         private List<ReindeerPowerUnit> BringAllReindeers()
