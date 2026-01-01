@@ -5,6 +5,7 @@ namespace ControlSystem.Core
     public class ControlSystem
     {
         private const int XmasSpirit = 40;
+        private const float NoMagicPower = 0;
         private readonly Dashboard _dashboard;
         private readonly MagicStable _magicStable = new();
         private readonly List<ReindeerPowerUnit> _reindeerPowerUnits;
@@ -17,7 +18,7 @@ namespace ControlSystem.Core
         
         public SleighEngineStatus Status { get; private set; }
         public SleighAction Action { get; private set; }
-        private float _controlMagicPower = 0;
+        private float _controlMagicPower = NoMagicPower;
 
         public ControlSystem() : this(SleighEngineStatus.Off, SleighAction.Flying)
         {
@@ -59,7 +60,7 @@ namespace ControlSystem.Core
                 {
                     _dashboard.DisplayStatus("Ascending...");
                     Action = SleighAction.Flying;
-                    _controlMagicPower = 0;
+                    _controlMagicPower = NoMagicPower;
                 }
                 else throw new ReindeersNeedRestException();
             }
