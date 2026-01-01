@@ -61,7 +61,7 @@ namespace ControlSystem.Tests
             var controlSystem = new Core.ControlSystem();
             controlSystem.StartSystem();
             controlSystem.Ascend();
-            controlSystem.Invoking(cs => cs.Descend()).Should().NotThrow<SleighNotStartedException>();
+            controlSystem.Descend();
             controlSystem.Action.Should().Be(SleighAction.Hovering);
             _output.ToString().Trim().Should()
                 .Be("""

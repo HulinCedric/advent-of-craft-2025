@@ -5,6 +5,7 @@ namespace ControlSystem.Core
     public class ControlSystem
     {
         private const int XmasSpirit = 40;
+        private const string SleighNotStartedFailure = "The sleigh is not started. Please start the sleigh before any other action...";
         private readonly Dashboard _dashboard;
         private readonly MagicStable _magicStable = new();
         private readonly List<ReindeerPowerUnit> _reindeerPowerUnits;
@@ -48,7 +49,10 @@ namespace ControlSystem.Core
         public void Ascend()
         {
             if (Status != SleighEngineStatus.On)
-                throw new SleighNotStartedException();
+            {
+                _dashboard.DisplayStatus(SleighNotStartedFailure);  
+                return;
+            }
             
             var availableMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
             if (availableMagicPower < XmasSpirit)
@@ -69,7 +73,10 @@ namespace ControlSystem.Core
         public void Descend()
         {
             if (Status != SleighEngineStatus.On)
-                throw new SleighNotStartedException();
+            {
+                _dashboard.DisplayStatus(SleighNotStartedFailure);  
+                return;
+            }
             
             if (Action != SleighAction.Flying) return;
 
@@ -80,7 +87,10 @@ namespace ControlSystem.Core
         public void Park()
         {
             if (Status != SleighEngineStatus.On)
-                throw new SleighNotStartedException();
+            {
+                _dashboard.DisplayStatus(SleighNotStartedFailure);  
+                return;
+            }
             
             _dashboard.DisplayStatus("Parking...");
 

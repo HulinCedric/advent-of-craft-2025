@@ -18,40 +18,19 @@
                 {
                     case "ascend":
                     case "a":
-                        try
-                        {
-                            controlSystem.Ascend();
-                        }
-                        catch (SleighNotStartedException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        controlSystem.Ascend();
 
                         break;
 
                     case "descend":
                     case "d":
-                        try
-                        {
-                            controlSystem.Descend();
-                        }
-                        catch (SleighNotStartedException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        controlSystem.Descend();
 
                         break;
 
                     case "park":
                     case "p":
-                        try
-                        {
-                            controlSystem.Park();
-                        }
-                        catch (SleighNotStartedException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        controlSystem.Park();
 
                         break;
 
