@@ -6,6 +6,7 @@ namespace ControlSystem.Core
     {
         private const int XmasSpirit = 40;
         private const string SleighNotStartedFailure = "The sleigh is not started. Please start the sleigh before any other action...";
+        private const string ReindeersNeedRestFailure = "The reindeer needs rest. Please park the sleigh...";
         private readonly Dashboard _dashboard;
         private readonly MagicStable _magicStable = new();
         private readonly List<ReindeerPowerUnit> _reindeerPowerUnits;
@@ -57,7 +58,7 @@ namespace ControlSystem.Core
             var availableMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
             if (availableMagicPower < XmasSpirit)
             {
-                _dashboard.DisplayStatus("The reindeer needs rest. Please park the sleigh...");
+                _dashboard.DisplayStatus(ReindeersNeedRestFailure);
                 return;
             }
 
