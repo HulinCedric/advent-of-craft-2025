@@ -18,6 +18,8 @@ public class ControlSystem
         { 3, AmplifierType.Blessed }
     };
 
+    private readonly Dashboard _dashboard;
+
     private readonly MagicStable _magicStable = new();
     private readonly List<ReindeerPowerUnit> _reindeerPowerUnits;
 
@@ -25,15 +27,12 @@ public class ControlSystem
 
     public ControlSystem(Sleigh sleigh)
     {
-        Dashboard = new Dashboard();
+        _dashboard = new Dashboard();
         _reindeerPowerUnits = BringAllReindeers();
         _sleigh = sleigh;
     }
 
-    public SleighEngineStatus Status => _sleigh.Status;
     public SleighAction Action => _sleigh.Action;
-
-    public Dashboard Dashboard { get; }
 
     private List<ReindeerPowerUnit> BringAllReindeers()
         => new BestMagicalPerformancePowerUnitFactory(
@@ -42,26 +41,26 @@ public class ControlSystem
 
     public void StartSystem()
     {
-        Dashboard.DisplayStatus("Starting the sleigh...");
+        _dashboard.DisplayStatus("Starting the sleigh...");
 
         _sleigh.TurnOn()
             .Match(
-                _ => Dashboard.DisplayStatus("System ready."),
-                failure => Dashboard.DisplayStatus(failure));
+                _ => _dashboard.DisplayStatus("System ready."),
+                failure => _dashboard.DisplayStatus(failure));
     }
 
     public void Ascend()
     {
         if (_sleigh.Status != SleighEngineStatus.On)
         {
-            Dashboard.DisplayStatus(SleighNotStartedFailure);
+            _dashboard.DisplayStatus(SleighNotStartedFailure);
             return;
         }
 
         var availableMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
         if (availableMagicPower < RequiredMagicPowerForAscend)
         {
-            Dashboard.DisplayStatus(ReindeersNeedRestFailure);
+            _dashboard.DisplayStatus(ReindeersNeedRestFailure);
             return;
         }
 
@@ -70,40 +69,36 @@ public class ControlSystem
             reindeerPowerUnit.HarnessMagicPower();
         }
 
-        Dashboard.DisplayStatus("Ascending...");
+        _dashboard.DisplayStatus("Ascending...");
         _sleigh.Action = SleighAction.Flying;
     }
 
     public void Descend()
         => _sleigh.Descend()
             .Match(
-                _ => Dashboard.DisplayStatus("Descending..."),
-                failure => Dashboard.DisplayStatus(failure));
+                _ => _dashboard.DisplayStatus("Descending..."),
+                failure => _dashboard.DisplayStatus(failure));
 
     public void Park()
-    {
-        if (_sleigh.Status != SleighEngineStatus.On)
-        {
-            Dashboard.DisplayStatus(SleighNotStartedFailure);
-            return;
-        }
+        => _sleigh.Park()
+            .Match(
+                _ =>
+                {
+                    _dashboard.DisplayStatus("Parking...");
 
-        Dashboard.DisplayStatus("Parking...");
-
-        foreach (var reindeerPowerUnit in _reindeerPowerUnits)
-        {
-            reindeerPowerUnit.ReleaseHarness();
-        }
-
-        _sleigh.Action = SleighAction.Parked;
-    }
+                    foreach (var reindeerPowerUnit in _reindeerPowerUnits)
+                    {
+                        reindeerPowerUnit.ReleaseHarness();
+                    }
+                },
+                failure => _dashboard.DisplayStatus(failure));
 
     public void StopSystem()
     {
-        Dashboard.DisplayStatus("Stopping the sleigh...");
+        _dashboard.DisplayStatus("Stopping the sleigh...");
         _sleigh.TurnOff()
             .Match(
-                _ => Dashboard.DisplayStatus("System shutdown."),
-                failure => Dashboard.DisplayStatus(failure));
+                _ => _dashboard.DisplayStatus("System shutdown."),
+                failure => _dashboard.DisplayStatus(failure));
     }
 }

@@ -42,4 +42,13 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
 
         return Unit.Default;
     }
+
+    public Either<string, Unit> Park()
+    {
+        if (Status != SleighEngineStatus.On) return SleighNotStartedFailure;
+        
+        Action = SleighAction.Parked;
+
+        return Unit.Default;
+    }
 }
