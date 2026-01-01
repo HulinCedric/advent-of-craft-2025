@@ -1,5 +1,5 @@
 using ControlSystem.Core;
-using ControlSystem.External;
+using ControlSystem.Infrastructure;
 using FluentAssertions;
 using static ControlSystem.Tests.SleighBuilder;
 
@@ -12,7 +12,7 @@ public class TestControlSystem
 
     public TestControlSystem()
     {
-        var availableSpecialAmplifiers = new Dictionary<int, AmplifierType>()
+        var availableSpecialAmplifiers = new Dictionary<int, AmplifierType>
         {
             { 1, AmplifierType.Divine },
             { 2, AmplifierType.Blessed },
@@ -20,16 +20,14 @@ public class TestControlSystem
         };
 
         IPowerUnitFactory factory = new BestMagicalPerformancePowerUnitFactory(
-            new MagicStable().GetAllReindeers(),
+            new ReindeerRepository().GetAllReindeers(),
             availableSpecialAmplifiers);
-            
+
         _dashboard = new SpyDashboard();
         _controlSystem = new Core.ControlSystem(
             ASleigh().Off().Parked().Build(),
-            _dashboard, 
+            _dashboard,
             factory);
-        
-        
     }
 
     [Fact]

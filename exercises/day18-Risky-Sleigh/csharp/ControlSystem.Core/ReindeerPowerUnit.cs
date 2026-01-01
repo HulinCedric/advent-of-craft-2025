@@ -1,8 +1,6 @@
-using ControlSystem.External;
-
 namespace ControlSystem.Core
 {
-    public class ReindeerPowerUnit(Reindeer reindeer, MagicPowerAmplifier amplifier)
+    public class ReindeerPowerUnit(IReindeer reindeer, MagicPowerAmplifier amplifier)
     {
         private const float NoMagicPower = 0;
         private const int NoHarnessing = 0;

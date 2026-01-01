@@ -1,12 +1,10 @@
-﻿using ControlSystem.External;
-
-namespace ControlSystem.Core;
+﻿namespace ControlSystem.Core;
 
 public class BestMagicalPerformancePowerUnitFactory : IPowerUnitFactory {
-    private List<Reindeer> allReindeers;
+    private IReadOnlyList<IReindeer> allReindeers;
     private Dictionary<int, AmplifierType> availableAmplifierByMagicalPower;
 
-    public BestMagicalPerformancePowerUnitFactory(List<Reindeer> allReindeers, Dictionary<int, AmplifierType> availableAmplifierByMagicalPower) {
+    public BestMagicalPerformancePowerUnitFactory(IReadOnlyList<IReindeer> allReindeers, Dictionary<int, AmplifierType> availableAmplifierByMagicalPower) {
         this.allReindeers = allReindeers;
         this.availableAmplifierByMagicalPower = availableAmplifierByMagicalPower;
     }
@@ -22,7 +20,7 @@ public class BestMagicalPerformancePowerUnitFactory : IPowerUnitFactory {
             .ToList();
     }
     
-    private ReindeerPowerUnit AttachPowerUnit(Reindeer reindeer, int indexOfMagicalPower)
+    private ReindeerPowerUnit AttachPowerUnit(IReindeer reindeer, int indexOfMagicalPower)
     {
         return GeneratePowerUnit(
             reindeer, 
@@ -30,7 +28,7 @@ public class BestMagicalPerformancePowerUnitFactory : IPowerUnitFactory {
         );
     }
     
-    private ReindeerPowerUnit GeneratePowerUnit(Reindeer reindeer, AmplifierType amplifierToAttach)
+    private ReindeerPowerUnit GeneratePowerUnit(IReindeer reindeer, AmplifierType amplifierToAttach)
     {
         return new ReindeerPowerUnit(reindeer, new MagicPowerAmplifier(amplifierToAttach));
     }

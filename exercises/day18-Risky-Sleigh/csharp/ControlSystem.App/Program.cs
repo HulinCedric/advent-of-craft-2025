@@ -1,5 +1,4 @@
-﻿using ControlSystem.External;
-using ControlSystem.Infrastructure;
+﻿using ControlSystem.Infrastructure;
 
 namespace ControlSystem
 {
@@ -7,7 +6,7 @@ namespace ControlSystem
     {
         static void Main(string[] args)
         {
-            var magicStable = new MagicStable();
+            var reindeerRepository = new ReindeerRepository();
             
             var availableSpecialAmplifiers = new Dictionary<int, AmplifierType>()
             {
@@ -15,12 +14,12 @@ namespace ControlSystem
                 { 2, AmplifierType.Blessed },
                 { 3, AmplifierType.Blessed }
             };
-            
-            IPowerUnitFactory factory = new BestMagicalPerformancePowerUnitFactory(
-                magicStable.GetAllReindeers(),
+
+            var powerUnitFactory = new BestMagicalPerformancePowerUnitFactory(
+                reindeerRepository.GetAllReindeers(),
                 availableSpecialAmplifiers);
             
-            var controlSystem = new ControlSystem.Core.ControlSystem(Sleigh.New(), new ConsoleDashboard(), factory);
+            var controlSystem = new ControlSystem.Core.ControlSystem(Sleigh.New(), new ConsoleDashboard(), powerUnitFactory);
             controlSystem.StartSystem();
 
             var keepRunning = true;
