@@ -1,3 +1,5 @@
+using LanguageExt;
+
 namespace ControlSystem.Core;
 
 public record Sleigh(SleighEngineStatus Status, SleighAction Action)
@@ -9,5 +11,12 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
 
     public void TurnOn() => Status = SleighEngineStatus.On;
 
-    public void TurnOff() => Status = SleighEngineStatus.Off;
+    public Either<string, Unit> TurnOff()
+    {
+        if (Status == SleighEngineStatus.Off)
+            return "Cannot turn off the sleigh because it is already off.";
+
+        Status = SleighEngineStatus.Off;
+        return Unit.Default;
+    }
 }

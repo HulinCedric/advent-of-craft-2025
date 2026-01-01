@@ -106,10 +106,10 @@ public class ControlSystem
 
     public void StopSystem()
     {
-        if (_sleigh.Status == SleighEngineStatus.Off) return;
-
         _dashboard.DisplayStatus("Stopping the sleigh...");
-        _sleigh.TurnOff();
-        _dashboard.DisplayStatus("System shutdown.");
+        _sleigh.TurnOff()
+            .Match(
+                _ => _dashboard.DisplayStatus("System shutdown."),
+                failure => _dashboard.DisplayStatus(failure));
     }
 }

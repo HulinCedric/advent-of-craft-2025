@@ -160,9 +160,17 @@ public class TestControlSystem : IDisposable
     public void TestAlreadyStop()
     {
         var controlSystem = new Core.ControlSystem(ASleigh().Off());
+        
         controlSystem.StopSystem();
-        controlSystem.Status.Should().Be(SleighEngineStatus.Off);
-        _output.ToString().Trim().Should().BeEmpty();
+        
+        _output.ToString()
+            .Trim()
+            .Should()
+            .Be(
+                """
+                Stopping the sleigh...
+                Cannot turn off the sleigh because it is already off.
+                """);
     }
 
     private static void SafeAscendManyTimes(Core.ControlSystem controlSystem, int numberOfTimes)
