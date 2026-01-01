@@ -6,7 +6,7 @@ namespace ControlSystem.Core
     {
         private const float NoMagicPower = 0;
         private const int NoHarnessing = 0;
-        
+
         private readonly Reindeer _reindeer;
         private readonly MagicPowerAmplifier _amplifier;
 
@@ -29,9 +29,7 @@ namespace ControlSystem.Core
         }
 
         public float CheckMagicPower()
-        {
-            return _reindeer.GetMagicPower();
-        }
+            => _reindeer.NeedsRest() ? NoMagicPower : _amplifier.Amplify(_reindeer.GetMagicPower());
 
         public void ReleaseHarness() => _reindeer.TimesHarnessing = NoHarnessing;
     }

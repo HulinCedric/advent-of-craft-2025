@@ -5,7 +5,6 @@ namespace ControlSystem.Core
     public class ControlSystem
     {
         private const int XmasSpirit = 40;
-        private const float NoMagicPower = 0;
         private readonly Dashboard _dashboard;
         private readonly MagicStable _magicStable = new();
         private readonly List<ReindeerPowerUnit> _reindeerPowerUnits;
@@ -18,7 +17,6 @@ namespace ControlSystem.Core
         
         public SleighEngineStatus Status { get; private set; }
         public SleighAction Action { get; private set; }
-        private float _controlMagicPower = NoMagicPower;
 
         public ControlSystem() : this(SleighEngineStatus.Off, SleighAction.Flying)
         {
@@ -51,16 +49,21 @@ namespace ControlSystem.Core
         {
             if (Status == SleighEngineStatus.On)
             {
+                float controlMagicPower = 0;
                 foreach (var reindeerPowerUnit in _reindeerPowerUnits)
                 {
-                    _controlMagicPower += reindeerPowerUnit.HarnessMagicPower();
+                    controlMagicPower += reindeerPowerUnit.CheckMagicPower();
                 }
 
-                if (CheckReindeerStatus())
+                if (controlMagicPower >= XmasSpirit)
                 {
+                    foreach (var reindeerPowerUnit in _reindeerPowerUnits)
+                    {
+                       reindeerPowerUnit.HarnessMagicPower();
+                    }
+                    
                     _dashboard.DisplayStatus("Ascending...");
                     Action = SleighAction.Flying;
-                    _controlMagicPower = NoMagicPower;
                 }
                 else throw new ReindeersNeedRestException();
             }
@@ -105,11 +108,6 @@ namespace ControlSystem.Core
             _dashboard.DisplayStatus("Stopping the sleigh...");
             Status = SleighEngineStatus.Off;
             _dashboard.DisplayStatus("System shutdown.");
-        }
-
-        private bool CheckReindeerStatus()
-        {
-            return _controlMagicPower >= XmasSpirit;
         }
     }
 }
