@@ -16,16 +16,11 @@ namespace ControlSystem.Core
             _amplifier = amplifier;
         }
 
-        public float HarnessMagicPower()
+        public void HarnessMagicPower()
         {
-            if (!_reindeer.NeedsRest())
-            {
-                var magicPower = _amplifier.Amplify(_reindeer.GetMagicPower());
-                _reindeer.TimesHarnessing++;
-                return magicPower;
-            }
+            if (_reindeer.NeedsRest()) return;
 
-            return NoMagicPower;
+            _reindeer.TimesHarnessing++;
         }
 
         public float CheckMagicPower()
