@@ -22,10 +22,6 @@
                         {
                             controlSystem.Ascend();
                         }
-                        catch (ReindeersNeedRestException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
                         catch (SleighNotStartedException e)
                         {
                             Console.WriteLine(e.Message);

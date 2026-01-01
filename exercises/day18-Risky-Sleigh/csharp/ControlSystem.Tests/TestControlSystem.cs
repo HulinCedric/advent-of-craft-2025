@@ -152,14 +152,9 @@ namespace ControlSystem.Tests
         }
         
         private static void SafeAscendManyTimes(Core.ControlSystem controlSystem, int numberOfTimes) {
-            try {
                 for (int i=0;i<numberOfTimes;i++){
                     controlSystem.Ascend();
                 }
-            }
-                catch(ReindeersNeedRestException e) {
-                //we want to continue
-            }
         }
     }
 }
