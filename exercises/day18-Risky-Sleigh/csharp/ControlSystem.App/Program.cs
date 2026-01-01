@@ -1,10 +1,12 @@
-﻿namespace ControlSystem
+﻿using ControlSystem.Infrastructure;
+
+namespace ControlSystem
 {
     public static class Program
     {
         static void Main(string[] args)
         {
-            var controlSystem = new ControlSystem.Core.ControlSystem(Sleigh.New());
+            var controlSystem = new ControlSystem.Core.ControlSystem(Sleigh.New(), new ConsoleDashboard());
             controlSystem.StartSystem();
 
             var keepRunning = true;

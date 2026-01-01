@@ -15,6 +15,7 @@ public class SleighShould
     [Fact]
     public void Be_Parked_by_default() => Sleigh.New().Action.Should().Be(Parked);
 
+    
     [Fact]
     public void Ascend_changes_action_to_Flying()
         => ASleigh()
@@ -26,8 +27,22 @@ public class SleighShould
             .Which.Action.Should()
             .Be(Flying);
 
+    [Theory]
+    [InlineData(Parked)]
+    [InlineData(Hovering)]
+    public void Not_descend_when(SleighAction initialAction)
+        => ASleigh()
+            .On()
+            .WithAction(initialAction)
+            .Build()
+            .Descend()
+            .Should()
+            .BeLeft()
+            .Which.Should()
+            .Be("The sleigh must be flying to descend.");
+    
     [Fact]
-    public void Descend_changes_action_to_Hovering()
+    public void Descend_when_on_and_flying()
         => ASleigh()
             .On()
             .Flying()

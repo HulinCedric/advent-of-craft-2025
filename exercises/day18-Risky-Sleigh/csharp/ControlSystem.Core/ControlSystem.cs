@@ -11,16 +11,16 @@ public class ControlSystem
         { 3, AmplifierType.Blessed }
     };
 
-    private readonly Dashboard _dashboard;
+    private readonly IDashboard _dashboard;
 
     private readonly MagicStable _magicStable = new();
     private readonly List<ReindeerPowerUnit> _reindeerPowerUnits;
 
     private Sleigh _sleigh;
 
-    public ControlSystem(Sleigh sleigh)
+    public ControlSystem(Sleigh sleigh, IDashboard dashboard)
     {
-        _dashboard = new Dashboard();
+        _dashboard = dashboard;
         _reindeerPowerUnits = BringAllReindeers();
         _sleigh = sleigh;
     }
@@ -39,7 +39,7 @@ public class ControlSystem
                 updatedSleigh =>
                 {
                     _sleigh = updatedSleigh;
-                    
+
                     _dashboard.DisplayStatus("System ready.");
                 },
                 failure => _dashboard.DisplayStatus(failure));
@@ -53,7 +53,7 @@ public class ControlSystem
                 updatedSleigh =>
                 {
                     _sleigh = updatedSleigh;
-                    
+
                     _dashboard.DisplayStatus("Ascending...");
 
                     foreach (var reindeerPowerUnit in _reindeerPowerUnits)
@@ -70,7 +70,7 @@ public class ControlSystem
                 updatedSleigh =>
                 {
                     _sleigh = updatedSleigh;
-                    
+
                     _dashboard.DisplayStatus("Descending...");
                 },
                 failure => _dashboard.DisplayStatus(failure));
@@ -81,7 +81,7 @@ public class ControlSystem
                 updatedSleigh =>
                 {
                     _sleigh = updatedSleigh;
-                    
+
                     _dashboard.DisplayStatus("Parking...");
 
                     foreach (var reindeerPowerUnit in _reindeerPowerUnits)
@@ -99,7 +99,7 @@ public class ControlSystem
                 updatedSleigh =>
                 {
                     _sleigh = updatedSleigh;
-                    
+
                     _dashboard.DisplayStatus("System shutdown.");
                 },
                 failure => _dashboard.DisplayStatus(failure));

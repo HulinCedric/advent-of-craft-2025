@@ -6,9 +6,4 @@ namespace ControlSystem.Core
         Blessed = 2,
         Divine = 3
     }
-
-    public static class AmplifierTypeExtensions
-    {
-        public static int GetMultiplier(this AmplifierType amplifierType) => (int) amplifierType;
-    }
 }
