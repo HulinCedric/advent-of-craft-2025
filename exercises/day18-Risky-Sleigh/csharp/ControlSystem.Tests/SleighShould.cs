@@ -21,7 +21,7 @@ public class SleighShould
         => ASleigh()
             .On()
             .Build()
-            .Ascend(41)
+            .Ascend()
             .Should()
             .BeRight()
             .Which.Action.Should()

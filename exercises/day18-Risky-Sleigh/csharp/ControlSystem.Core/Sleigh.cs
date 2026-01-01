@@ -4,7 +4,6 @@ namespace ControlSystem.Core;
 
 public record Sleigh(SleighEngineStatus Status, SleighAction Action)
 {
-    private const int RequiredMagicPowerForAscend = 40;
 
     private const string SleighNotStartedFailure =
         "The sleigh is not started. Please start the sleigh before any other action...";
@@ -27,12 +26,9 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
         return this with { Status = SleighEngineStatus.Off };
     }
 
-    public Either<string, Sleigh> Ascend(float availableMagicPower)
+    public Either<string, Sleigh> Ascend()
     {
         if (Status != SleighEngineStatus.On) return SleighNotStartedFailure;
-
-        if (availableMagicPower < RequiredMagicPowerForAscend)
-            return "The reindeer needs rest. Please park the sleigh...";
 
         return this with { Action = SleighAction.Flying };
     }
@@ -49,7 +45,7 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
     public Either<string, Sleigh> Park()
     {
         if (Status != SleighEngineStatus.On) return SleighNotStartedFailure;
-
+        
         return this with { Action = SleighAction.Parked };
     }
 }

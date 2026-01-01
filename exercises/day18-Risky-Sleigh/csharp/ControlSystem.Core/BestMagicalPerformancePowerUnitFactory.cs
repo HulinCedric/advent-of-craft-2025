@@ -5,15 +5,15 @@ public class BestMagicalPerformancePowerUnitFactory(
     IReadOnlyDictionary<int, AmplifierType> availableAmplifierByMagicalPower)
     : IPowerUnitFactory
 {
-    public List<ReindeerPowerUnit> BringAllReindeers()
+    public HarnessedReindeers BringAllReindeers()
     {
         var allReindeerByMagicalPower = allReindeers
             .OrderByDescending(r => r.GetMagicPower())
             .ToList();
 
-        return allReindeerByMagicalPower
-            .Select((reindeer, index) => AttachPowerUnit(reindeer, index + 1))
-            .ToList();
+        return new HarnessedReindeers(
+            allReindeerByMagicalPower
+                .Select((reindeer, index) => AttachPowerUnit(reindeer, index + 1)));
     }
 
     private ReindeerPowerUnit AttachPowerUnit(IReindeer reindeer, int indexOfMagicalPower)

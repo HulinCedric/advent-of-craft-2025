@@ -2,7 +2,7 @@ namespace ControlSystem.Core;
 
 public class ControlSystem(Sleigh sleigh, IDashboard dashboard, IPowerUnitFactory powerUnitFactory)
 {
-    private readonly IReadOnlyList<ReindeerPowerUnit> _reindeerPowerUnits = powerUnitFactory.BringAllReindeers();
+    private readonly HarnessedReindeers _reindeerPowerUnits = powerUnitFactory.BringAllReindeers();
 
     private Sleigh _sleigh = sleigh;
 
@@ -12,9 +12,9 @@ public class ControlSystem(Sleigh sleigh, IDashboard dashboard, IPowerUnitFactor
 
         _sleigh.TurnOn()
             .Match(
-                updatedSleigh =>
+                sleigh =>
                 {
-                    _sleigh = updatedSleigh;
+                    _sleigh = sleigh;
 
                     dashboard.DisplayStatus("System ready.");
                 },
@@ -22,30 +22,24 @@ public class ControlSystem(Sleigh sleigh, IDashboard dashboard, IPowerUnitFactor
     }
 
     public void Ascend()
-    {
-        var availableMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
-        _sleigh.Ascend(availableMagicPower)
+        => (from sleigh in _sleigh.Ascend()
+                from _ in _reindeerPowerUnits.HarnessAllPower()
+                select sleigh)
             .Match(
-                updatedSleigh =>
+                sleigh =>
                 {
-                    _sleigh = updatedSleigh;
+                    _sleigh = sleigh;
 
                     dashboard.DisplayStatus("Ascending...");
-
-                    foreach (var reindeerPowerUnit in _reindeerPowerUnits)
-                    {
-                        reindeerPowerUnit.HarnessMagicPower();
-                    }
                 },
                 dashboard.DisplayStatus);
-    }
 
     public void Descend()
         => _sleigh.Descend()
             .Match(
-                updatedSleigh =>
+                sleigh =>
                 {
-                    _sleigh = updatedSleigh;
+                    _sleigh = sleigh;
 
                     dashboard.DisplayStatus("Descending...");
                 },
@@ -60,21 +54,19 @@ public class ControlSystem(Sleigh sleigh, IDashboard dashboard, IPowerUnitFactor
 
                     dashboard.DisplayStatus("Parking...");
 
-                    foreach (var reindeerPowerUnit in _reindeerPowerUnits)
-                    {
-                        reindeerPowerUnit.ReleaseHarness();
-                    }
+                    _reindeerPowerUnits.RestReindeers();
                 },
                 dashboard.DisplayStatus);
 
     public void StopSystem()
     {
         dashboard.DisplayStatus("Stopping the sleigh...");
+
         _sleigh.TurnOff()
             .Match(
-                updatedSleigh =>
+                sleigh =>
                 {
-                    _sleigh = updatedSleigh;
+                    _sleigh = sleigh;
 
                     dashboard.DisplayStatus("System shutdown.");
                 },

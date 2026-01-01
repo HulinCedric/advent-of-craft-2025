@@ -2,5 +2,5 @@
 
 public interface IPowerUnitFactory
 {
-    List<ReindeerPowerUnit> BringAllReindeers();
+    HarnessedReindeers BringAllReindeers();
 }
