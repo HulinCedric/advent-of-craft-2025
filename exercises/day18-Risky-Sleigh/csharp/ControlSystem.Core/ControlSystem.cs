@@ -16,7 +16,7 @@ public class ControlSystem
     private readonly MagicStable _magicStable = new();
     private readonly List<ReindeerPowerUnit> _reindeerPowerUnits;
 
-    private readonly Sleigh _sleigh;
+    private Sleigh _sleigh;
 
     public ControlSystem(Sleigh sleigh)
     {
@@ -38,7 +38,12 @@ public class ControlSystem
 
         _sleigh.TurnOn()
             .Match(
-                _ => _dashboard.DisplayStatus("System ready."),
+                updatedSleigh =>
+                {
+                    _sleigh = updatedSleigh;
+                    
+                    _dashboard.DisplayStatus("System ready.");
+                },
                 failure => _dashboard.DisplayStatus(failure));
     }
 
@@ -47,8 +52,10 @@ public class ControlSystem
         var availableMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
         _sleigh.Ascend(availableMagicPower)
             .Match(
-                _ =>
+                updatedSleigh =>
                 {
+                    _sleigh = updatedSleigh;
+                    
                     _dashboard.DisplayStatus("Ascending...");
 
                     foreach (var reindeerPowerUnit in _reindeerPowerUnits)
@@ -62,14 +69,21 @@ public class ControlSystem
     public void Descend()
         => _sleigh.Descend()
             .Match(
-                _ => _dashboard.DisplayStatus("Descending..."),
+                updatedSleigh =>
+                {
+                    _sleigh = updatedSleigh;
+                    
+                    _dashboard.DisplayStatus("Descending...");
+                },
                 failure => _dashboard.DisplayStatus(failure));
 
     public void Park()
         => _sleigh.Park()
             .Match(
-                _ =>
+                updatedSleigh =>
                 {
+                    _sleigh = updatedSleigh;
+                    
                     _dashboard.DisplayStatus("Parking...");
 
                     foreach (var reindeerPowerUnit in _reindeerPowerUnits)
@@ -84,7 +98,12 @@ public class ControlSystem
         _dashboard.DisplayStatus("Stopping the sleigh...");
         _sleigh.TurnOff()
             .Match(
-                _ => _dashboard.DisplayStatus("System shutdown."),
+                updatedSleigh =>
+                {
+                    _sleigh = updatedSleigh;
+                    
+                    _dashboard.DisplayStatus("System shutdown.");
+                },
                 failure => _dashboard.DisplayStatus(failure));
     }
 }
