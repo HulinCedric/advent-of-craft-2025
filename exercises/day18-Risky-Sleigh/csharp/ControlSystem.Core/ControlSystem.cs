@@ -39,6 +39,8 @@ namespace ControlSystem.Core
 
         public void StartSystem()
         {
+            if (Status == SleighEngineStatus.On) return;
+            
             _dashboard.DisplayStatus("Starting the sleigh...");
             Status = SleighEngineStatus.On;
             _dashboard.DisplayStatus("System ready.");

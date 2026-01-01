@@ -29,6 +29,17 @@ namespace ControlSystem.Tests
                                                   System ready.
                                                   """);
         }
+        
+        [Fact]
+        public void TestAlreadyStart()
+        {
+            var controlSystem = new Core.ControlSystem(
+                status: SleighEngineStatus.On,
+                action: SleighAction.Flying);
+            controlSystem.StartSystem();
+            controlSystem.Status.Should().Be(SleighEngineStatus.On);
+            _output.ToString().Trim().Should().BeEmpty();
+        }
 
         [Fact]
         public void TestAscend()
