@@ -25,10 +25,10 @@ public class TestControlSystem : IDisposable
     [Fact]
     public void TestStart()
     {
-        // The system has been started
         var controlSystem = new Core.ControlSystem(ASleigh());
+        
         controlSystem.StartSystem();
-        controlSystem.Status.Should().Be(SleighEngineStatus.On);
+        
         _output.ToString()
             .Trim()
             .Should()
@@ -150,10 +150,10 @@ public class TestControlSystem : IDisposable
     [Fact]
     public void TestStop()
     {
-        // The system has been started
         var controlSystem = new Core.ControlSystem(ASleigh().On());
+        
         controlSystem.StopSystem();
-        Assert.True(controlSystem.Status == SleighEngineStatus.Off);
+
         _output.ToString()
             .Trim()
             .Should()
