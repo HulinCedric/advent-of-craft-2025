@@ -4,7 +4,6 @@ namespace ControlSystem.Core;
 
 public record Sleigh(SleighEngineStatus Status, SleighAction Action)
 {
-
     private const string SleighNotStartedFailure =
         "The sleigh is not started. Please start the sleigh before any other action...";
 
@@ -13,7 +12,7 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
     public Either<string, Sleigh> TurnOn()
     {
         if (Status == SleighEngineStatus.On)
-            return "Cannot turn on the sleigh because it is already on.";
+            return "The sleigh is already started.";
 
         return this with { Status = SleighEngineStatus.On };
     }
@@ -21,7 +20,7 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
     public Either<string, Sleigh> TurnOff()
     {
         if (Status == SleighEngineStatus.Off)
-            return "Cannot turn off the sleigh because it is already off.";
+            return "The sleigh is already stopped.";
 
         return this with { Status = SleighEngineStatus.Off };
     }
@@ -37,7 +36,8 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
     {
         if (Status != SleighEngineStatus.On) return SleighNotStartedFailure;
 
-        if (Action != SleighAction.Flying) return "The sleigh must be flying to descend.";
+        if (Action != SleighAction.Flying)
+            return "The sleigh must be flying to descend. You can try to ascend or park the sleigh...";
 
         return this with { Action = SleighAction.Hovering };
     }
@@ -45,7 +45,7 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
     public Either<string, Sleigh> Park()
     {
         if (Status != SleighEngineStatus.On) return SleighNotStartedFailure;
-        
+
         return this with { Action = SleighAction.Parked };
     }
 }

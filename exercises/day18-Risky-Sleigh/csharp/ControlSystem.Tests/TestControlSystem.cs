@@ -58,7 +58,7 @@ public class TestControlSystem
                 Starting the sleigh...
                 System ready.
                 Starting the sleigh...
-                Cannot turn on the sleigh because it is already on.
+                The sleigh is already started.
                 """);
     }
 
@@ -110,7 +110,7 @@ public class TestControlSystem
                 """
                 Starting the sleigh...
                 System ready.
-                The sleigh must be flying to descend.
+                The sleigh must be flying to descend. You can try to ascend or park the sleigh...
                 """);
     }
 
@@ -131,7 +131,7 @@ public class TestControlSystem
                 System ready.
                 Ascending...
                 Descending...
-                The sleigh must be flying to descend.
+                The sleigh must be flying to descend. You can try to ascend or park the sleigh...
                 """);
     }
 
@@ -194,7 +194,7 @@ public class TestControlSystem
             .Be(
                 """
                 Stopping the sleigh...
-                Cannot turn off the sleigh because it is already off.
+                The sleigh is already stopped.
                 """);
     }
 }

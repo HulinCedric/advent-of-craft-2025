@@ -39,7 +39,7 @@ public class SleighShould
             .Should()
             .BeLeft()
             .Which.Should()
-            .Be("The sleigh must be flying to descend.");
+            .Be("The sleigh must be flying to descend. You can try to ascend or park the sleigh...");
     
     [Fact]
     public void Descend_when_on_and_flying()
