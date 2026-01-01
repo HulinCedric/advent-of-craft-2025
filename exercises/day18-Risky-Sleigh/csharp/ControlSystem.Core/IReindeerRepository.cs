@@ -1,6 +1,4 @@
-using ControlSystem.Core;
-
-namespace ControlSystem.Tests;
+namespace ControlSystem.Core;
 
 public interface IReindeerRepository
 {

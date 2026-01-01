@@ -1,6 +1,5 @@
 using ControlSystem.Core;
 using ControlSystem.External;
-using ControlSystem.Tests;
 
 namespace ControlSystem.Infrastructure;
 
