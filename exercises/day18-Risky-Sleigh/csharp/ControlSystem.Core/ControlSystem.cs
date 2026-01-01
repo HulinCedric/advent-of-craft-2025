@@ -65,30 +65,28 @@ namespace ControlSystem.Core
 
         public void Descend()
         {
-            if (Status == SleighEngineStatus.On)
-            {
-                if (Action != SleighAction.Flying) return;
-                
-                _dashboard.DisplayStatus("Descending...");
-                Action = SleighAction.Hovering;
-            }
-            else throw new SleighNotStartedException();
+            if (Status != SleighEngineStatus.On)
+                throw new SleighNotStartedException();
+            
+            if (Action != SleighAction.Flying) return;
+
+            _dashboard.DisplayStatus("Descending...");
+            Action = SleighAction.Hovering;
         }
 
         public void Park()
         {
-            if (Status == SleighEngineStatus.On)
+            if (Status != SleighEngineStatus.On)
+                throw new SleighNotStartedException();
+            
+            _dashboard.DisplayStatus("Parking...");
+
+            foreach (var reindeerPowerUnit in _reindeerPowerUnits)
             {
-                _dashboard.DisplayStatus("Parking...");
-
-                foreach (var reindeerPowerUnit in _reindeerPowerUnits)
-                {
-                    reindeerPowerUnit.ReleaseHarness();
-                }
-
-                Action = SleighAction.Parked;
+                reindeerPowerUnit.ReleaseHarness();
             }
-            else throw new SleighNotStartedException();
+
+            Action = SleighAction.Parked;
         }
 
         public void StopSystem()
