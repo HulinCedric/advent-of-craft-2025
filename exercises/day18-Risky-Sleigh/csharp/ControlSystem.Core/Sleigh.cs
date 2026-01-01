@@ -4,6 +4,9 @@ namespace ControlSystem.Core;
 
 public record Sleigh(SleighEngineStatus Status, SleighAction Action)
 {
+    private const string SleighNotStartedFailure =
+        "The sleigh is not started. Please start the sleigh before any other action...";
+
     public SleighEngineStatus Status { get; set; } = Status;
     public SleighAction Action { get; set; } = Action;
 
@@ -15,7 +18,7 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
             return "Cannot turn on the sleigh because it is already on.";
 
         Status = SleighEngineStatus.On;
-        
+
         return Unit.Default;
     }
 
@@ -25,7 +28,18 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
             return "Cannot turn off the sleigh because it is already off.";
 
         Status = SleighEngineStatus.Off;
-        
+
+        return Unit.Default;
+    }
+
+    public Either<string, Unit> Descend()
+    {
+        if (Status != SleighEngineStatus.On) return SleighNotStartedFailure;
+
+        if (Action != SleighAction.Flying) return "The sleigh must be flying to descend.";
+
+        Action = SleighAction.Hovering;
+
         return Unit.Default;
     }
 }

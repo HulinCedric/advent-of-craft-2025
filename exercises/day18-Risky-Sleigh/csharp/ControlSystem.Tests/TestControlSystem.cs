@@ -26,9 +26,9 @@ public class TestControlSystem : IDisposable
     public void TestStart()
     {
         var controlSystem = new Core.ControlSystem(ASleigh());
-        
+
         controlSystem.StartSystem();
-        
+
         _output.ToString()
             .Trim()
             .Should()
@@ -98,18 +98,22 @@ public class TestControlSystem : IDisposable
     public void TestDescendWhenParked()
     {
         var controlSystem = new Core.ControlSystem(ASleigh().On().Parked());
+
         controlSystem.Descend();
+
         controlSystem.Action.Should().Be(SleighAction.Parked);
-        _output.ToString().Trim().Should().BeEmpty();
+        _output.ToString().Trim().Should().Be("The sleigh must be flying to descend.");
     }
 
     [Fact]
     public void TestDescendWhenHovering()
     {
         var controlSystem = new Core.ControlSystem(ASleigh().On().Hovering());
+
         controlSystem.Descend();
+
         controlSystem.Action.Should().Be(SleighAction.Hovering);
-        _output.ToString().Trim().Should().BeEmpty();
+        _output.ToString().Trim().Should().Be("The sleigh must be flying to descend.");
     }
 
     [Fact]
@@ -151,7 +155,7 @@ public class TestControlSystem : IDisposable
     public void TestStop()
     {
         var controlSystem = new Core.ControlSystem(ASleigh().On());
-        
+
         controlSystem.StopSystem();
 
         _output.ToString()
