@@ -1,5 +1,7 @@
 using ControlSystem.Core;
 
+namespace ControlSystem.Tests;
+
 public class SleighBuilder
 {
     private SleighAction _action = SleighAction.Parked;
