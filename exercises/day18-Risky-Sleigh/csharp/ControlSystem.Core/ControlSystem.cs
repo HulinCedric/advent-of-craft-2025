@@ -35,15 +35,15 @@ namespace ControlSystem.Core
 
         private readonly Sleigh _sleigh;
 
-        public ControlSystem() : this(SleighEngineStatus.Off, SleighAction.Flying)
+        public ControlSystem() : this(new Sleigh())
         {
         }
 
-        public ControlSystem(SleighEngineStatus status, SleighAction action)
+        public ControlSystem(Sleigh sleigh)
         {
             _dashboard = new Dashboard();
             _reindeerPowerUnits = BringAllReindeers();
-            _sleigh = new Sleigh(status, action);
+            _sleigh = sleigh;
         }
         
         public SleighEngineStatus Status => _sleigh.Status;

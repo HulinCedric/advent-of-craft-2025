@@ -19,9 +19,7 @@ namespace ControlSystem.Tests
         public void TestStart()
         {
             // The system has been started
-            var controlSystem = new Core.ControlSystem(
-                status: SleighEngineStatus.Off,
-                action: SleighAction.Flying);
+            var controlSystem = new Core.ControlSystem(sleigh: new Sleigh(SleighEngineStatus.Off, SleighAction.Flying));
             controlSystem.StartSystem();
             controlSystem.Status.Should().Be(SleighEngineStatus.On);
             _output.ToString().Trim().Should().Be("""
@@ -33,9 +31,7 @@ namespace ControlSystem.Tests
         [Fact]
         public void TestAlreadyStart()
         {
-            var controlSystem = new Core.ControlSystem(
-                status: SleighEngineStatus.On,
-                action: SleighAction.Flying);
+            var controlSystem = new Core.ControlSystem(sleigh: new Sleigh(SleighEngineStatus.On, SleighAction.Flying));
             controlSystem.StartSystem();
             controlSystem.Status.Should().Be(SleighEngineStatus.On);
             _output.ToString().Trim().Should().BeEmpty();
@@ -44,7 +40,7 @@ namespace ControlSystem.Tests
         [Fact]
         public void TestAscend()
         {
-            var controlSystem = new Core.ControlSystem();
+            var controlSystem = new Core.ControlSystem(new Sleigh(SleighEngineStatus.Off, SleighAction.Flying));
             controlSystem.StartSystem();
             controlSystem.Ascend();
             controlSystem.Action.Should().Be(SleighAction.Flying);
@@ -58,7 +54,7 @@ namespace ControlSystem.Tests
         [Fact]
         public void TestDescend()
         {
-            var controlSystem = new Core.ControlSystem();
+            var controlSystem = new Core.ControlSystem(new Sleigh(SleighEngineStatus.Off, SleighAction.Flying));
             controlSystem.StartSystem();
             controlSystem.Ascend();
             controlSystem.Descend();
@@ -75,7 +71,7 @@ namespace ControlSystem.Tests
         [Fact]
         public void TestDescendWhenParked()
         {
-            var controlSystem = new Core.ControlSystem(SleighEngineStatus.On, SleighAction.Parked);
+            var controlSystem = new Core.ControlSystem(new Sleigh(SleighEngineStatus.On, SleighAction.Parked));
             controlSystem.Descend();
             controlSystem.Action.Should().Be(SleighAction.Parked);
             _output.ToString().Trim().Should().BeEmpty();
@@ -84,7 +80,7 @@ namespace ControlSystem.Tests
         [Fact]
         public void TestDescendWhenHovering()
         {
-            var controlSystem = new Core.ControlSystem(SleighEngineStatus.On, SleighAction.Hovering);
+            var controlSystem = new Core.ControlSystem(new Sleigh(SleighEngineStatus.On, SleighAction.Hovering));
             controlSystem.Descend();
             controlSystem.Action.Should().Be(SleighAction.Hovering);
             _output.ToString().Trim().Should().BeEmpty();
@@ -93,7 +89,7 @@ namespace ControlSystem.Tests
         [Fact]
         public void TestPark()
         {
-            var controlSystem = new Core.ControlSystem();
+            var controlSystem = new Core.ControlSystem(new Sleigh(SleighEngineStatus.Off, SleighAction.Flying));
             controlSystem.StartSystem();
 
             //we want to drain all the magic power to test the parking
@@ -126,7 +122,7 @@ namespace ControlSystem.Tests
         public void TestStop()
         {
             // The system has been started
-            var controlSystem = new Core.ControlSystem(SleighEngineStatus.On, SleighAction.Parked);
+            var controlSystem = new Core.ControlSystem(new Sleigh(SleighEngineStatus.On, SleighAction.Parked));
             controlSystem.StopSystem();
             Assert.True(controlSystem.Status == SleighEngineStatus.Off);
             _output.ToString().Trim().Should()
@@ -139,7 +135,7 @@ namespace ControlSystem.Tests
         [Fact]
         public void TestAlreadyStop()
         {
-            var controlSystem = new Core.ControlSystem(SleighEngineStatus.Off, SleighAction.Parked);
+            var controlSystem = new Core.ControlSystem(new Sleigh(SleighEngineStatus.Off, SleighAction.Parked));
             controlSystem.StopSystem();
             controlSystem.Status .Should().Be(SleighEngineStatus.Off);
             _output.ToString().Trim().Should().BeEmpty();
