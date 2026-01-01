@@ -4,7 +4,7 @@ namespace ControlSystem.Core
 {
     public class ControlSystem
     {
-        private const int XmasSpirit = 40;
+        private const int RequiredMagicPowerForAscend = 40;
         private const string SleighNotStartedFailure = "The sleigh is not started. Please start the sleigh before any other action...";
         private const string ReindeersNeedRestFailure = "The reindeer needs rest. Please park the sleigh...";
         private readonly Dashboard _dashboard;
@@ -56,7 +56,7 @@ namespace ControlSystem.Core
             }
             
             var availableMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
-            if (availableMagicPower < XmasSpirit)
+            if (availableMagicPower < RequiredMagicPowerForAscend)
             {
                 _dashboard.DisplayStatus(ReindeersNeedRestFailure);
                 return;
