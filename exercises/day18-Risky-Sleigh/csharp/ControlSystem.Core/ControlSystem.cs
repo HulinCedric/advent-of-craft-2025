@@ -47,25 +47,20 @@ namespace ControlSystem.Core
 
         public void Ascend()
         {
-            if (Status == SleighEngineStatus.On)
-            {
-                var controlMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
-                if (controlMagicPower >= XmasSpirit)
-                {
-                    foreach (var reindeerPowerUnit in _reindeerPowerUnits)
-                    {
-                       reindeerPowerUnit.HarnessMagicPower();
-                    }
-                    
-                    _dashboard.DisplayStatus("Ascending...");
-                    Action = SleighAction.Flying;
-                }
-                else throw new ReindeersNeedRestException();
-            }
-            else
-            {
+            if (Status != SleighEngineStatus.On)
                 throw new SleighNotStartedException();
+            
+            var availableMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
+            if (availableMagicPower < XmasSpirit)
+                throw new ReindeersNeedRestException();
+            
+            foreach (var reindeerPowerUnit in _reindeerPowerUnits)
+            {
+                reindeerPowerUnit.HarnessMagicPower();
             }
+
+            _dashboard.DisplayStatus("Ascending...");
+            Action = SleighAction.Flying;
         }
 
         public void Descend()
