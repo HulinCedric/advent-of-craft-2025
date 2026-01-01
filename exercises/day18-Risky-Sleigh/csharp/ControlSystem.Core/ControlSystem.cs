@@ -52,8 +52,11 @@ namespace ControlSystem.Core
             
             var availableMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
             if (availableMagicPower < XmasSpirit)
-                throw new ReindeersNeedRestException();
-            
+            {
+                _dashboard.DisplayStatus("The reindeer needs rest. Please park the sleigh...");
+                return;
+            }
+
             foreach (var reindeerPowerUnit in _reindeerPowerUnits)
             {
                 reindeerPowerUnit.HarnessMagicPower();
