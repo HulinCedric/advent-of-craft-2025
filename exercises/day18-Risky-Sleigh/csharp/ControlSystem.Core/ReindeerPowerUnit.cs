@@ -20,8 +20,9 @@ namespace ControlSystem.Core
         {
             if (!_reindeer.NeedsRest())
             {
+                var magicPower = _amplifier.Amplify(_reindeer.GetMagicPower());
                 _reindeer.TimesHarnessing++;
-                return _amplifier.Amplify(_reindeer.GetMagicPower());
+                return magicPower;
             }
 
             return NoMagicPower;
