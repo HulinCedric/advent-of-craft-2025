@@ -2,30 +2,21 @@ using ControlSystem.External;
 
 namespace ControlSystem.Core
 {
-    public class ReindeerPowerUnit
+    public class ReindeerPowerUnit(Reindeer reindeer, MagicPowerAmplifier amplifier)
     {
         private const float NoMagicPower = 0;
         private const int NoHarnessing = 0;
 
-        private readonly Reindeer _reindeer;
-        private readonly MagicPowerAmplifier _amplifier;
-
-        public ReindeerPowerUnit(Reindeer reindeer, MagicPowerAmplifier amplifier)
-        {
-            _reindeer = reindeer;
-            _amplifier = amplifier;
-        }
-
         public void HarnessMagicPower()
         {
-            if (_reindeer.NeedsRest()) return;
+            if (reindeer.NeedsRest()) return;
 
-            _reindeer.TimesHarnessing++;
+            reindeer.TimesHarnessing++;
         }
 
         public float CheckMagicPower()
-            => _reindeer.NeedsRest() ? NoMagicPower : _amplifier.Amplify(_reindeer.GetMagicPower());
+            => reindeer.NeedsRest() ? NoMagicPower : amplifier.Amplify(reindeer.GetMagicPower());
 
-        public void ReleaseHarness() => _reindeer.TimesHarnessing = NoHarnessing;
+        public void ReleaseHarness() => reindeer.TimesHarnessing = NoHarnessing;
     }
 }

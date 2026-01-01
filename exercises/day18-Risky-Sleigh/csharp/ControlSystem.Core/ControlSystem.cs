@@ -1,34 +1,18 @@
-using ControlSystem.External;
-
 namespace ControlSystem.Core;
 
 public class ControlSystem
 {
-    private readonly Dictionary<int, AmplifierType> _availableSpecialAmplifiers = new()
-    {
-        { 1, AmplifierType.Divine },
-        { 2, AmplifierType.Blessed },
-        { 3, AmplifierType.Blessed }
-    };
-
     private readonly IDashboard _dashboard;
-
-    private readonly MagicStable _magicStable = new();
-    private readonly List<ReindeerPowerUnit> _reindeerPowerUnits;
+    private readonly IReadOnlyList<ReindeerPowerUnit> _reindeerPowerUnits;
 
     private Sleigh _sleigh;
 
-    public ControlSystem(Sleigh sleigh, IDashboard dashboard)
+    public ControlSystem(Sleigh sleigh, IDashboard dashboard, IPowerUnitFactory powerUnitFactory)
     {
         _dashboard = dashboard;
-        _reindeerPowerUnits = BringAllReindeers();
+        _reindeerPowerUnits = powerUnitFactory.BringAllReindeers();
         _sleigh = sleigh;
     }
-
-    private List<ReindeerPowerUnit> BringAllReindeers()
-        => new BestMagicalPerformancePowerUnitFactory(
-            _magicStable.GetAllReindeers(),
-            _availableSpecialAmplifiers).BringAllReindeers();
 
     public void StartSystem()
     {
