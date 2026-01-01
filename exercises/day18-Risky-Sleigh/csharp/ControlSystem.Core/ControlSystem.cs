@@ -2,22 +2,6 @@ using ControlSystem.External;
 
 namespace ControlSystem.Core
 {
-    public class Sleigh
-    {
-        public Sleigh() : this(SleighEngineStatus.Off, SleighAction.Flying)
-        {
-        }
-
-        public Sleigh(SleighEngineStatus status, SleighAction action)
-        {
-            Status = status;
-            Action = action;
-        }
-
-        public SleighEngineStatus Status { get; set; }
-        public SleighAction Action { get; set; }
-    }
-
     public class ControlSystem
     {
         private const int RequiredMagicPowerForAscend = 40;
@@ -34,10 +18,6 @@ namespace ControlSystem.Core
         };
 
         private readonly Sleigh _sleigh;
-
-        public ControlSystem() : this(new Sleigh())
-        {
-        }
 
         public ControlSystem(Sleigh sleigh)
         {

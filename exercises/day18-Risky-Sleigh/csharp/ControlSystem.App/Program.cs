@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            var controlSystem = new ControlSystem.Core.ControlSystem(new Sleigh());
+            var controlSystem = new ControlSystem.Core.ControlSystem(Sleigh.New());
             controlSystem.StartSystem();
 
             var keepRunning = true;
