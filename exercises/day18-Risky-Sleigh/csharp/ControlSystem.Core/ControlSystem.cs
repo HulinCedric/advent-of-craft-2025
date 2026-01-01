@@ -4,13 +4,6 @@ namespace ControlSystem.Core;
 
 public class ControlSystem
 {
-    private const int RequiredMagicPowerForAscend = 40;
-
-    private const string SleighNotStartedFailure =
-        "The sleigh is not started. Please start the sleigh before any other action...";
-
-    private const string ReindeersNeedRestFailure = "The reindeer needs rest. Please park the sleigh...";
-
     private readonly Dictionary<int, AmplifierType> _availableSpecialAmplifiers = new()
     {
         { 1, AmplifierType.Divine },
@@ -51,26 +44,19 @@ public class ControlSystem
 
     public void Ascend()
     {
-        if (_sleigh.Status != SleighEngineStatus.On)
-        {
-            _dashboard.DisplayStatus(SleighNotStartedFailure);
-            return;
-        }
-
         var availableMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
-        if (availableMagicPower < RequiredMagicPowerForAscend)
-        {
-            _dashboard.DisplayStatus(ReindeersNeedRestFailure);
-            return;
-        }
+        _sleigh.Ascend(availableMagicPower)
+            .Match(
+                _ =>
+                {
+                    _dashboard.DisplayStatus("Ascending...");
 
-        foreach (var reindeerPowerUnit in _reindeerPowerUnits)
-        {
-            reindeerPowerUnit.HarnessMagicPower();
-        }
-
-        _dashboard.DisplayStatus("Ascending...");
-        _sleigh.Action = SleighAction.Flying;
+                    foreach (var reindeerPowerUnit in _reindeerPowerUnits)
+                    {
+                        reindeerPowerUnit.HarnessMagicPower();
+                    }
+                },
+                failure => _dashboard.DisplayStatus(failure));
     }
 
     public void Descend()
