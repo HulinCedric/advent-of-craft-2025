@@ -11,7 +11,10 @@ public class ReindeerPowerUnit(IReindeer reindeer, MagicPowerAmplifier amplifier
         reindeer.Harness();
     }
 
-    public float CheckMagicPower() => reindeer.NeedsRest() ? NoMagicPower : amplifier.Amplify(reindeer.GetMagicPower());
+    public float CheckMagicPower()
+        => reindeer.NeedsRest()
+            ? NoMagicPower
+            : amplifier.Amplify(reindeer.GetMagicPower());
 
     public void ReleaseHarness() => reindeer.Rest();
 }
