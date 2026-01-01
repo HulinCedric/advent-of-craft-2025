@@ -29,6 +29,6 @@ namespace ControlSystem.Core
             return _reindeer.GetMagicPower();
         }
 
-        public void Rest() => _reindeer.ResetHarnessing();
+        public void ReleaseHarness() => _reindeer.Rest();
     }
 }

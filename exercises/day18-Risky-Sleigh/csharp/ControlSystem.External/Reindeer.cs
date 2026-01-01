@@ -55,6 +55,6 @@ namespace ControlSystem.External
         }
 
         public void IncrementHarnessing() => _timesHarnessing++;
-        public void ResetHarnessing() => _timesHarnessing = 0;
+        public void Rest() => _timesHarnessing = 0;
     }
 }

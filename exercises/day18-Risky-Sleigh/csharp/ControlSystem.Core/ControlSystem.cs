@@ -85,7 +85,7 @@ namespace ControlSystem.Core
 
                 foreach (var reindeerPowerUnit in _reindeerPowerUnits)
                 {
-                    reindeerPowerUnit.Rest();
+                    reindeerPowerUnit.ReleaseHarness();
                 }
 
                 Action = SleighAction.Parked;
