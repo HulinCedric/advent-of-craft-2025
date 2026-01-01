@@ -4,21 +4,21 @@ namespace ControlSystem.Core
 {
     public class ReindeerPowerUnit
     {
-        public Reindeer Reindeer { get; }
+        private readonly Reindeer _reindeer;
         private readonly MagicPowerAmplifier _amplifier;
 
         public ReindeerPowerUnit(Reindeer reindeer, MagicPowerAmplifier amplifier)
         {
-            Reindeer = reindeer;
+            _reindeer = reindeer;
             _amplifier = amplifier;
         }
 
         public float HarnessMagicPower()
         {
-            if (!Reindeer.NeedsRest())
+            if (!_reindeer.NeedsRest())
             {
-                Reindeer.IncrementHarnessing();
-                return _amplifier.Amplify(Reindeer.GetMagicPower());
+                _reindeer.IncrementHarnessing();
+                return _amplifier.Amplify(_reindeer.GetMagicPower());
             }
 
             return 0;
@@ -26,9 +26,9 @@ namespace ControlSystem.Core
 
         public float CheckMagicPower()
         {
-            return Reindeer.GetMagicPower();
+            return _reindeer.GetMagicPower();
         }
 
-        public void Rest() => Reindeer.ResetHarnessing();
+        public void Rest() => _reindeer.ResetHarnessing();
     }
 }
