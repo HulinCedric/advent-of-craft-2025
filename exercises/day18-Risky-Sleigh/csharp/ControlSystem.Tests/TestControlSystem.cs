@@ -71,6 +71,24 @@ namespace ControlSystem.Tests
                     Descending...
                     """);
         }
+        
+        [Fact]
+        public void TestDescendWhenParked()
+        {
+            var controlSystem = new Core.ControlSystem(SleighEngineStatus.On, SleighAction.Parked);
+            controlSystem.Descend();
+            controlSystem.Action.Should().Be(SleighAction.Parked);
+            _output.ToString().Trim().Should().BeEmpty();
+        }
+        
+        [Fact]
+        public void TestDescendWhenHovering()
+        {
+            var controlSystem = new Core.ControlSystem(SleighEngineStatus.On, SleighAction.Hovering);
+            controlSystem.Descend();
+            controlSystem.Action.Should().Be(SleighAction.Hovering);
+            _output.ToString().Trim().Should().BeEmpty();
+        }
 
         [Fact]
         public void TestPark()

@@ -73,6 +73,8 @@ namespace ControlSystem.Core
         {
             if (Status == SleighEngineStatus.On)
             {
+                if (Action != SleighAction.Flying) return;
+                
                 _dashboard.DisplayStatus("Descending...");
                 Action = SleighAction.Hovering;
             }
