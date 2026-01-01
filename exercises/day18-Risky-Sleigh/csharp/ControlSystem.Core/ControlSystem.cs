@@ -49,12 +49,7 @@ namespace ControlSystem.Core
         {
             if (Status == SleighEngineStatus.On)
             {
-                float controlMagicPower = 0;
-                foreach (var reindeerPowerUnit in _reindeerPowerUnits)
-                {
-                    controlMagicPower += reindeerPowerUnit.CheckMagicPower();
-                }
-
+                var controlMagicPower = _reindeerPowerUnits.Sum(reindeerPowerUnit => reindeerPowerUnit.CheckMagicPower());
                 if (controlMagicPower >= XmasSpirit)
                 {
                     foreach (var reindeerPowerUnit in _reindeerPowerUnits)
