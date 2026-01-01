@@ -15,14 +15,19 @@ namespace ControlSystem.Core
             {3, AmplifierType.Blessed},
         };
         
-        public SleighEngineStatus Status { get; set; }
+        public SleighEngineStatus Status { get; private set; }
         public SleighAction Action { get; set; }
         private float _controlMagicPower = 0;
 
-        public ControlSystem()
+        public ControlSystem() : this(SleighEngineStatus.Off)
+        {
+        }
+
+        public ControlSystem(SleighEngineStatus status)
         {
             _dashboard = new Dashboard();
             _reindeerPowerUnits = BringAllReindeers();
+            Status = status;
         }
 
         private List<ReindeerPowerUnit> BringAllReindeers()

@@ -19,9 +19,8 @@ namespace ControlSystem.Tests
         public void TestStart()
         {
             // The system has been started
-            var controlSystem = new Core.ControlSystem();
+            var controlSystem = new Core.ControlSystem(SleighEngineStatus.Off);
             controlSystem.Action = SleighAction.Flying;
-            controlSystem.Status = SleighEngineStatus.Off;
             controlSystem.StartSystem();
             controlSystem.Status.Should().Be(SleighEngineStatus.On);
             _output.ToString().Trim().Should().Be("""
@@ -91,9 +90,8 @@ namespace ControlSystem.Tests
         public void TestStop()
         {
             // The system has been started
-            var controlSystem = new Core.ControlSystem();
+            var controlSystem = new Core.ControlSystem(SleighEngineStatus.On);
             controlSystem.Action = SleighAction.Parked;
-            controlSystem.Status = SleighEngineStatus.On;
             controlSystem.StopSystem();
             Assert.True(controlSystem.Status == SleighEngineStatus.Off);
             _output.ToString().Trim().Should()
