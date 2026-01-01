@@ -1,4 +1,3 @@
-using ControlSystem.Core;
 using FluentAssertions;
 using static ControlSystem.Tests.SleighBuilder;
 
@@ -62,7 +61,6 @@ public class TestControlSystem : IDisposable
         var controlSystem = new Core.ControlSystem(ASleigh().Off());
         controlSystem.StartSystem();
         controlSystem.Ascend();
-        controlSystem.Action.Should().Be(SleighAction.Flying);
         _output.ToString()
             .Trim()
             .Should()
@@ -81,7 +79,6 @@ public class TestControlSystem : IDisposable
         controlSystem.StartSystem();
         controlSystem.Ascend();
         controlSystem.Descend();
-        controlSystem.Action.Should().Be(SleighAction.Hovering);
         _output.ToString()
             .Trim()
             .Should()
@@ -101,7 +98,6 @@ public class TestControlSystem : IDisposable
 
         controlSystem.Descend();
 
-        controlSystem.Action.Should().Be(SleighAction.Parked);
         _output.ToString().Trim().Should().Be("The sleigh must be flying to descend.");
     }
 
@@ -112,7 +108,6 @@ public class TestControlSystem : IDisposable
 
         controlSystem.Descend();
 
-        controlSystem.Action.Should().Be(SleighAction.Hovering);
         _output.ToString().Trim().Should().Be("The sleigh must be flying to descend.");
     }
 
@@ -128,7 +123,6 @@ public class TestControlSystem : IDisposable
         controlSystem.Park();
         controlSystem.Ascend();
 
-        Assert.True(controlSystem.Action == SleighAction.Flying);
         _output.ToString()
             .Trim()
             .Should()

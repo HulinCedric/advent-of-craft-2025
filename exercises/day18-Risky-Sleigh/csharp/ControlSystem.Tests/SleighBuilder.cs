@@ -39,6 +39,12 @@ public class SleighBuilder
         return this;
     }
 
+    public SleighBuilder Flying()
+    {
+        _action = SleighAction.Flying;
+        return this;
+    }
+
     public Sleigh Build() => new(_status, _action);
 
     public static implicit operator Sleigh(SleighBuilder builder) => builder.Build();

@@ -25,8 +25,6 @@ public class ControlSystem
         _sleigh = sleigh;
     }
 
-    public SleighAction Action => _sleigh.Action;
-
     private List<ReindeerPowerUnit> BringAllReindeers()
         => new BestMagicalPerformancePowerUnitFactory(
             _magicStable.GetAllReindeers(),
