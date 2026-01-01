@@ -17,7 +17,7 @@ namespace ControlSystem.Core
         {
             if (!Reindeer.NeedsRest())
             {
-                Reindeer.TimesHarnessing++;
+                Reindeer.IncrementHarnessing();
                 return _amplifier.Amplify(Reindeer.GetMagicPower());
             }
 

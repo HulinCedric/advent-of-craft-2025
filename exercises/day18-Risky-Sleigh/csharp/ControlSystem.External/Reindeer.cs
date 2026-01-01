@@ -6,7 +6,7 @@ namespace ControlSystem.External
         private int _age = 0;
         private readonly string _name;
         private bool _sick = false;
-        public int TimesHarnessing = 0;
+        private int _timesHarnessing = 0;
         private int _powerPullLimit = 0;
 
         public Reindeer(string name, int age, int spirit)
@@ -40,17 +40,21 @@ namespace ControlSystem.External
                 return 0;
             }
         }
+        
 
         public bool NeedsRest()
         {
             if (!_sick)
             {
-                return TimesHarnessing == _powerPullLimit;
+                return _timesHarnessing == _powerPullLimit;
             }
             else
             {
                 return true;
             }
         }
+
+        public void IncrementHarnessing() => _timesHarnessing++;
+        public void ResetHarnessing() => _timesHarnessing = 0;
     }
 }
