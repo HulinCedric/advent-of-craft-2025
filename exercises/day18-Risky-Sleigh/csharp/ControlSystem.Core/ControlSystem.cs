@@ -2,6 +2,22 @@ using ControlSystem.External;
 
 namespace ControlSystem.Core
 {
+    public class Sleigh
+    {
+        public Sleigh() : this(SleighEngineStatus.Off, SleighAction.Flying)
+        {
+        }
+
+        public Sleigh(SleighEngineStatus status, SleighAction action)
+        {
+            Status = status;
+            Action = action;
+        }
+
+        public SleighEngineStatus Status { get; set; }
+        public SleighAction Action { get; set; }
+    }
+
     public class ControlSystem
     {
         private const int RequiredMagicPowerForAscend = 40;
@@ -16,9 +32,8 @@ namespace ControlSystem.Core
             {2, AmplifierType.Blessed},
             {3, AmplifierType.Blessed},
         };
-        
-        public SleighEngineStatus Status { get; private set; }
-        public SleighAction Action { get; private set; }
+
+        private readonly Sleigh _sleigh;
 
         public ControlSystem() : this(SleighEngineStatus.Off, SleighAction.Flying)
         {
@@ -28,9 +43,11 @@ namespace ControlSystem.Core
         {
             _dashboard = new Dashboard();
             _reindeerPowerUnits = BringAllReindeers();
-            Status = status;
-            Action = action;
+            _sleigh = new Sleigh(status, action);
         }
+        
+        public SleighEngineStatus Status => _sleigh.Status;
+        public SleighAction Action => _sleigh.Action;
 
         private List<ReindeerPowerUnit> BringAllReindeers()
         {
@@ -40,16 +57,16 @@ namespace ControlSystem.Core
 
         public void StartSystem()
         {
-            if (Status == SleighEngineStatus.On) return;
+            if (_sleigh.Status == SleighEngineStatus.On) return;
             
             _dashboard.DisplayStatus("Starting the sleigh...");
-            Status = SleighEngineStatus.On;
+            _sleigh.Status = SleighEngineStatus.On;
             _dashboard.DisplayStatus("System ready.");
         }
 
         public void Ascend()
         {
-            if (Status != SleighEngineStatus.On)
+            if (_sleigh.Status != SleighEngineStatus.On)
             {
                 _dashboard.DisplayStatus(SleighNotStartedFailure);  
                 return;
@@ -68,26 +85,26 @@ namespace ControlSystem.Core
             }
 
             _dashboard.DisplayStatus("Ascending...");
-            Action = SleighAction.Flying;
+            _sleigh.Action = SleighAction.Flying;
         }
 
         public void Descend()
         {
-            if (Status != SleighEngineStatus.On)
+            if (_sleigh.Status != SleighEngineStatus.On)
             {
                 _dashboard.DisplayStatus(SleighNotStartedFailure);  
                 return;
             }
             
-            if (Action != SleighAction.Flying) return;
+            if (_sleigh.Action != SleighAction.Flying) return;
 
             _dashboard.DisplayStatus("Descending...");
-            Action = SleighAction.Hovering;
+            _sleigh.Action = SleighAction.Hovering;
         }
 
         public void Park()
         {
-            if (Status != SleighEngineStatus.On)
+            if (_sleigh.Status != SleighEngineStatus.On)
             {
                 _dashboard.DisplayStatus(SleighNotStartedFailure);  
                 return;
@@ -100,15 +117,15 @@ namespace ControlSystem.Core
                 reindeerPowerUnit.ReleaseHarness();
             }
 
-            Action = SleighAction.Parked;
+            _sleigh.Action = SleighAction.Parked;
         }
 
         public void StopSystem()
         {
-            if (Status == SleighEngineStatus.Off) return;
+            if (_sleigh.Status == SleighEngineStatus.Off) return;
             
             _dashboard.DisplayStatus("Stopping the sleigh...");
-            Status = SleighEngineStatus.Off;
+            _sleigh.Status = SleighEngineStatus.Off;
             _dashboard.DisplayStatus("System shutdown.");
         }
     }
