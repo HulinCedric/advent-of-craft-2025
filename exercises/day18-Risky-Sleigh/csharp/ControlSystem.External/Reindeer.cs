@@ -2,63 +2,55 @@ namespace ControlSystem.External
 {
     public class Reindeer
     {
-        private const float NoMagicPower = 0;
-        private const int NoHarnessing = 0;
+        private int _spirit = 0;
+        private int _age = 0;
+        private readonly string _name;
+        public bool Sick = false;
+        public int TimesHarnessing = 0;
+        private int _powerPullLimit = 0;
 
-        private const int AdultAge = 5;
-        private const int YoungAge = 1;
-        
-        private const int FullPower = 5;
-
-        private readonly int _age;
-        private readonly int _powerPullLimit;
-        private readonly bool _sick;
-        private readonly int _spirit;
-
-        private int _timesHarnessing;
-
-        public Reindeer(string name, int age, int spirit, bool sick = false)
+        public Reindeer(string name, int age, int spirit)
+            : this(name, age, spirit, false)
         {
-            _age = age;
+        }
+
+        public Reindeer(string name, int age, int spirit, bool sick)
+        {
+            _name = name;
             _spirit = spirit;
-            _sick = sick;
-            _powerPullLimit = age <= AdultAge
-                ? FullPower
-                : FullPower - (age - AdultAge);
+            _age = age;
+            Sick = sick;
+
+            _powerPullLimit = age <= 5 ? 5 : 5 - (age - 5);
         }
 
         public float GetMagicPower()
         {
-            if (_sick) return NoMagicPower;
-            
-            if (NeedsRest()) return NoMagicPower;
-
-            if (IsYoung())
-                return HalfSpirit();
-
-            if (IsAdult())
-                return FullSpirit();
-
-            return QuarterSpirit();
+            if (!Sick && !NeedsRest())
+            {
+                if (_age == 1)
+                    return _spirit * 0.5f;
+                else if (_age <= 5)
+                    return _spirit;
+                else
+                    return _spirit * 0.25f;
+            }
+            else
+            {
+                return 0;
+            }
         }
-
-        private bool IsYoung() => _age <= YoungAge;
-        private bool IsAdult() => _age is > YoungAge and <= AdultAge;
-        private bool IsOld() => _age > AdultAge;
-
-        private int FullSpirit() => _spirit;
-        private float HalfSpirit() => _spirit * 0.5f;
-        private float QuarterSpirit() => _spirit * 0.25f;
 
         public bool NeedsRest()
         {
-            if (!_sick) return _timesHarnessing == _powerPullLimit;
-
-            return true;
+            if (!Sick)
+            {
+                return TimesHarnessing == _powerPullLimit;
+            }
+            else
+            {
+                return true;
+            }
         }
-
-        public void IncrementHarnessing() => _timesHarnessing++;
-
-        public void Rest() => _timesHarnessing = NoHarnessing;
     }
 }
