@@ -41,11 +41,11 @@ public class ControlSystem
 
     public void StartSystem()
     {
-        if (_sleigh.Status == SleighEngineStatus.On) return;
-
         _dashboard.DisplayStatus("Starting the sleigh...");
-        _sleigh.TurnOn();
-        _dashboard.DisplayStatus("System ready.");
+        _sleigh.TurnOn()
+            .Match(
+                _ => _dashboard.DisplayStatus("System ready."),
+                failure => _dashboard.DisplayStatus(failure));
     }
 
     public void Ascend()

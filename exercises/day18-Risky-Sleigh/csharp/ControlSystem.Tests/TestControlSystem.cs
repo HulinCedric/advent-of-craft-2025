@@ -43,9 +43,17 @@ public class TestControlSystem : IDisposable
     public void TestAlreadyStart()
     {
         var controlSystem = new Core.ControlSystem(ASleigh().On());
+
         controlSystem.StartSystem();
-        controlSystem.Status.Should().Be(SleighEngineStatus.On);
-        _output.ToString().Trim().Should().BeEmpty();
+
+        _output.ToString()
+            .Trim()
+            .Should()
+            .Be(
+                """
+                Starting the sleigh...
+                Cannot turn on the sleigh because it is already on.
+                """);
     }
 
     [Fact]
@@ -160,9 +168,9 @@ public class TestControlSystem : IDisposable
     public void TestAlreadyStop()
     {
         var controlSystem = new Core.ControlSystem(ASleigh().Off());
-        
+
         controlSystem.StopSystem();
-        
+
         _output.ToString()
             .Trim()
             .Should()

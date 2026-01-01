@@ -9,7 +9,15 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
 
     public static Sleigh New() => new(SleighEngineStatus.Off, SleighAction.Parked);
 
-    public void TurnOn() => Status = SleighEngineStatus.On;
+    public Either<string, Unit> TurnOn()
+    {
+        if (Status == SleighEngineStatus.On)
+            return "Cannot turn on the sleigh because it is already on.";
+
+        Status = SleighEngineStatus.On;
+        
+        return Unit.Default;
+    }
 
     public Either<string, Unit> TurnOff()
     {
@@ -17,6 +25,7 @@ public record Sleigh(SleighEngineStatus Status, SleighAction Action)
             return "Cannot turn off the sleigh because it is already off.";
 
         Status = SleighEngineStatus.Off;
+        
         return Unit.Default;
     }
 }
