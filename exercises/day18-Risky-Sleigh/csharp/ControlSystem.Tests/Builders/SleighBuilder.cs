@@ -1,6 +1,6 @@
 using ControlSystem.Core;
 
-namespace ControlSystem.Tests;
+namespace ControlSystem.Tests.Builder;
 
 public class SleighBuilder
 {

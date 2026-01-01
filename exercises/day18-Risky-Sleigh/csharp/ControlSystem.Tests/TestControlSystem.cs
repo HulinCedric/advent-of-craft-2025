@@ -1,7 +1,8 @@
 using ControlSystem.Core;
 using ControlSystem.Infrastructure;
+using ControlSystem.Tests.TestDoubles;
 using FluentAssertions;
-using static ControlSystem.Tests.SleighBuilder;
+using static ControlSystem.Tests.Builder.SleighBuilder;
 
 namespace ControlSystem.Tests;
 

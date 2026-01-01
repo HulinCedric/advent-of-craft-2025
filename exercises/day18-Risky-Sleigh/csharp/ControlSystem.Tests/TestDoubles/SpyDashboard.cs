@@ -1,7 +1,7 @@
 using System.Text;
 using ControlSystem.Core;
 
-namespace ControlSystem.Tests;
+namespace ControlSystem.Tests.TestDoubles;
 
 public class SpyDashboard : IDashboard
 {

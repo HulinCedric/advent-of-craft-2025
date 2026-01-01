@@ -1,0 +1,6 @@
+{
+  "stryker-config": {
+    "mutation-level": "Advanced",
+    "project": "ControlSystem.Core.csproj"
+  }
+}

@@ -3,7 +3,7 @@ using FluentAssertions;
 using FluentAssertions.LanguageExt;
 using static ControlSystem.Core.SleighAction;
 using static ControlSystem.Core.SleighEngineStatus;
-using static ControlSystem.Tests.SleighBuilder;
+using static ControlSystem.Tests.Builder.SleighBuilder;
 
 namespace ControlSystem.Tests;
 
@@ -14,7 +14,6 @@ public class SleighShould
 
     [Fact]
     public void Be_Parked_by_default() => Sleigh.New().Action.Should().Be(Parked);
-
     
     [Fact]
     public void Ascend_changes_action_to_Flying()
