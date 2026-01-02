@@ -1,4 +1,7 @@
-namespace ControlSystem.Core;
+using ControlSystem.Core.Models.Reindeers.Ports;
+using ControlSystem.Core.Ports;
+
+namespace ControlSystem.Core.Models.Reindeers;
 
 public class ReindeerPowerUnit(IReindeer reindeer, MagicPowerAmplifier amplifier)
 {

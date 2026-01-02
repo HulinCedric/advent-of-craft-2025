@@ -1,4 +1,5 @@
 using ControlSystem.Core;
+using ControlSystem.Core.Ports;
 
 namespace ControlSystem.Infrastructure;
 

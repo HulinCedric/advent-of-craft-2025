@@ -1,4 +1,7 @@
-﻿using ControlSystem.Infrastructure;
+﻿using ControlSystem.Core.Models.Reindeers;
+using ControlSystem.Core.Models.Reindeers.Factories;
+using ControlSystem.Core.Models.Sleighs;
+using ControlSystem.Infrastructure;
 
 namespace ControlSystem
 {
@@ -19,7 +22,7 @@ namespace ControlSystem
                 reindeerRepository.GetAllReindeers(),
                 availableSpecialAmplifiers);
             
-            var controlSystem = new ControlSystem.Core.ControlSystem(Sleigh.New(), new ConsoleDashboard(), powerUnitFactory);
+            var controlSystem = new Core.Services.ControlSystem(Sleigh.New(), new ConsoleDashboard(), powerUnitFactory);
             controlSystem.StartSystem();
 
             var keepRunning = true;

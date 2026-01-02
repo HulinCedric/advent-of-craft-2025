@@ -1,4 +1,4 @@
-namespace ControlSystem.Core;
+namespace ControlSystem.Core.Models.Reindeers;
 
 public enum AmplifierType
 {

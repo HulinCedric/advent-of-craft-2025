@@ -1,6 +1,6 @@
 using LanguageExt;
 
-namespace ControlSystem.Core;
+namespace ControlSystem.Core.Models.Sleighs;
 
 public record Sleigh(SleighEngineStatus Status, SleighAction Action)
 {

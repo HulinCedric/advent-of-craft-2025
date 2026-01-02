@@ -1,6 +1,6 @@
 using LanguageExt;
 
-namespace ControlSystem.Core;
+namespace ControlSystem.Core.Models.Reindeers;
 
 public class HarnessedReindeers
 {

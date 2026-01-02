@@ -1,4 +1,4 @@
-namespace ControlSystem.Core;
+namespace ControlSystem.Core.Ports;
 
 public interface IDashboard
 {

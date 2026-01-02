@@ -1,5 +1,6 @@
 using System.Text;
 using ControlSystem.Core;
+using ControlSystem.Core.Ports;
 
 namespace ControlSystem.Tests.TestDoubles;
 

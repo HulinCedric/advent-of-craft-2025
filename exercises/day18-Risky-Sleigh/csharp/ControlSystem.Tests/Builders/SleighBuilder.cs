@@ -1,6 +1,6 @@
-using ControlSystem.Core;
+using ControlSystem.Core.Models.Sleighs;
 
-namespace ControlSystem.Tests.Builder;
+namespace ControlSystem.Tests.Builders;
 
 public class SleighBuilder
 {

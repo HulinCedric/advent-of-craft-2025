@@ -1,14 +1,18 @@
 using ControlSystem.Core;
+using ControlSystem.Core.Models.Reindeers;
+using ControlSystem.Core.Models.Reindeers.Factories;
+using ControlSystem.Core.Models.Reindeers.Ports;
+using ControlSystem.Core.Ports;
 using ControlSystem.Infrastructure;
 using ControlSystem.Tests.TestDoubles;
 using FluentAssertions;
-using static ControlSystem.Tests.Builder.SleighBuilder;
+using static ControlSystem.Tests.Builders.SleighBuilder;
 
 namespace ControlSystem.Tests;
 
 public class TestControlSystem
 {
-    private readonly Core.ControlSystem _controlSystem;
+    private readonly Core.Services.ControlSystem _controlSystem;
     private readonly SpyDashboard _dashboard;
 
     public TestControlSystem()
@@ -25,7 +29,7 @@ public class TestControlSystem
             availableSpecialAmplifiers);
 
         _dashboard = new SpyDashboard();
-        _controlSystem = new Core.ControlSystem(
+        _controlSystem = new Core.Services.ControlSystem(
             ASleigh().Off().Parked().Build(),
             _dashboard,
             factory);

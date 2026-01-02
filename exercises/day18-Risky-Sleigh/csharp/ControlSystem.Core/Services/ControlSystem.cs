@@ -1,6 +1,10 @@
+using ControlSystem.Core.Models.Reindeers;
+using ControlSystem.Core.Models.Reindeers.Ports;
+using ControlSystem.Core.Models.Sleighs;
+using ControlSystem.Core.Ports;
 using LanguageExt;
 
-namespace ControlSystem.Core;
+namespace ControlSystem.Core.Services;
 
 public class ControlSystem(Sleigh sleigh, IDashboard dashboard, IPowerUnitFactory powerUnitFactory)
 {

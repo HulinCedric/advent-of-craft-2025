@@ -1,9 +1,10 @@
 using ControlSystem.Core;
+using ControlSystem.Core.Models.Sleighs;
 using FluentAssertions;
 using FluentAssertions.LanguageExt;
-using static ControlSystem.Core.SleighAction;
-using static ControlSystem.Core.SleighEngineStatus;
-using static ControlSystem.Tests.Builder.SleighBuilder;
+using static ControlSystem.Core.Models.Sleighs.SleighAction;
+using static ControlSystem.Core.Models.Sleighs.SleighEngineStatus;
+using static ControlSystem.Tests.Builders.SleighBuilder;
 
 namespace ControlSystem.Tests;
 

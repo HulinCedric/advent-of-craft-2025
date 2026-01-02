@@ -1,4 +1,6 @@
-﻿namespace ControlSystem.Core;
+﻿using ControlSystem.Core.Models.Reindeers.Ports;
+
+namespace ControlSystem.Core.Models.Reindeers.Factories;
 
 public class BestMagicalPerformancePowerUnitFactory(
     IReadOnlyList<IReindeer> allReindeers,

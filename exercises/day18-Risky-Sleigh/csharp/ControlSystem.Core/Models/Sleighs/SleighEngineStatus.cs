@@ -1,4 +1,4 @@
-namespace ControlSystem.Core;
+namespace ControlSystem.Core.Models.Sleighs;
 
 public enum SleighEngineStatus
 {
