@@ -1,10 +1,28 @@
-﻿namespace ControlSystem
+﻿using ControlSystem.Core.Modules.Reindeers;
+using ControlSystem.Core.Modules.Reindeers.Factories;
+using ControlSystem.Core.Modules.Sleighs;
+using ControlSystem.Infrastructure;
+
+namespace ControlSystem
 {
     public static class Program
     {
         static void Main(string[] args)
         {
-            var controlSystem = new ControlSystem.Core.ControlSystem();
+            var reindeerRepository = new ReindeerRepository();
+            
+            var availableSpecialAmplifiers = new Dictionary<int, AmplifierType>()
+            {
+                { 1, AmplifierType.Divine },
+                { 2, AmplifierType.Blessed },
+                { 3, AmplifierType.Blessed }
+            };
+
+            var powerUnitFactory = new BestMagicalPerformancePowerUnitFactory(
+                reindeerRepository.GetAllReindeers(),
+                availableSpecialAmplifiers);
+            
+            var controlSystem = new Core.Services.ControlSystem(Sleigh.New(), new ConsoleDashboard(), powerUnitFactory);
             controlSystem.StartSystem();
 
             var keepRunning = true;
@@ -18,44 +36,19 @@
                 {
                     case "ascend":
                     case "a":
-                        try
-                        {
-                            controlSystem.Ascend();
-                        }
-                        catch (ReindeersNeedRestException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
-                        catch (SleighNotStartedException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        controlSystem.Ascend();
 
                         break;
 
                     case "descend":
                     case "d":
-                        try
-                        {
-                            controlSystem.Descend();
-                        }
-                        catch (SleighNotStartedException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        controlSystem.Descend();
 
                         break;
 
                     case "park":
                     case "p":
-                        try
-                        {
-                            controlSystem.Park();
-                        }
-                        catch (SleighNotStartedException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        controlSystem.Park();
 
                         break;
 
