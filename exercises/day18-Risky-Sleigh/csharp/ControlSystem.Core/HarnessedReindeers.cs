@@ -15,15 +15,14 @@ public class HarnessedReindeers
         if (!HasEnoughPowerToReach(RequiredMagicPowerForAscend))
             return "The reindeer needs rest. Please park the sleigh...";
 
-        foreach (var reindeer in _reindeers)
-        {
-            reindeer.HarnessMagicPower();
-        }
+        foreach (var reindeer in _reindeers) reindeer.HarnessMagicPower();
 
         return Unit.Default;
     }
 
-    private bool HasEnoughPowerToReach(int powerNeeded) => _reindeers.Sum(r => r.CheckMagicPower()) >= powerNeeded;
+    private bool HasEnoughPowerToReach(int powerNeeded) => AvailableMagicPower() >= powerNeeded;
+
+    private float AvailableMagicPower() => _reindeers.Sum(reindeer => reindeer.CheckMagicPower());
 
     public void RestReindeers()
     {

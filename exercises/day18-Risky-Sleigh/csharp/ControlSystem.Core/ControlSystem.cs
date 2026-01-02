@@ -1,3 +1,5 @@
+using LanguageExt;
+
 namespace ControlSystem.Core;
 
 public class ControlSystem(Sleigh sleigh, IDashboard dashboard, IPowerUnitFactory powerUnitFactory)
@@ -11,65 +13,42 @@ public class ControlSystem(Sleigh sleigh, IDashboard dashboard, IPowerUnitFactor
         dashboard.DisplayStatus("Starting the sleigh...");
 
         _sleigh.TurnOn()
-            .Match(
-                sleigh =>
-                {
-                    _sleigh = sleigh;
-
-                    dashboard.DisplayStatus("System ready.");
-                },
-                dashboard.DisplayStatus);
+            .Do(sleigh => _sleigh = sleigh)
+            .Do(_ => dashboard.DisplayStatus("System ready."))
+            .IfLeft(dashboard.DisplayStatus);
     }
 
     public void Ascend()
-        => (from sleigh in _sleigh.Ascend()
-                from _ in _reindeerPowerUnits.HarnessAllPower()
-                select sleigh)
-            .Match(
-                sleigh =>
-                {
-                    _sleigh = sleigh;
+        => AscendSleigh()
+            .Do(sleigh => _sleigh = sleigh)
+            .Do(_ => dashboard.DisplayStatus("Ascending..."))
+            .IfLeft(dashboard.DisplayStatus);
 
-                    dashboard.DisplayStatus("Ascending...");
-                },
-                dashboard.DisplayStatus);
+    private Either<string, Sleigh> AscendSleigh()
+        => from sleigh in _sleigh.Ascend()
+            from _ in _reindeerPowerUnits.HarnessAllPower()
+            select sleigh;
 
     public void Descend()
         => _sleigh.Descend()
-            .Match(
-                sleigh =>
-                {
-                    _sleigh = sleigh;
-
-                    dashboard.DisplayStatus("Descending...");
-                },
-                dashboard.DisplayStatus);
+            .Do(sleigh => _sleigh = sleigh)
+            .Do(_ => dashboard.DisplayStatus("Descending..."))
+            .IfLeft(dashboard.DisplayStatus);
 
     public void Park()
         => _sleigh.Park()
-            .Match(
-                updatedSleigh =>
-                {
-                    _sleigh = updatedSleigh;
-
-                    dashboard.DisplayStatus("Parking...");
-
-                    _reindeerPowerUnits.RestReindeers();
-                },
-                dashboard.DisplayStatus);
+            .Do(sleigh => _sleigh = sleigh)
+            .Do(_ => _reindeerPowerUnits.RestReindeers())
+            .Do(_ => dashboard.DisplayStatus("Parking..."))
+            .IfLeft(dashboard.DisplayStatus);
 
     public void StopSystem()
     {
         dashboard.DisplayStatus("Stopping the sleigh...");
 
         _sleigh.TurnOff()
-            .Match(
-                sleigh =>
-                {
-                    _sleigh = sleigh;
-
-                    dashboard.DisplayStatus("System shutdown.");
-                },
-                dashboard.DisplayStatus);
+            .Do(sleigh => _sleigh = sleigh)
+            .Do(_ => dashboard.DisplayStatus("System shutdown."))
+            .IfLeft(dashboard.DisplayStatus);
     }
 }
