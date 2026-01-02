@@ -1,4 +1,4 @@
-namespace ControlSystem.Core.Models.Reindeers;
+namespace ControlSystem.Core.Modules.Reindeers;
 
 public static class AmplifierTypeExtensions
 {

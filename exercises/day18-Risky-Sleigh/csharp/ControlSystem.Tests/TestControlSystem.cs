@@ -1,7 +1,7 @@
 using ControlSystem.Core;
-using ControlSystem.Core.Models.Reindeers;
-using ControlSystem.Core.Models.Reindeers.Factories;
-using ControlSystem.Core.Models.Reindeers.Ports;
+using ControlSystem.Core.Modules.Reindeers;
+using ControlSystem.Core.Modules.Reindeers.Factories;
+using ControlSystem.Core.Modules.Reindeers.Ports;
 using ControlSystem.Core.Ports;
 using ControlSystem.Infrastructure;
 using ControlSystem.Tests.TestDoubles;

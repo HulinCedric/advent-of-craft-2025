@@ -1,4 +1,4 @@
-using ControlSystem.Core.Models.Sleighs;
+using ControlSystem.Core.Modules.Sleighs;
 
 namespace ControlSystem.Tests.Builders;
 

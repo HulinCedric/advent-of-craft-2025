@@ -1,5 +1,5 @@
 using ControlSystem.Core;
-using ControlSystem.Core.Models.Reindeers.Ports;
+using ControlSystem.Core.Modules.Reindeers.Ports;
 using ControlSystem.Core.Ports;
 using ControlSystem.External;
 

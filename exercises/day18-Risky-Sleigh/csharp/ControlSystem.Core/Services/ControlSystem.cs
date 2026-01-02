@@ -1,6 +1,6 @@
-using ControlSystem.Core.Models.Reindeers;
-using ControlSystem.Core.Models.Reindeers.Ports;
-using ControlSystem.Core.Models.Sleighs;
+using ControlSystem.Core.Modules.Reindeers;
+using ControlSystem.Core.Modules.Reindeers.Ports;
+using ControlSystem.Core.Modules.Sleighs;
 using ControlSystem.Core.Ports;
 using LanguageExt;
 

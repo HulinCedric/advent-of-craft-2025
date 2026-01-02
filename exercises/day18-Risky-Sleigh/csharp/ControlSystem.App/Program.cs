@@ -1,6 +1,6 @@
-﻿using ControlSystem.Core.Models.Reindeers;
-using ControlSystem.Core.Models.Reindeers.Factories;
-using ControlSystem.Core.Models.Sleighs;
+﻿using ControlSystem.Core.Modules.Reindeers;
+using ControlSystem.Core.Modules.Reindeers.Factories;
+using ControlSystem.Core.Modules.Sleighs;
 using ControlSystem.Infrastructure;
 
 namespace ControlSystem

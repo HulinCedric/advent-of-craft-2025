@@ -1,4 +1,4 @@
-namespace ControlSystem.Core.Models.Reindeers.Ports;
+namespace ControlSystem.Core.Modules.Reindeers.Ports;
 
 public interface IReindeer
 {

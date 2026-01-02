@@ -1,4 +1,4 @@
-namespace ControlSystem.Core.Models.Sleighs;
+namespace ControlSystem.Core.Modules.Sleighs;
 
 public enum SleighAction
 {
