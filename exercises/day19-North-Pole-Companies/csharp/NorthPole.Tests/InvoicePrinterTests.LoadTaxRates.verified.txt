@@ -1,0 +1,21 @@
+﻿{
+  alpine: {
+    Name: Alpine Region,
+    TaxRateValue: 0.2,
+    Description: 20% regional tax for Alpine operations
+  },
+  arctic: {
+    Name: Arctic Circle,
+    TaxRateValue: 0.1,
+    Description: 10% Arctic tax zone
+  },
+  nordic: {
+    Name: Nordic Region,
+    TaxRateValue: 0.15,
+    Description: 15% VAT applies to all Nordic elf companies
+  },
+  north-pole: {
+    Name: North Pole,
+    Description: Tax-free zone - Santa's headquarters
+  }
+}

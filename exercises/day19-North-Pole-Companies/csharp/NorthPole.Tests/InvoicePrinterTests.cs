@@ -1,9 +1,5 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Xunit;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace NorthPole.Tests;
 
@@ -19,6 +15,14 @@ public class InvoicePrinterTests
         var result = printer.Print(invoice, elfCompanies);
 
         return Verify(result);
+    }
+    
+    [Fact]
+    public Task LoadTaxRates()
+    {
+        var taxes = LoadTaxes();
+
+        return Verify(taxes);
     }
 
     // TODO: Add ExampleInvoiceWithTaxes() test here
@@ -55,5 +59,22 @@ public class InvoicePrinterTests
             ));
         }
         return new Invoice(customer, deliveries);
+    }
+    
+    private Dictionary<string, TaxRate> LoadTaxes()
+    {
+        var json = File.ReadAllText("Resources/taxRates.json");
+        var data = JsonConvert.DeserializeObject<Dictionary<string, JObject>>(json);
+        var taxes = new Dictionary<string, TaxRate>();
+
+        foreach (var kvp in data)
+        {
+            taxes[kvp.Key] = new TaxRate(
+                name: kvp.Value["name"].ToString(),
+                taxRate: kvp.Value["taxRate"].ToObject<double>(),
+                description: kvp.Value["description"].ToString()
+            );
+        }
+        return taxes;
     }
 }
