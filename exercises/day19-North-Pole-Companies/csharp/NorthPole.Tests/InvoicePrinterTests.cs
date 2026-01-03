@@ -22,9 +22,10 @@ public class InvoicePrinterTests
     {
         var elfCompanies = LoadElfCompanies();
         var invoice = LoadInvoice();
+        var taxes = LoadTaxes();
         var printer = new InvoicePrinter();
 
-        var result = printer.Print(invoice, elfCompanies);
+        var result = printer.Print(invoice, elfCompanies, taxes);
 
         return Verify(result);
     }

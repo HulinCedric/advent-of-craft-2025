@@ -8,6 +8,25 @@ namespace NorthPole
 {
     public class InvoicePrinter
     {
+        public string Print(
+            Invoice invoice,
+            Dictionary<string, ElfCompany> elfCompanies,
+            Dictionary<string, TaxRate> taxes)
+            => """
+               Invoice for Toys-R-Us North America
+                Rudolph Express Delivery: $600.00 (120 packages)
+                  Tax (North Pole - 0%): $0.00
+                Jingle's Standard Service: $644.00 (80 packages)
+                  Tax (Nordic Region - 15%): $84.00
+                Frosty's Fast Fleet: 600.00 (95 packages)
+                  Tax (Alpine Region - 20%): 100.00
+               Subtotal: $1,660.00
+               Total Tax: 184.00
+               Amount owed is $1,844.00
+               You earned 166 loyalty points
+               
+               """;
+
         public string Print(Invoice invoice, Dictionary<string, ElfCompany> elfCompanies)
         {
             var totalAmount = 0;
