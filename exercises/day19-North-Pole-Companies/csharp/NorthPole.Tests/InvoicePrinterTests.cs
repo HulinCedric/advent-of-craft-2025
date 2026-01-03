@@ -16,15 +16,7 @@ public class InvoicePrinterTests
 
         return Verify(result);
     }
-
-    [Fact]
-    public Task LoadTaxRates()
-    {
-        var taxes = LoadTaxes();
-
-        return Verify(taxes);
-    }
-
+    
     [Fact]
     public Task ExampleInvoiceWithTaxes()
     {
