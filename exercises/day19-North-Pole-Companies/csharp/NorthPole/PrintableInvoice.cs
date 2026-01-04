@@ -8,9 +8,8 @@ public record PrintableInvoice(Invoice Invoice, IReadOnlyList<(Delivery delivery
         foreach (var delivery in invoice.Deliveries)
         {
             var company = elfCompanies[delivery.CompanyID];
-            var deliveryCostInCents = CalculateDeliveryCost(delivery, company);
-
-            invoiceLines.Add((delivery, company, deliveryCostInCents / 100.0m));
+            var deliveryCost = CalculateDeliveryCost(delivery, company);
+            invoiceLines.Add((delivery, company, deliveryCost));
         }
         
         var totalAmount = invoiceLines.Select(t=>t.deliveryCost).Sum();
@@ -25,7 +24,14 @@ public record PrintableInvoice(Invoice Invoice, IReadOnlyList<(Delivery delivery
         return printableInvoice;
     }
 
-    private static int CalculateDeliveryCost(Delivery delivery, ElfCompany company)
+    public static decimal CalculateDeliveryCost(Delivery delivery, ElfCompany company)
+    {
+        var deliveryCostInCents = CalculateDeliveryCostInCents(delivery, company);
+
+        return deliveryCostInCents / 100.0m;
+    }
+
+    private static int CalculateDeliveryCostInCents(Delivery delivery, ElfCompany company)
     {
         var cost = 0;
         switch (company.Type)
