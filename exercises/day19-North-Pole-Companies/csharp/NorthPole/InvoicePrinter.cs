@@ -29,35 +29,30 @@ namespace NorthPole
 
         public string Print(Invoice invoice, Dictionary<string, ElfCompany> elfCompanies)
         {
-            var loyaltyPoints = 0;
-            var result = new StringBuilder($"Invoice for {invoice.Customer}\n");
-            var currencyFormat = new CultureInfo("en-US");
-
-            var deliveryCosts = new List<(Delivery delivery, ElfCompany company, int deliveryCostInCents)>();
+            var deliveryCosts = new List<(Delivery delivery, ElfCompany company, double deliveryCost)>();
             foreach (var delivery in invoice.Deliveries)
             {
                 var company = elfCompanies[delivery.CompanyID];
                 var deliveryCostInCents = CalculateDeliveryCost(delivery, company);
 
-                deliveryCosts.Add((delivery, company, deliveryCostInCents));
+                deliveryCosts.Add((delivery, company, deliveryCostInCents / 100.0));
             }
         
-            var totalAmount = deliveryCosts.Select(t=>t.deliveryCostInCents).Sum() / 100.0;
+            var totalAmount = deliveryCosts.Select(t=>t.deliveryCost).Sum();
             
+            var loyaltyPoints = 0;
             foreach (var delivery in invoice.Deliveries)
             {
                 var company = elfCompanies[delivery.CompanyID];
                 loyaltyPoints += CalculateLoyaltyPoints(delivery, company);
             }
-            
                 
+            var result = new StringBuilder($"Invoice for {invoice.Customer}\n");
+            var currencyFormat = new CultureInfo("en-US");
             foreach (var tuple in deliveryCosts)
             {
-                var deliveryCost = tuple.deliveryCostInCents / 100.0;
-                result.AppendLine($" {tuple.company.Name}: {deliveryCost.ToString("C", currencyFormat)} ({tuple.delivery.Packages} packages)");
+                result.AppendLine($" {tuple.company.Name}: {tuple.deliveryCost.ToString("C", currencyFormat)} ({tuple.delivery.Packages} packages)");
             }
-
-
             result.AppendLine($"Amount owed is {totalAmount.ToString("C", currencyFormat)}");
             result.AppendLine($"You earned {loyaltyPoints} loyalty points");
             return result.ToString();
