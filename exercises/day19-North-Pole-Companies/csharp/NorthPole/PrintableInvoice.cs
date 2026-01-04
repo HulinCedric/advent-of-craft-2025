@@ -36,7 +36,7 @@ public record PrintableInvoice(
             case "express":
                 return ExpressCalculateDeliveryCostInCents(delivery) / 100.0m;
             case "standard":
-                return StandardCalculateDeliveryCostInCents(delivery) / 100.0m;
+                return StandardCalculateDeliveryCost(delivery.Packages);
             default:
                 throw new Exception($"unknown type: {company.Type}");
         }
@@ -50,12 +50,29 @@ public record PrintableInvoice(
         return basePrice;
     }
 
-    private static int StandardCalculateDeliveryCostInCents(Delivery delivery)
+    private static decimal StandardCalculateDeliveryCost(int numberOfPackages)
     {
-        var basePrice = 30000;
-        if (delivery.Packages > 50) basePrice += 1000 + 300 * (delivery.Packages - 50);
-        basePrice += 200 * delivery.Packages;
-        return basePrice;
+        const decimal baseFee = 300m; // 300.00 €
+        const decimal pricePerPackage = 2m; // 2.00 € per package
+        
+        const int threshold = 50;
+
+        if (numberOfPackages <= threshold)
+        {
+            return baseFee
+                   + numberOfPackages * pricePerPackage;
+        }
+
+        const decimal highVolumeSurcharge = 10m; // +10.00 € once above 50 packages
+        const decimal extraPerPackageAboveThreshold = 3m; // +3.00 € per package above 50
+            
+        var extraPackages = numberOfPackages - threshold;
+
+        return baseFee
+               + numberOfPackages * pricePerPackage
+               + highVolumeSurcharge
+               + extraPackages * extraPerPackageAboveThreshold;
+
     }
 
     private static int CalculateLoyaltyPoints(Delivery delivery, ElfCompany company)
