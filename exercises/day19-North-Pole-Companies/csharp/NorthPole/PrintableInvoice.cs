@@ -31,19 +31,12 @@ public record PrintableInvoice(
 
     public static decimal CalculateDeliveryCost(Delivery delivery, ElfCompany company)
     {
-        var deliveryCostInCents = CalculateDeliveryCostInCents(delivery, company);
-
-        return deliveryCostInCents / 100.0m;
-    }
-
-    private static int CalculateDeliveryCostInCents(Delivery delivery, ElfCompany company)
-    {
         switch (company.Type)
         {
             case "express":
-                return ExpressCalculateDeliveryCostInCents(delivery);
+                return ExpressCalculateDeliveryCostInCents(delivery) / 100.0m;
             case "standard":
-                return StandardCalculateDeliveryCostInCents(delivery);
+                return StandardCalculateDeliveryCostInCents(delivery) / 100.0m;
             default:
                 throw new Exception($"unknown type: {company.Type}");
         }
