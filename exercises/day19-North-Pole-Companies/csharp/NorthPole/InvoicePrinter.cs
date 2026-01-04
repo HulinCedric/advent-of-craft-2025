@@ -43,6 +43,11 @@ namespace NorthPole
                 result.AppendLine($" {company.Name}: {deliveryCost.ToString("C", currencyFormat)} ({delivery.Packages} packages)");
                 
                 totalAmountInCents += deliveryCostInCents;
+            }
+            
+            foreach (var delivery in invoice.Deliveries)
+            {
+                var company = elfCompanies[delivery.CompanyID];
                 loyaltyPoints += CalculateLoyaltyPoints(delivery, company);
             }
 
