@@ -1,16 +1,16 @@
 namespace NorthPole;
 
-public record PrintableInvoice(Invoice Invoice, IReadOnlyList<(Delivery delivery, ElfCompany company, double deliveryCost)> InvoiceLines, double TotalAmount, int LoyaltyPoints)
+public record PrintableInvoice(Invoice Invoice, IReadOnlyList<(Delivery delivery, ElfCompany company, decimal deliveryCost)> InvoiceLines, decimal TotalAmount, int LoyaltyPoints)
 {
     public static PrintableInvoice CreateFrom(Invoice invoice, Dictionary<string, ElfCompany> elfCompanies)
     {
-        var invoiceLines = new List<(Delivery delivery, ElfCompany company, double deliveryCost)>();
+        var invoiceLines = new List<(Delivery delivery, ElfCompany company, decimal deliveryCost)>();
         foreach (var delivery in invoice.Deliveries)
         {
             var company = elfCompanies[delivery.CompanyID];
             var deliveryCostInCents = CalculateDeliveryCost(delivery, company);
 
-            invoiceLines.Add((delivery, company, deliveryCostInCents / 100.0));
+            invoiceLines.Add((delivery, company, deliveryCostInCents / 100.0m));
         }
         
         var totalAmount = invoiceLines.Select(t=>t.deliveryCost).Sum();
