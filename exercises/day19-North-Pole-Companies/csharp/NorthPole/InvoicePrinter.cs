@@ -29,7 +29,7 @@ namespace NorthPole
 
         public string Print(Invoice invoice, Dictionary<string, ElfCompany> elfCompanies)
         {
-            var totalAmountCents = 0;
+            var totalAmountInCents = 0;
             var loyaltyPoints = 0;
             var result = new StringBuilder($"Invoice for {invoice.Customer}\n");
             var currencyFormat = new CultureInfo("en-US");
@@ -37,15 +37,16 @@ namespace NorthPole
             foreach (var delivery in invoice.Deliveries)
             {
                 var company = elfCompanies[delivery.CompanyID];
-                var deliveryCost = CalculateDeliveryCost(delivery, company);
+                var deliveryCostInCents = CalculateDeliveryCost(delivery, company);
 
-                result.AppendLine($" {company.Name}: {(deliveryCost / 100.0).ToString("C", currencyFormat)} ({delivery.Packages} packages)");
+                var deliveryCost = deliveryCostInCents / 100.0;
+                result.AppendLine($" {company.Name}: {deliveryCost.ToString("C", currencyFormat)} ({delivery.Packages} packages)");
                 
-                totalAmountCents += deliveryCost;
+                totalAmountInCents += deliveryCostInCents;
                 loyaltyPoints += CalculateLoyaltyPoints(delivery, company);
             }
 
-            var totalAmount = totalAmountCents / 100.0;
+            var totalAmount = totalAmountInCents / 100.0;
             result.AppendLine($"Amount owed is {totalAmount.ToString("C", currencyFormat)}");
             result.AppendLine($"You earned {loyaltyPoints} loyalty points");
             return result.ToString();
