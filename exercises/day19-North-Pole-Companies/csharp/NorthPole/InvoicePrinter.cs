@@ -40,11 +40,8 @@ namespace NorthPole
                 var deliveryCostInCents = CalculateDeliveryCost(delivery, company);
 
                 deliveryCosts.Add((delivery, company, deliveryCostInCents));
-                
-                var deliveryCost = deliveryCostInCents / 100.0;
-                result.AppendLine($" {company.Name}: {deliveryCost.ToString("C", currencyFormat)} ({delivery.Packages} packages)");
             }
-            
+        
             var totalAmount = deliveryCosts.Select(t=>t.deliveryCostInCents).Sum() / 100.0;
             
             foreach (var delivery in invoice.Deliveries)
@@ -52,6 +49,14 @@ namespace NorthPole
                 var company = elfCompanies[delivery.CompanyID];
                 loyaltyPoints += CalculateLoyaltyPoints(delivery, company);
             }
+            
+                
+            foreach (var tuple in deliveryCosts)
+            {
+                var deliveryCost = tuple.deliveryCostInCents / 100.0;
+                result.AppendLine($" {tuple.company.Name}: {deliveryCost.ToString("C", currencyFormat)} ({tuple.delivery.Packages} packages)");
+            }
+
 
             result.AppendLine($"Amount owed is {totalAmount.ToString("C", currencyFormat)}");
             result.AppendLine($"You earned {loyaltyPoints} loyalty points");
