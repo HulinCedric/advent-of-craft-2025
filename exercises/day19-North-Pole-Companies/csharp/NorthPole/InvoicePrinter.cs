@@ -29,69 +29,17 @@ namespace NorthPole
 
         public string Print(Invoice invoice, Dictionary<string, ElfCompany> elfCompanies)
         {
-            var deliveryCosts = new List<(Delivery delivery, ElfCompany company, double deliveryCost)>();
-            foreach (var delivery in invoice.Deliveries)
-            {
-                var company = elfCompanies[delivery.CompanyID];
-                var deliveryCostInCents = CalculateDeliveryCost(delivery, company);
+            var printableInvoice = PrintableInvoice.CreateFrom(invoice, elfCompanies);
 
-                deliveryCosts.Add((delivery, company, deliveryCostInCents / 100.0));
-            }
-        
-            var totalAmount = deliveryCosts.Select(t=>t.deliveryCost).Sum();
-            
-            var loyaltyPoints = 0;
-            foreach (var delivery in invoice.Deliveries)
-            {
-                var company = elfCompanies[delivery.CompanyID];
-                loyaltyPoints += CalculateLoyaltyPoints(delivery, company);
-            }
-                
-            var result = new StringBuilder($"Invoice for {invoice.Customer}\n");
+            var result = new StringBuilder($"Invoice for {printableInvoice.Invoice.Customer}\n");
             var currencyFormat = new CultureInfo("en-US");
-            foreach (var tuple in deliveryCosts)
+            foreach (var line in printableInvoice.InvoiceLines)
             {
-                result.AppendLine($" {tuple.company.Name}: {tuple.deliveryCost.ToString("C", currencyFormat)} ({tuple.delivery.Packages} packages)");
+                result.AppendLine($" {line.company.Name}: {line.deliveryCost.ToString("C", currencyFormat)} ({line.delivery.Packages} packages)");
             }
-            result.AppendLine($"Amount owed is {totalAmount.ToString("C", currencyFormat)}");
-            result.AppendLine($"You earned {loyaltyPoints} loyalty points");
+            result.AppendLine($"Amount owed is {printableInvoice.TotalAmount.ToString("C", currencyFormat)}");
+            result.AppendLine($"You earned {printableInvoice.LoyaltyPoints} loyalty points");
             return result.ToString();
-        }
-
-        private int CalculateDeliveryCost(Delivery delivery, ElfCompany company)
-        {
-            var cost = 0;
-            switch (company.Type)
-            {
-                case "express":
-                    cost = 50000;
-                    if (delivery.Packages > 100)
-                    {
-                        cost += 500 * (delivery.Packages - 100);
-                    }
-                    break;
-                case "standard":
-                    cost = 30000;
-                    if (delivery.Packages > 50)
-                    {
-                        cost += 1000 + 300 * (delivery.Packages - 50);
-                    }
-                    cost += 200 * delivery.Packages;
-                    break;
-                default:
-                    throw new Exception($"unknown type: {company.Type}");
-            }
-            return cost;
-        }
-
-        private int CalculateLoyaltyPoints(Delivery delivery, ElfCompany company)
-        {
-            var points = Math.Max(delivery.Packages - 50, 0);
-            if (company.Type == "express")
-            {
-                points += (int)Math.Floor(delivery.Packages / 10.0);
-            }
-            return points;
         }
     }
 }
