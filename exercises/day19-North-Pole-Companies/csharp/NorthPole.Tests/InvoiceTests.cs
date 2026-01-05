@@ -21,7 +21,23 @@ public class InvoiceTests
 
         Assert.Equal(deliveryCost, PrintableInvoice.CalculateDeliveryCost(delivery, company));
     }
-    
+
+    [Theory]
+    [InlineData(0, 0.00, 300.00)]
+    [InlineData(0, 0.15, 345.00)]
+    [InlineData(0, 0.20, 360.00)]
+    [InlineData(80, 0.00, 560.00)]
+    [InlineData(80, 0.15, 644.00)]
+    [InlineData(80, 0.20, 672.00)]
+    public void Standard_calculation_with_tax(int packages, decimal tax, decimal deliveryCost)
+    {
+        var delivery = new Delivery("jingles-standard", packages);
+        var company = new ElfCompany("Jingle's Standard Service", "standard", "nordic");
+        var taxRate = new TaxRate("North Pole", tax, "Tax-free zone - Santa's headquarters");
+
+        Assert.Equal(deliveryCost, PrintableInvoice.CalculateDeliveryCost(delivery, company, taxRate));
+    }
+
     [Theory]
     [InlineData(0, 500.00)]
     [InlineData(1, 500.00)]

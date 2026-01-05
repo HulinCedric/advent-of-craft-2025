@@ -43,10 +43,10 @@ namespace NorthPole
     public class TaxRate
     {
         public string Name { get; }
-        public double TaxRateValue { get; }
+        public decimal TaxRateValue { get; }
         public string Description { get; }
 
-        public TaxRate(string name, double taxRate, string description)
+        public TaxRate(string name, decimal taxRate, string description)
         {
             Name = name;
             TaxRateValue = taxRate;

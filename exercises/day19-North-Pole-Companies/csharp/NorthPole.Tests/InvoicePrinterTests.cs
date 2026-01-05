@@ -75,7 +75,7 @@ public class InvoicePrinterTests
         {
             taxes[kvp.Key] = new TaxRate(
                 name: kvp.Value["name"].ToString(),
-                taxRate: kvp.Value["taxRate"].ToObject<double>(),
+                taxRate: kvp.Value["taxRate"].ToObject<decimal>(),
                 description: kvp.Value["description"].ToString());
         }
 

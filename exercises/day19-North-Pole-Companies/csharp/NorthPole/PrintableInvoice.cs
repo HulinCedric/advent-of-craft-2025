@@ -29,14 +29,15 @@ public record PrintableInvoice(
         return printableInvoice;
     }
 
-    public static decimal CalculateDeliveryCost(Delivery delivery, ElfCompany company)
+    public static decimal CalculateDeliveryCost(Delivery delivery, ElfCompany company, TaxRate? taxRate = null)
     {
+        var taxValue = taxRate?.TaxRateValue ?? 0m;
         switch (company.Type)
         {
             case "express":
                 return ExpressCalculateDeliveryCostInCents(delivery) / 100.0m;
             case "standard":
-                return StandardCalculateDeliveryCost(delivery.Packages);
+                return StandardCalculateDeliveryCost(delivery.Packages) * (1 + taxValue);
             default:
                 throw new Exception($"unknown type: {company.Type}");
         }
@@ -54,7 +55,7 @@ public record PrintableInvoice(
     {
         const decimal baseFee = 300m; // 300.00 €
         const decimal pricePerPackage = 2m; // 2.00 € per package
-        
+
         const int threshold = 50;
 
         if (numberOfPackages <= threshold)
@@ -65,14 +66,13 @@ public record PrintableInvoice(
 
         const decimal highVolumeSurcharge = 10m; // +10.00 € once above 50 packages
         const decimal extraPerPackageAboveThreshold = 3m; // +3.00 € per package above 50
-            
+
         var extraPackages = numberOfPackages - threshold;
 
         return baseFee
                + numberOfPackages * pricePerPackage
                + highVolumeSurcharge
                + extraPackages * extraPerPackageAboveThreshold;
-
     }
 
     private static int CalculateLoyaltyPoints(Delivery delivery, ElfCompany company)
