@@ -3,7 +3,7 @@ using static NorthPole.PrintableInvoice;
 
 namespace NorthPole;
 
-public class TextPrinter : IPrinter
+public class PrintWithoutTax : IPrinter
 {
     private readonly CultureInfo _culture = new("en-US");
 

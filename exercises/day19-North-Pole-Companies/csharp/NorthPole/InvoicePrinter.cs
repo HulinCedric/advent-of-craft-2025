@@ -16,6 +16,6 @@ public class InvoicePrinter
     {
         var printableInvoice = PrintableInvoiceFactory.CreateFrom(invoice, elfCompanies);
 
-        return new TextPrinter().Print(printableInvoice);
+        return new PrintWithoutTax().Print(printableInvoice);
     }
 }
