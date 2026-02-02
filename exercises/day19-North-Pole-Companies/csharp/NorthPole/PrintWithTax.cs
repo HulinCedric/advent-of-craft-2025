@@ -11,9 +11,9 @@ public class PrintWithTax : IPrinter
         => $"""
             Invoice for {invoice.Customer}
             {Print(invoice.Lines)}
-            Subtotal: {invoice.SubTotalAmount.ToString("C", _culture)}
-            Total Tax: {invoice.TaxTotalAmount.ToString("C", _culture)}
-            Amount owed is {invoice.TotalAmount.ToString("C", _culture)}
+            Subtotal: {invoice.SubTotalAmount}
+            Total Tax: {invoice.TaxTotalAmount}
+            Amount owed is {invoice.TotalAmount}
             You earned {invoice.LoyaltyPoints} loyalty points
 
             """;
@@ -23,6 +23,6 @@ public class PrintWithTax : IPrinter
     private string Print(Line line)
         => $"""
              {line.CompanyName}: {line.NetAmount} ({line.NumberOfPackages} packages)
-               Tax ({line.TaxName} - {line.TaxRate.ToString("P0", _culture)}): {line.TaxAmount.ToString("C", _culture)}
+               Tax ({line.TaxName} - {line.TaxRate.ToString("P0", _culture)}): {line.TaxAmount}
             """;
 }

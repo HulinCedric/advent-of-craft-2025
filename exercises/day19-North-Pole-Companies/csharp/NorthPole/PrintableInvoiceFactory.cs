@@ -35,9 +35,9 @@ public static class PrintableInvoiceFactory
     {
         var lines = CreateLines(invoice.Deliveries, elfCompanies, taxRates).ToList();
 
-        var subTotalAmount = lines.Sum(l => l.NetAmount);
-        var taxTotalAmount = lines.Sum(l => l.TaxAmount);
-        var totalAmount = lines.Sum(l => l.GrossAmount);
+        var subTotalAmount = lines.Sum(line => line.NetAmount);
+        var taxTotalAmount = lines.Sum(line => line.TaxAmount);
+        var totalAmount = lines.Sum(line => line.GrossAmount);
         var loyaltyPoints = lines.Sum(l => l.LoyaltyPoints);
 
         return new PrintableInvoice(
@@ -70,8 +70,8 @@ public static class PrintableInvoiceFactory
             taxRate.Name,
             taxRate.TaxRateValue,
             new Money(netAmount),
-            taxAmount,
-            grossAmount,
+            new Money(taxAmount),
+            new Money(grossAmount),
             loyaltyPoints);
     }
 

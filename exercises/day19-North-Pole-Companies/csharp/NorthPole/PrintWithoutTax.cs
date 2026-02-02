@@ -11,7 +11,7 @@ public class PrintWithoutTax : IPrinter
         => $"""
             Invoice for {invoice.Customer}
             {Print(invoice.Lines)}
-            Amount owed is {invoice.TotalAmount.ToString("C", _culture)}
+            Amount owed is {invoice.TotalAmount}
             You earned {invoice.LoyaltyPoints} loyalty points
 
             """;

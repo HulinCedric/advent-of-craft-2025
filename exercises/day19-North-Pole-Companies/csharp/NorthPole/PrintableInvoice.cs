@@ -3,9 +3,9 @@ namespace NorthPole;
 public record PrintableInvoice(
     string Customer,
     IReadOnlyList<PrintableInvoice.Line> Lines,
-    decimal SubTotalAmount,
-    decimal TaxTotalAmount,
-    decimal TotalAmount,
+    Money SubTotalAmount,
+    Money TaxTotalAmount,
+    Money TotalAmount,
     int LoyaltyPoints)
 {
     public record Line(
@@ -14,7 +14,7 @@ public record PrintableInvoice(
         string TaxName,
         decimal TaxRate,
         Money NetAmount,
-        decimal TaxAmount,
-        decimal GrossAmount,
+        Money TaxAmount,
+        Money GrossAmount,
         int LoyaltyPoints);
 }
