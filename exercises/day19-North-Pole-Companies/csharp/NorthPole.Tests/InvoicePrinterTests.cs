@@ -13,22 +13,24 @@ public class InvoicePrinterTests
     {
         var elfCompanies = LoadElfCompanies();
         var invoice = LoadInvoice(ResourcesOrder);
-        var printer = new InvoicePrinter();
 
-        var result = printer.Print(invoice, elfCompanies);
+        var result = InvoicePrinter.Print(
+            PrintableInvoiceFactory.CreateFrom(invoice, elfCompanies),
+            new PrintWithoutTax());
 
         return Verify(result);
     }
-    
+
     [Fact]
     public Task ExampleInvoiceWithTaxes()
     {
         var elfCompanies = LoadElfCompanies();
         var invoice = LoadInvoice(ResourcesOrderWithTaxes);
         var taxes = LoadTaxes();
-        var printer = new InvoicePrinter();
 
-        var result = printer.Print(invoice, elfCompanies, taxes);
+        var result = InvoicePrinter.Print(
+            PrintableInvoiceFactory.CreateFrom(invoice, elfCompanies, taxes),
+            new PrintWithTax());
 
         return Verify(result);
     }
