@@ -13,7 +13,7 @@ public record PrintableInvoice(
         string CompanyName,
         string TaxName,
         decimal TaxRate,
-        decimal NetAmount,
+        Money NetAmount,
         decimal TaxAmount,
         decimal GrossAmount,
         int LoyaltyPoints);

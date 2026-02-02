@@ -16,8 +16,8 @@ public class PrintWithoutTax : IPrinter
 
             """;
 
-    private string Print(IReadOnlyList<Line> lines) => string.Join("\n", lines.Select(Print));
+    private static string Print(IReadOnlyList<Line> lines) => string.Join("\n", lines.Select(Print));
 
-    private string Print(Line line)
-        => $" {line.CompanyName}: {line.NetAmount.ToString("C", _culture)} ({line.NumberOfPackages} packages)";
+    private static string Print(Line line)
+        => $" {line.CompanyName}: {line.NetAmount} ({line.NumberOfPackages} packages)";
 }

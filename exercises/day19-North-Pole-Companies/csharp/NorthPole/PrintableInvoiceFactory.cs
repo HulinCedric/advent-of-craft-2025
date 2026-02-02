@@ -69,7 +69,7 @@ public static class PrintableInvoiceFactory
             company.Name,
             taxRate.Name,
             taxRate.TaxRateValue,
-            netAmount,
+            new Money(netAmount),
             taxAmount,
             grossAmount,
             loyaltyPoints);
