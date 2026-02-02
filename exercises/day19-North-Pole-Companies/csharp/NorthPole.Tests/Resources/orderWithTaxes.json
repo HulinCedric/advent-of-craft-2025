@@ -1,0 +1,17 @@
+{
+  "customer": "Toys-R-Us North America",
+  "deliveries": [
+    {
+      "companyID": "rudolph-express",
+      "packages": 120
+    },
+    {
+      "companyID": "jingles-standard",
+      "packages": 160
+    },
+    {
+      "companyID": "frostys-express",
+      "packages": 145
+    }
+  ]
+}

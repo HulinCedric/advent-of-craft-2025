@@ -1,11 +1,11 @@
 ﻿Invoice for Toys-R-Us North America
  Rudolph Express Delivery: $600.00 (120 packages)
    Tax (North Pole - 0%): $0.00
- Jingle's Standard Service: $644.00 (80 packages)
-   Tax (Nordic Region - 15%): $84.00
- Frosty's Fast Fleet: $600.00 (95 packages)
-   Tax (Alpine Region - 20%): $100.00
-Subtotal: $1,660.00
-Total Tax: $184.00
-Amount owed is $1,844.00
-You earned 166 loyalty points
+ Jingle's Standard Service: $960.00 (160 packages)
+   Tax (Nordic Region - 15%): $144.00
+ Frosty's Fast Fleet: $725.00 (145 packages)
+   Tax (Alpine Region - 20%): $145.00
+Subtotal: $2,285.00
+Total Tax: $289.00
+Amount owed is $2,574.00
+You earned 301 loyalty points

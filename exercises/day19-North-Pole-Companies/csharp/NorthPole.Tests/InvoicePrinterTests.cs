@@ -5,11 +5,14 @@ namespace NorthPole.Tests;
 
 public class InvoicePrinterTests
 {
+    private const string ResourcesOrderWithTaxes = "Resources/orderWithTaxes.json";
+    private const string ResourcesOrder = "Resources/order.json";
+
     [Fact]
     public Task ExampleInvoice()
     {
         var elfCompanies = LoadElfCompanies();
-        var invoice = LoadInvoice();
+        var invoice = LoadInvoice(ResourcesOrder);
         var printer = new InvoicePrinter();
 
         var result = printer.Print(invoice, elfCompanies);
@@ -21,7 +24,7 @@ public class InvoicePrinterTests
     public Task ExampleInvoiceWithTaxes()
     {
         var elfCompanies = LoadElfCompanies();
-        var invoice = LoadInvoice();
+        var invoice = LoadInvoice(ResourcesOrderWithTaxes);
         var taxes = LoadTaxes();
         var printer = new InvoicePrinter();
 
@@ -30,7 +33,7 @@ public class InvoicePrinterTests
         return Verify(result);
     }
 
-    private Dictionary<string, ElfCompany> LoadElfCompanies()
+    private static Dictionary<string, ElfCompany> LoadElfCompanies()
     {
         var json = File.ReadAllText("Resources/elfCompanies.json");
         var data = JsonConvert.DeserializeObject<Dictionary<string, JObject>>(json);
@@ -47,9 +50,9 @@ public class InvoicePrinterTests
         return companies;
     }
 
-    private Invoice LoadInvoice()
+    private static Invoice LoadInvoice(string orders)
     {
-        var json = File.ReadAllText("Resources/order.json");
+        var json = File.ReadAllText(orders);
         var data = JObject.Parse(json);
         var customer = data["customer"].ToString();
         var deliveries = new List<Delivery>();
@@ -65,7 +68,7 @@ public class InvoicePrinterTests
         return new Invoice(customer, deliveries);
     }
 
-    private Dictionary<string, TaxRate> LoadTaxes()
+    private static Dictionary<string, TaxRate> LoadTaxes()
     {
         var json = File.ReadAllText("Resources/taxRates.json");
         var data = JsonConvert.DeserializeObject<Dictionary<string, JObject>>(json);
