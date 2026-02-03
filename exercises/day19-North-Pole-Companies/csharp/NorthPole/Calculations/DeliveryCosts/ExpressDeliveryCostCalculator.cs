@@ -1,24 +1,24 @@
+using NorthPole.Domain;
+
 namespace NorthPole.Calculations.DeliveryCosts;
 
 public class ExpressDeliveryCostCalculator : IDeliveryCostCalculator
 {
-    private const decimal BaseFee = 500m; // 500.00 €
-    private const decimal ExtraPerPackageAboveThreshold = 5m; // +5.00 € per package above 100
-
     private const int HighVolumeThreshold = 100;
+    private static readonly Money BaseCost = Money.Parse(500.00m);
+    private static readonly Money ExtraPackageCost = Money.Parse(5.00m);
 
-    public decimal Calculate(int numberOfPackages)
+    public Money Calculate(int numberOfPackages)
         => numberOfPackages <= HighVolumeThreshold
             ? DeliveryCost()
             : DeliveryCostForHighVolume(numberOfPackages);
 
-    private static decimal DeliveryCost() => BaseFee;
+    private static Money DeliveryCost() => BaseCost;
 
-    private static decimal DeliveryCostForHighVolume(int numberOfPackages)
+    private static Money DeliveryCostForHighVolume(int numberOfPackages)
     {
         var extraPackages = numberOfPackages - HighVolumeThreshold;
 
-        return BaseFee
-               + extraPackages * ExtraPerPackageAboveThreshold;
+        return BaseCost + extraPackages * ExtraPackageCost;
     }
 }
