@@ -17,13 +17,13 @@ public sealed class InvoiceCalculator(
     private CalculatedInvoice.Line Line(EnrichedDelivery delivery)
     {
         var netAmount = NetAmount(delivery);
-        var taxLine = TaxLine(delivery, netAmount);
+        var tax = Tax(delivery, netAmount);
         var loyaltyPoints = LoyaltyPoints(delivery);
 
         return new CalculatedInvoice.Line(
             delivery.Packages,
             delivery.CompanyName,
-            taxLine,
+            tax,
             netAmount,
             loyaltyPoints);
     }
@@ -33,7 +33,7 @@ public sealed class InvoiceCalculator(
             ? calculator.Calculate(delivery.Packages)
             : throw new InvalidOperationException($"Unknown company type: {delivery.CompanyType}");
 
-    private static TaxLine TaxLine(EnrichedDelivery delivery, Money netAmount)
+    private static TaxLine Tax(EnrichedDelivery delivery, Money netAmount)
         => new(delivery.Tax, Amount: netAmount * delivery.TaxRate);
 
     private int LoyaltyPoints(EnrichedDelivery delivery)
