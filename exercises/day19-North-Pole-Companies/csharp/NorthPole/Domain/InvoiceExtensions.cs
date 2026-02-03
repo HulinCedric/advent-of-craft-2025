@@ -4,7 +4,7 @@ namespace NorthPole.Domain;
 
 public static class InvoiceExtensions
 {
-    extension(Invoice invoice)
+    extension(EnrichedInvoice invoice)
     {
         public CalculatedInvoice CalculateWithoutTaxes(
             InvoiceCalculator calculator,

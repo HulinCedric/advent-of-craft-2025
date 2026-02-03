@@ -22,12 +22,12 @@ public class InvoiceCalculator
     }
 
     public CalculatedInvoice Calculate(
-        Invoice invoice,
+        EnrichedInvoice invoice,
         Dictionary<string, ElfCompany> elfCompanies)
         => Calculate(invoice, elfCompanies, new Dictionary<string, Tax>());
 
     public CalculatedInvoice Calculate(
-        Invoice invoice,
+        EnrichedInvoice invoice,
         Dictionary<string, ElfCompany> elfCompanies,
         Dictionary<string, Tax> taxRates)
     {
@@ -37,15 +37,15 @@ public class InvoiceCalculator
     }
 
     private IEnumerable<Line> CreateLines(
-        List<Delivery> deliveries,
+        List<EnrichedDelivery> deliveries,
         Dictionary<string, ElfCompany> elfCompanies,
         Dictionary<string, Tax> taxRates)
         => from delivery in deliveries
-            let company = elfCompanies[delivery.CompanyId]
-            let taxRate = taxRates.GetValueOrDefault(company.RegionName, Tax.NoTax)
-            select Line(delivery, company, taxRate);
+            // let company = elfCompanies[delivery.CompanyId]
+            // let taxRate = taxRates.GetValueOrDefault(company.RegionName, Tax.NoTax)
+            select Line(delivery, delivery.Company, delivery.Company.Tax);
 
-    private Line Line(Delivery delivery, ElfCompany company, Tax tax)
+    private Line Line(EnrichedDelivery delivery, EnrichedElfCompany company, Tax tax)
     {
         var netAmount = NetAmount(delivery, company);
         var taxLine = TaxLine(tax, netAmount);
@@ -59,14 +59,14 @@ public class InvoiceCalculator
             loyaltyPoints);
     }
 
-    private Money NetAmount(Delivery delivery, ElfCompany company)
+    private Money NetAmount(EnrichedDelivery delivery, EnrichedElfCompany company)
         => _deliveryCostCalculators.TryGetValue(company.Type, out var calculator)
             ? new Money(calculator.Calculate(delivery.Packages))
             : throw new InvalidOperationException($"Unknown company type: {company.Type}");
 
     private static TaxLine TaxLine(Tax tax, Money netAmount) => new(tax, new Money(netAmount.Value * tax.Rate.Value));
 
-    private int LoyaltyPoints(Delivery delivery, ElfCompany company)
+    private int LoyaltyPoints(EnrichedDelivery delivery, EnrichedElfCompany company)
         => _loyaltyPointsCalculators
             .GetValueOrDefault(company.Type, _defaultLoyaltyPointsCalculator)
             .Calculate(delivery.Packages);

@@ -24,7 +24,7 @@ public class InvoicePrinter(InvoiceCalculator calculator)
     }
 
     public string PrintWithoutTax(Invoice invoice, Dictionary<string, ElfCompany> elfCompanies)
-        => invoice
+        => invoice.EnrichWith(elfCompanies)
             .CalculateWithoutTaxes(calculator, elfCompanies)
             .FormatWith(new InvoiceFormatterWithoutTax());
 
@@ -33,6 +33,7 @@ public class InvoicePrinter(InvoiceCalculator calculator)
         Dictionary<string, ElfCompany> elfCompanies,
         Dictionary<string, Tax> taxes)
         => invoice
+            .EnrichWith(elfCompanies, taxes)
             .CalculateWithTaxes(calculator, elfCompanies, taxes)
             .FormatWith(new InvoiceFormatterWithTax());
 }
