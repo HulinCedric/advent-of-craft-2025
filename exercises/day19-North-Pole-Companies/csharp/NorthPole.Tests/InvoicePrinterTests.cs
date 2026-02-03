@@ -8,21 +8,22 @@ public class InvoicePrinterTests
     private const string ResourcesOrderWithTaxes = "Resources/orderWithTaxes.json";
     private const string ResourcesOrder = "Resources/order.json";
 
-    private readonly PrintableInvoiceFactory _printableInvoiceFactory;
+    private readonly InvoicePrinter _invoicePrinter;
 
     public InvoicePrinterTests()
-        => _printableInvoiceFactory = new PrintableInvoiceFactory(
-            new Dictionary<string, IDeliveryCostCalculator>
-            {
-                { ElfCompany.ExpressType, new ExpressDeliveryCostCalculator() },
-                { ElfCompany.StandardType, new StandardDeliveryCostCalculator() }
-            },
-            new Dictionary<string, ILoyaltyPointsCalculator>
-            {
-                { ElfCompany.ExpressType, new ExpressLoyaltyPointsCalculator() },
-                { ElfCompany.StandardType, new StandardLoyaltyPointsCalculator() }
-            },
-            new StandardLoyaltyPointsCalculator());
+        => _invoicePrinter = new InvoicePrinter(
+            new PrintableInvoiceFactory(
+                new Dictionary<string, IDeliveryCostCalculator>
+                {
+                    { ElfCompany.ExpressType, new ExpressDeliveryCostCalculator() },
+                    { ElfCompany.StandardType, new StandardDeliveryCostCalculator() }
+                },
+                new Dictionary<string, ILoyaltyPointsCalculator>
+                {
+                    { ElfCompany.ExpressType, new ExpressLoyaltyPointsCalculator() },
+                    { ElfCompany.StandardType, new StandardLoyaltyPointsCalculator() }
+                },
+                new StandardLoyaltyPointsCalculator()));
 
     [Fact]
     public Task ExampleInvoice()
@@ -30,9 +31,7 @@ public class InvoicePrinterTests
         var elfCompanies = LoadElfCompanies();
         var invoice = LoadInvoice(ResourcesOrder);
 
-        var result = InvoicePrinter.Print(
-            _printableInvoiceFactory.CreateFrom(invoice, elfCompanies),
-            new PrintWithoutTax());
+        var result = _invoicePrinter.PrintWithoutTax(invoice, elfCompanies);
 
         return Verify(result);
     }
@@ -44,9 +43,7 @@ public class InvoicePrinterTests
         var invoice = LoadInvoice(ResourcesOrderWithTaxes);
         var taxes = LoadTaxes();
 
-        var result = InvoicePrinter.Print(
-            _printableInvoiceFactory.CreateFrom(invoice, elfCompanies, taxes),
-            new PrintWithTax());
+        var result = _invoicePrinter.PrintWithTax(invoice, elfCompanies, taxes);
 
         return Verify(result);
     }
