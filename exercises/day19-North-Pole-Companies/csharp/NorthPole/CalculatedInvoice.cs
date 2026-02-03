@@ -13,7 +13,9 @@ public record CalculatedInvoice(
         string CompanyName,
         TaxLine TaxLine,
         Money NetAmount,
-        Money TaxAmount,
         Money GrossAmount,
-        int LoyaltyPoints);
+        int LoyaltyPoints)
+    {
+        public Money TaxAmount() => TaxLine.Amount;
+    }
 }

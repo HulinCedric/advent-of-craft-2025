@@ -31,7 +31,7 @@ public class InvoiceCalculator
         var lines = CreateLines(invoice.Deliveries, elfCompanies, taxRates).ToList();
 
         var subTotalAmount = lines.Sum(line => line.NetAmount);
-        var taxTotalAmount = lines.Sum(line => line.TaxAmount);
+        var taxTotalAmount = lines.Sum(line => line.TaxAmount());
         var totalAmount = lines.Sum(line => line.GrossAmount);
         var loyaltyPoints = lines.Sum(l => l.LoyaltyPoints);
 
@@ -66,7 +66,6 @@ public class InvoiceCalculator
             company.Name,
             taxLine,
             netAmount,
-            taxAmount,
             grossAmount,
             loyaltyPoints);
     }
