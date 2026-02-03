@@ -55,7 +55,11 @@ public class InvoiceCalculator
 
     private Line Line(Delivery delivery, ElfCompany company, Tax tax)
     {
-        var (netAmount, taxAmount, grossAmount) = LineAmounts(company.Type, delivery.Packages, tax.Rate);
+        var deliveryCostCalculator = CreateDeliveryCostCalculator(company.Type);
+
+        var netAmount = deliveryCostCalculator.Calculate(delivery.Packages);
+        var taxAmount = CalculateTaxAmount(netAmount, tax.Rate);
+        var grossAmount = CalculateGrossAmount(netAmount, taxAmount);
 
         var loyaltyPoints = LineLoyaltyPoints(company.Type, delivery.Packages);
 
@@ -74,20 +78,6 @@ public class InvoiceCalculator
         var loyaltyPointCalculator = CreateLoyaltyPointCalculator(companyType);
 
         return loyaltyPointCalculator.Calculate(numberOfPackages);
-    }
-
-    private (decimal netAmount, decimal taxAmount, decimal grossAmount) LineAmounts(
-        string companyType,
-        int numberOfPackages,
-        TaxRate taxRate)
-    {
-        var deliveryCostCalculator = CreateDeliveryCostCalculator(companyType);
-
-        var netAmount = deliveryCostCalculator.Calculate(numberOfPackages);
-        var taxAmount = CalculateTaxAmount(netAmount, taxRate);
-        var grossAmount = CalculateGrossAmount(netAmount, taxAmount);
-
-        return (netAmount, taxAmount, grossAmount);
     }
 
     private static decimal CalculateGrossAmount(decimal netAmount, decimal taxAmount) => netAmount + taxAmount;
