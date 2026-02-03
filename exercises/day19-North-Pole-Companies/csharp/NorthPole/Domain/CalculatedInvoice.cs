@@ -10,7 +10,7 @@ public record CalculatedInvoice(
     Money TotalAmount,
     int LoyaltyPoints)
 {
-    public static CalculatedInvoice Create(EnrichedInvoice invoice, List<Line> lines)
+    public static CalculatedInvoice From(EnrichedInvoice invoice, List<Line> lines)
     {
         var subTotalAmount = lines.Sum(line => line.NetAmount);
         var totalTaxAmount = lines.Sum(line => line.TaxAmount());

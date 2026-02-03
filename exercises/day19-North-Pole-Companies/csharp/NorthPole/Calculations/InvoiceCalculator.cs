@@ -1,60 +1,45 @@
 using NorthPole.Calculations.DeliveryCosts;
 using NorthPole.Calculations.LoyaltyPoints;
 using NorthPole.Domain;
-using static NorthPole.Domain.CalculatedInvoice;
 
 namespace NorthPole.Calculations;
 
-public class InvoiceCalculator
+public sealed class InvoiceCalculator(
+    IReadOnlyDictionary<string, IDeliveryCostCalculator> deliveryCostCalculators,
+    IReadOnlyDictionary<string, ILoyaltyPointsCalculator> loyaltyPointsCalculators,
+    ILoyaltyPointsCalculator defaultLoyaltyPointsCalculator)
 {
-    private readonly ILoyaltyPointsCalculator _defaultLoyaltyPointsCalculator;
-    private readonly IReadOnlyDictionary<string, IDeliveryCostCalculator> _deliveryCostCalculators;
-    private readonly IReadOnlyDictionary<string, ILoyaltyPointsCalculator> _loyaltyPointsCalculators;
-
-    public InvoiceCalculator(
-        IReadOnlyDictionary<string, IDeliveryCostCalculator> deliveryCostCalculators,
-        IReadOnlyDictionary<string, ILoyaltyPointsCalculator> loyaltyPointsCalculators,
-        ILoyaltyPointsCalculator defaultLoyaltyPointsCalculator)
-    {
-        _deliveryCostCalculators = deliveryCostCalculators;
-        _defaultLoyaltyPointsCalculator = defaultLoyaltyPointsCalculator;
-        _loyaltyPointsCalculators = loyaltyPointsCalculators;
-    }
-
     public CalculatedInvoice Calculate(EnrichedInvoice invoice)
     {
-        var lines = CreateLines(invoice.Deliveries).ToList();
+        var lines = invoice.Deliveries.Select(Line).ToList();
 
-        return Create(invoice, lines);
+        return CalculatedInvoice.From(invoice, lines);
     }
 
-    private IEnumerable<Line> CreateLines(List<EnrichedDelivery> deliveries)
-        => from delivery in deliveries
-            select Line(delivery, delivery.Company, delivery.Company.Tax);
-
-    private Line Line(EnrichedDelivery delivery, EnrichedElfCompany company, Tax tax)
+    private CalculatedInvoice.Line Line(EnrichedDelivery delivery)
     {
-        var netAmount = NetAmount(delivery, company);
-        var taxLine = TaxLine(tax, netAmount);
-        var loyaltyPoints = LoyaltyPoints(delivery, company);
+        var netAmount = NetAmount(delivery);
+        var taxLine = TaxLine(delivery, netAmount);
+        var loyaltyPoints = LoyaltyPoints(delivery);
 
-        return new Line(
+        return new CalculatedInvoice.Line(
             delivery.Packages,
-            company.Name,
+            delivery.Company.Name,
             taxLine,
             netAmount,
             loyaltyPoints);
     }
 
-    private Money NetAmount(EnrichedDelivery delivery, EnrichedElfCompany company)
-        => _deliveryCostCalculators.TryGetValue(company.Type, out var calculator)
+    private Money NetAmount(EnrichedDelivery delivery)
+        => deliveryCostCalculators.TryGetValue(delivery.Company.Type, out var calculator)
             ? new Money(calculator.Calculate(delivery.Packages))
-            : throw new InvalidOperationException($"Unknown company type: {company.Type}");
+            : throw new InvalidOperationException($"Unknown company type: {delivery.Company.Type}");
 
-    private static TaxLine TaxLine(Tax tax, Money netAmount) => new(tax, new Money(netAmount.Value * tax.Rate.Value));
+    private static TaxLine TaxLine(EnrichedDelivery delivery, Money netAmount)
+        => new(delivery.Company.Tax, new Money(netAmount.Value * delivery.Company.Tax.Rate.Value));
 
-    private int LoyaltyPoints(EnrichedDelivery delivery, EnrichedElfCompany company)
-        => _loyaltyPointsCalculators
-            .GetValueOrDefault(company.Type, _defaultLoyaltyPointsCalculator)
+    private int LoyaltyPoints(EnrichedDelivery delivery)
+        => loyaltyPointsCalculators
+            .GetValueOrDefault(delivery.Company.Type, defaultLoyaltyPointsCalculator)
             .Calculate(delivery.Packages);
 }
