@@ -1,4 +1,4 @@
-namespace NorthPole;
+namespace NorthPole.Printers;
 
 public interface IPrinter
 {

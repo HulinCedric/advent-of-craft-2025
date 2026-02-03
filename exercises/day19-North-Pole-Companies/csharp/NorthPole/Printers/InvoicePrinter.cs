@@ -1,4 +1,6 @@
-namespace NorthPole;
+using NorthPole.Calculations;
+
+namespace NorthPole.Printers;
 
 public class InvoicePrinter(InvoiceCalculator invoiceCalculator)
 {

@@ -1,6 +1,6 @@
 using static NorthPole.CalculatedInvoice;
 
-namespace NorthPole;
+namespace NorthPole.Printers;
 
 public class PrintWithTax : IPrinter
 {

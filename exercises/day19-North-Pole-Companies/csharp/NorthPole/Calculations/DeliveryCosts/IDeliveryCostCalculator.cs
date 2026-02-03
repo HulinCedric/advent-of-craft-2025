@@ -1,4 +1,4 @@
-namespace NorthPole;
+namespace NorthPole.Calculations.DeliveryCosts;
 
 public interface IDeliveryCostCalculator
 {

@@ -1,5 +1,9 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NorthPole.Calculations;
+using NorthPole.Calculations.DeliveryCosts;
+using NorthPole.Calculations.LoyaltyPoints;
+using NorthPole.Printers;
 
 namespace NorthPole.Tests;
 

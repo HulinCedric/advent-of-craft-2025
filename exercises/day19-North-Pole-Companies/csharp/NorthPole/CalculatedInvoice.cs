@@ -1,3 +1,5 @@
+using NorthPole.Calculations;
+
 namespace NorthPole;
 
 public record CalculatedInvoice(

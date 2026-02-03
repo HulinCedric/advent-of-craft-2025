@@ -1,4 +1,4 @@
-namespace NorthPole;
+namespace NorthPole.Calculations.LoyaltyPoints;
 
 public class ExpressLoyaltyPointsCalculator : ILoyaltyPointsCalculator
 {

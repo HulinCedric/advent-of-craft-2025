@@ -1,6 +1,8 @@
+using NorthPole.Calculations.DeliveryCosts;
+using NorthPole.Calculations.LoyaltyPoints;
 using static NorthPole.CalculatedInvoice;
 
-namespace NorthPole;
+namespace NorthPole.Calculations;
 
 public class InvoiceCalculator
 {
