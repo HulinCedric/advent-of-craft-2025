@@ -1,8 +1,5 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NorthPole.Calculations;
-using NorthPole.Calculations.DeliveryCosts;
-using NorthPole.Calculations.LoyaltyPoints;
 using NorthPole.Printers;
 
 namespace NorthPole.Tests;
@@ -12,22 +9,7 @@ public class InvoicePrinterTests
     private const string ResourcesOrderWithTaxes = "Resources/orderWithTaxes.json";
     private const string ResourcesOrder = "Resources/order.json";
 
-    private readonly InvoicePrinter _invoicePrinter;
-
-    public InvoicePrinterTests()
-        => _invoicePrinter = new InvoicePrinter(
-            new InvoiceCalculator(
-                new Dictionary<string, IDeliveryCostCalculator>
-                {
-                    { ElfCompany.ExpressType, new ExpressDeliveryCostCalculator() },
-                    { ElfCompany.StandardType, new StandardDeliveryCostCalculator() }
-                },
-                new Dictionary<string, ILoyaltyPointsCalculator>
-                {
-                    { ElfCompany.ExpressType, new ExpressLoyaltyPointsCalculator() },
-                    { ElfCompany.StandardType, new StandardLoyaltyPointsCalculator() }
-                },
-                new StandardLoyaltyPointsCalculator()));
+    private readonly InvoicePrinter _invoicePrinter = new();
 
     [Fact]
     public Task ExampleInvoice()
