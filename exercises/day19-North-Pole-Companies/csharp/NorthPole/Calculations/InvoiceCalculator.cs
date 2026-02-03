@@ -10,11 +10,9 @@ public sealed class InvoiceCalculator(
     ILoyaltyPointsCalculator defaultLoyaltyPointsCalculator)
 {
     public CalculatedInvoice Calculate(EnrichedInvoice invoice)
-    {
-        var lines = invoice.Deliveries.Select(Line).ToList();
-
-        return CalculatedInvoice.From(invoice, lines);
-    }
+        => CalculatedInvoice.From(
+            invoice,
+            lines: invoice.Deliveries.Select(Line).ToList());
 
     private CalculatedInvoice.Line Line(EnrichedDelivery delivery)
     {
