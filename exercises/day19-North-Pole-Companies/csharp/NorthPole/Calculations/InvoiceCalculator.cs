@@ -21,28 +21,15 @@ public class InvoiceCalculator
         _loyaltyPointsCalculators = loyaltyPointsCalculators;
     }
 
-    public CalculatedInvoice Calculate(
-        EnrichedInvoice invoice,
-        Dictionary<string, ElfCompany> elfCompanies)
-        => Calculate(invoice, elfCompanies, new Dictionary<string, Tax>());
-
-    public CalculatedInvoice Calculate(
-        EnrichedInvoice invoice,
-        Dictionary<string, ElfCompany> elfCompanies,
-        Dictionary<string, Tax> taxRates)
+    public CalculatedInvoice Calculate(EnrichedInvoice invoice)
     {
-        var lines = CreateLines(invoice.Deliveries, elfCompanies, taxRates).ToList();
+        var lines = CreateLines(invoice.Deliveries).ToList();
 
         return Create(invoice, lines);
     }
 
-    private IEnumerable<Line> CreateLines(
-        List<EnrichedDelivery> deliveries,
-        Dictionary<string, ElfCompany> elfCompanies,
-        Dictionary<string, Tax> taxRates)
+    private IEnumerable<Line> CreateLines(List<EnrichedDelivery> deliveries)
         => from delivery in deliveries
-            // let company = elfCompanies[delivery.CompanyId]
-            // let taxRate = taxRates.GetValueOrDefault(company.RegionName, Tax.NoTax)
             select Line(delivery, delivery.Company, delivery.Company.Tax);
 
     private Line Line(EnrichedDelivery delivery, EnrichedElfCompany company, Tax tax)
