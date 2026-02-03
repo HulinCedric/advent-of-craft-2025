@@ -5,21 +5,24 @@ public static class InvoiceExtensions
     extension(Invoice invoice)
     {
         public EnrichedInvoice EnrichWith(Dictionary<string, ElfCompany> companies)
-            => new(
-                invoice.Customer,
-                invoice.Deliveries
-                    .Select(d => new EnrichedDelivery(d, new EnrichedElfCompany(companies[d.CompanyId], Tax.NoTax)))
-                    .ToList());
+        {
+            var enrichedDeliveries = from delivery in invoice.Deliveries
+                let company = companies[delivery.CompanyId]
+                let enrichedCompany = new EnrichedElfCompany(company, Tax.NoTax)
+                select new EnrichedDelivery(delivery, enrichedCompany);
+
+            return new EnrichedInvoice(invoice.Customer, enrichedDeliveries.ToList());
+        }
 
         public EnrichedInvoice EnrichWith(Dictionary<string, ElfCompany> companies, Dictionary<string, Tax> taxes)
-            => new(
-                invoice.Customer,
-                invoice.Deliveries
-                    .Select(d => new EnrichedDelivery(
-                        d,
-                        new EnrichedElfCompany(
-                            companies[d.CompanyId],
-                            taxes[companies[d.CompanyId].RegionName])))
-                    .ToList());
+        {
+            var enrichedDeliveries = from delivery in invoice.Deliveries
+                let company = companies[delivery.CompanyId]
+                let tax = taxes[company.RegionName]
+                let enrichedCompany = new EnrichedElfCompany(company, tax)
+                select new EnrichedDelivery(delivery, enrichedCompany);
+
+            return new EnrichedInvoice(invoice.Customer, enrichedDeliveries.ToList());
+        }
     }
 }
