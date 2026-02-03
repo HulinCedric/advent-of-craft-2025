@@ -3,15 +3,15 @@ namespace NorthPole;
 public class Tax
 {
     public string Name { get; }
-    public decimal TaxRateValue { get; }
+    public TaxRate TaxRate { get; }
     public string Description { get; }
 
-    public Tax(string name, decimal taxRate, string description)
+    public Tax(string name, TaxRate taxRate, string description)
     {
         Name = name;
-        TaxRateValue = taxRate;
+        TaxRate = taxRate;
         Description = description;
     }
 
-    public static readonly Tax NoTax = new("No Tax", 0m, "No tax rate for this region");
+    public static readonly Tax NoTax = new("No Tax", TaxRate.Zero, "No tax rate for this region");
 }

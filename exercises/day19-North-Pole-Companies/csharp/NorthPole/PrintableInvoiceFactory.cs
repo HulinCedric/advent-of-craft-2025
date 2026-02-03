@@ -60,7 +60,7 @@ public static class PrintableInvoiceFactory
 
     private static Line Line(Delivery delivery, ElfCompany company, Tax tax)
     {
-        var (netAmount, taxAmount, grossAmount) = LineAmounts(company.Type, delivery.Packages, tax.TaxRateValue);
+        var (netAmount, taxAmount, grossAmount) = LineAmounts(company.Type, delivery.Packages, tax.TaxRate);
 
         var loyaltyPoints = LineLoyaltyPoints(company.Type, delivery.Packages);
 
@@ -68,7 +68,7 @@ public static class PrintableInvoiceFactory
             delivery.Packages,
             company.Name,
             tax.Name,
-            new TaxRate(tax.TaxRateValue),
+            tax.TaxRate,
             new Money(netAmount),
             new Money(taxAmount),
             new Money(grossAmount),
@@ -85,7 +85,7 @@ public static class PrintableInvoiceFactory
     private static (decimal netAmount, decimal taxAmount, decimal grossAmount) LineAmounts(
         string companyType,
         int numberOfPackages,
-        decimal taxRate)
+        TaxRate taxRate)
     {
         var deliveryCostCalculator = CreateDeliveryCostCalculator(companyType);
 
@@ -97,7 +97,7 @@ public static class PrintableInvoiceFactory
     }
 
     private static decimal CalculateGrossAmount(decimal netAmount, decimal taxAmount) => netAmount + taxAmount;
-    private static decimal CalculateTaxAmount(decimal netAmount, decimal taxRate) => netAmount * taxRate;
+    private static decimal CalculateTaxAmount(decimal netAmount, TaxRate taxRate) => netAmount * taxRate;
 
     private static IDeliveryCostCalculator CreateDeliveryCostCalculator(string companyType)
         => DeliveryCostCalculators.TryGetValue(companyType, out var calculator)
