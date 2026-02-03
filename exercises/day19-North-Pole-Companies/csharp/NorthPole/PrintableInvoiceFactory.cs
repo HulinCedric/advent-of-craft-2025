@@ -60,15 +60,14 @@ public static class PrintableInvoiceFactory
 
     private static Line Line(Delivery delivery, ElfCompany company, Tax tax)
     {
-        var (netAmount, taxAmount, grossAmount) = LineAmounts(company.Type, delivery.Packages, tax.TaxRate);
+        var (netAmount, taxAmount, grossAmount) = LineAmounts(company.Type, delivery.Packages, tax.Rate);
 
         var loyaltyPoints = LineLoyaltyPoints(company.Type, delivery.Packages);
 
         return new Line(
             delivery.Packages,
             company.Name,
-            tax.Name,
-            tax.TaxRate,
+            new TaxLine(tax, new Money(taxAmount)),
             new Money(netAmount),
             new Money(taxAmount),
             new Money(grossAmount),

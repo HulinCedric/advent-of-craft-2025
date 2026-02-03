@@ -1,4 +1,3 @@
-using System.Globalization;
 using static NorthPole.PrintableInvoice;
 
 namespace NorthPole;
@@ -16,11 +15,11 @@ public class PrintWithTax : IPrinter
 
             """;
 
-    private string Print(IReadOnlyList<Line> lines) => string.Join("\n", lines.Select(Print));
+    private static string Print(IReadOnlyList<Line> lines) => string.Join("\n", lines.Select(Print));
 
-    private string Print(Line line)
+    private static string Print(Line line)
         => $"""
              {line.CompanyName}: {line.NetAmount} ({line.NumberOfPackages} packages)
-               Tax ({line.TaxName} - {line.TaxRate}): {line.TaxAmount}
+               {line.TaxLine}
             """;
 }

@@ -79,9 +79,8 @@ public class InvoicePrinterTests
         foreach (var kvp in data)
         {
             taxes[kvp.Key] = new Tax(
-                name: kvp.Value["name"].ToString(),
-                taxRate: new TaxRate(kvp.Value["taxRate"].ToObject<decimal>()),
-                description: kvp.Value["description"].ToString());
+                RegionName: kvp.Value["name"].ToString(),
+                Rate: new TaxRate(kvp.Value["taxRate"].ToObject<decimal>()));
         }
 
         return taxes;

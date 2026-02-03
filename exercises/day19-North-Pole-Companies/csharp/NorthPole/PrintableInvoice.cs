@@ -11,8 +11,7 @@ public record PrintableInvoice(
     public record Line(
         int NumberOfPackages,
         string CompanyName,
-        string TaxName,
-        TaxRate TaxRate,
+        TaxLine TaxLine,
         Money NetAmount,
         Money TaxAmount,
         Money GrossAmount,
