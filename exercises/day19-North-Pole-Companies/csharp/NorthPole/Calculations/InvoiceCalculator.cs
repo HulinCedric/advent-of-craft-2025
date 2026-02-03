@@ -1,6 +1,7 @@
 using NorthPole.Calculations.DeliveryCosts;
 using NorthPole.Calculations.LoyaltyPoints;
-using static NorthPole.CalculatedInvoice;
+using NorthPole.Domain;
+using static NorthPole.Domain.CalculatedInvoice;
 
 namespace NorthPole.Calculations;
 

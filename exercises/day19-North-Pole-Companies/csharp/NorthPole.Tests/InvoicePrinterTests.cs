@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NorthPole.Printers;
+using NorthPole.Domain;
+using NorthPole.Formatters;
 
 namespace NorthPole.Tests;
 

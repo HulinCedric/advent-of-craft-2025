@@ -1,4 +1,6 @@
-﻿namespace NorthPole.Calculations;
+﻿using NorthPole.Domain;
+
+namespace NorthPole.Calculations;
 
 public static class LinesCalculationExtensions
 {

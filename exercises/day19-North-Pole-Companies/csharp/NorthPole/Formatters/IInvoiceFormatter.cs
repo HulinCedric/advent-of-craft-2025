@@ -1,4 +1,6 @@
-namespace NorthPole.Printers;
+using NorthPole.Domain;
+
+namespace NorthPole.Formatters;
 
 public interface IInvoiceFormatter
 {

@@ -1,8 +1,9 @@
 using NorthPole.Calculations;
 using NorthPole.Calculations.DeliveryCosts;
 using NorthPole.Calculations.LoyaltyPoints;
+using NorthPole.Domain;
 
-namespace NorthPole.Printers;
+namespace NorthPole.Formatters;
 
 public class InvoicePrinter(InvoiceCalculator invoiceCalculator)
 {
@@ -35,13 +36,5 @@ public class InvoicePrinter(InvoiceCalculator invoiceCalculator)
     {
         var printableInvoice = invoiceCalculator.CreateFrom(invoice, elfCompanies, taxes);
         return printableInvoice.FormatWith(new InvoiceFormatterWithTax());
-    }
-}
-
-public static class CalculatedInvoiceExtensions
-{
-    extension(CalculatedInvoice invoice)
-    {
-        public string FormatWith(IInvoiceFormatter formatter) => formatter.Format(invoice);
     }
 }

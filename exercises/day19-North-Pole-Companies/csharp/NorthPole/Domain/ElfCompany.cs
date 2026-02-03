@@ -1,4 +1,4 @@
-namespace NorthPole;
+namespace NorthPole.Domain;
 
 public record ElfCompany(string Name, string Type, string RegionName)
 {

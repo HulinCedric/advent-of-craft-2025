@@ -1,4 +1,4 @@
-namespace NorthPole;
+namespace NorthPole.Domain;
 
 public record Tax(string RegionName, TaxRate Rate)
 {

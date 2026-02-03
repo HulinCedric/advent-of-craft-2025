@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace NorthPole;
+namespace NorthPole.Domain;
 
 public readonly record struct TaxRate(decimal Value)
 {

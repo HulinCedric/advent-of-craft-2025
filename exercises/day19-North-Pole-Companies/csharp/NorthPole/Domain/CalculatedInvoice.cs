@@ -1,6 +1,6 @@
 using NorthPole.Calculations;
 
-namespace NorthPole;
+namespace NorthPole.Domain;
 
 public record CalculatedInvoice(
     string Customer,

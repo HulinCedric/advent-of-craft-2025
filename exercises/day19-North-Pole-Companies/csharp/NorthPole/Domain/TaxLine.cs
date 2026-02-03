@@ -1,4 +1,4 @@
-﻿namespace NorthPole;
+﻿namespace NorthPole.Domain;
 
 public record TaxLine(Tax Tax, Money Amount)
 {
