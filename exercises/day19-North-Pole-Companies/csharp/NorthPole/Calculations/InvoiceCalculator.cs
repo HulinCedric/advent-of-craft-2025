@@ -22,22 +22,22 @@ public sealed class InvoiceCalculator(
 
         return new CalculatedInvoice.Line(
             delivery.Packages,
-            delivery.Company.Name,
+            delivery.CompanyName,
             taxLine,
             netAmount,
             loyaltyPoints);
     }
 
     private Money NetAmount(EnrichedDelivery delivery)
-        => deliveryCostCalculators.TryGetValue(delivery.Company.Type, out var calculator)
+        => deliveryCostCalculators.TryGetValue(delivery.CompanyType, out var calculator)
             ? new Money(calculator.Calculate(delivery.Packages))
-            : throw new InvalidOperationException($"Unknown company type: {delivery.Company.Type}");
+            : throw new InvalidOperationException($"Unknown company type: {delivery.CompanyType}");
 
     private static TaxLine TaxLine(EnrichedDelivery delivery, Money netAmount)
-        => new(delivery.Company.Tax, new Money(netAmount.Value * delivery.Company.Tax.Rate.Value));
+        => new(delivery.Tax, new Money(netAmount.Value * delivery.Tax.Rate.Value));
 
     private int LoyaltyPoints(EnrichedDelivery delivery)
         => loyaltyPointsCalculators
-            .GetValueOrDefault(delivery.Company.Type, defaultLoyaltyPointsCalculator)
+            .GetValueOrDefault(delivery.CompanyType, defaultLoyaltyPointsCalculator)
             .Calculate(delivery.Packages);
 }

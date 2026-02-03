@@ -17,5 +17,5 @@ public class InvoiceFormatterWithoutTax : IInvoiceFormatter
     private static string Print(IReadOnlyList<Line> lines) => string.Join("\n", lines.Select(Print));
 
     private static string Print(Line line)
-        => $" {line.CompanyName}: {line.NetAmount} ({line.NumberOfPackages} packages)";
+        => $" {line.CompanyName}: {line.NetAmount} ({line.Packages} packages)";
 }

@@ -20,7 +20,7 @@ public class InvoiceFormatterWithTax : IInvoiceFormatter
 
     private static string Print(Line line)
         => $"""
-             {line.CompanyName}: {line.NetAmount} ({line.NumberOfPackages} packages)
+             {line.CompanyName}: {line.NetAmount} ({line.Packages} packages)
                {line.TaxLine}
             """;
 }

@@ -27,7 +27,7 @@ public record CalculatedInvoice(
     }
 
     public record Line(
-        int NumberOfPackages,
+        int Packages,
         string CompanyName,
         TaxLine TaxLine,
         Money NetAmount,
