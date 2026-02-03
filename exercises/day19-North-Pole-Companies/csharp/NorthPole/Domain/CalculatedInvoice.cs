@@ -29,10 +29,10 @@ public record CalculatedInvoice(
     public record Line(
         int Packages,
         string CompanyName,
-        TaxLine TaxLine,
+        CalculatedTax CalculatedTax,
         Money NetAmount,
         int LoyaltyPoints)
     {
-        public Money TaxAmount() => TaxLine.Amount;
+        public Money TaxAmount() => CalculatedTax.Amount;
     }
 }
