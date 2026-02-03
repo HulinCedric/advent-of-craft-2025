@@ -30,18 +30,7 @@ public class InvoiceCalculator
     {
         var lines = CreateLines(invoice.Deliveries, elfCompanies, taxRates).ToList();
 
-        var subTotalAmount = lines.Sum(line => line.NetAmount);
-        var taxTotalAmount = lines.Sum(line => line.TaxAmount());
-        var totalAmount = lines.Sum(line => line.GrossAmount);
-        var loyaltyPoints = lines.Sum(l => l.LoyaltyPoints);
-
-        return new CalculatedInvoice(
-            invoice.Customer,
-            lines,
-            subTotalAmount,
-            taxTotalAmount,
-            totalAmount,
-            loyaltyPoints);
+        return Create(invoice, lines);
     }
 
     private IEnumerable<Line> CreateLines(
@@ -56,9 +45,7 @@ public class InvoiceCalculator
     private Line Line(Delivery delivery, ElfCompany company, Tax tax)
     {
         var netAmount = NetAmount(delivery, company);
-        var taxAmount = TaxAmount(netAmount, tax.Rate);
-        var taxLine = new TaxLine(tax, taxAmount);
-        var grossAmount = GrossAmount(netAmount, taxAmount);
+        var taxLine = TaxLine(tax, netAmount);
         var loyaltyPoints = LoyaltyPoints(delivery, company);
 
         return new Line(
@@ -66,8 +53,13 @@ public class InvoiceCalculator
             company.Name,
             taxLine,
             netAmount,
-            grossAmount,
             loyaltyPoints);
+    }
+
+    private static TaxLine TaxLine(Tax tax, Money netAmount)
+    {
+        var taxAmount = new Money(netAmount.Value * tax.Rate.Value);
+        return new TaxLine(tax, taxAmount);
     }
 
     private Money NetAmount(Delivery delivery, ElfCompany company)
@@ -76,10 +68,6 @@ public class InvoiceCalculator
 
         return new Money(deliveryCostCalculator.Calculate(delivery.NumberOfPackages));
     }
-
-    private static Money GrossAmount(Money netAmount, Money taxAmount) => new(netAmount.Value + taxAmount.Value);
-
-    private static Money TaxAmount(Money netAmount, TaxRate taxRate) => new(netAmount.Value * taxRate.Value);
 
     private int LoyaltyPoints(Delivery delivery, ElfCompany company)
     {
