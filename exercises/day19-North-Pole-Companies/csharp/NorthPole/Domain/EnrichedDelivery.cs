@@ -1,10 +1,11 @@
 namespace NorthPole.Domain;
 
-public sealed class EnrichedDelivery(Delivery delivery, EnrichedElfCompany company)
+public sealed class EnrichedDelivery(Delivery delivery, ElfCompany company, Tax tax)
 {
     public int Packages { get; } = delivery.Packages;
 
-    public Tax Tax => company.Tax;
+    public Tax Tax => tax;
+    public TaxRate TaxRate => tax.Rate;
     public string CompanyName => company.Name;
     public string CompanyType => company.Type;
 }

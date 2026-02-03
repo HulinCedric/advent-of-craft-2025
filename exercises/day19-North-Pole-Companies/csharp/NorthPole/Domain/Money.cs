@@ -8,6 +8,7 @@ public readonly record struct Money(decimal Value)
     private static readonly CultureInfo Culture = new("en-US");
     
     public static Money operator +(Money a, Money b) => new(a.Value + b.Value);
+    public static Money operator *(Money a, TaxRate b) => new(a.Value * b.Value);
 
     public override string ToString() => Value.ToString("C", Culture);
 }

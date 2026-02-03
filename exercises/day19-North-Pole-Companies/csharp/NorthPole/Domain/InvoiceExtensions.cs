@@ -8,8 +8,7 @@ public static class InvoiceExtensions
         {
             var enrichedDeliveries = from delivery in invoice.Deliveries
                 let company = companies[delivery.CompanyId]
-                let enrichedCompany = new EnrichedElfCompany(company, Tax.NoTax)
-                select new EnrichedDelivery(delivery, enrichedCompany);
+                select new EnrichedDelivery(delivery, company, Tax.NoTax);
 
             return new EnrichedInvoice(invoice.Customer, enrichedDeliveries.ToList());
         }
@@ -19,8 +18,7 @@ public static class InvoiceExtensions
             var enrichedDeliveries = from delivery in invoice.Deliveries
                 let company = companies[delivery.CompanyId]
                 let tax = taxes[company.RegionName]
-                let enrichedCompany = new EnrichedElfCompany(company, tax)
-                select new EnrichedDelivery(delivery, enrichedCompany);
+                select new EnrichedDelivery(delivery, company, tax);
 
             return new EnrichedInvoice(invoice.Customer, enrichedDeliveries.ToList());
         }

@@ -34,7 +34,7 @@ public sealed class InvoiceCalculator(
             : throw new InvalidOperationException($"Unknown company type: {delivery.CompanyType}");
 
     private static TaxLine TaxLine(EnrichedDelivery delivery, Money netAmount)
-        => new(delivery.Tax, new Money(netAmount.Value * delivery.Tax.Rate.Value));
+        => new(delivery.Tax, netAmount * delivery.TaxRate);
 
     private int LoyaltyPoints(EnrichedDelivery delivery)
         => loyaltyPointsCalculators
