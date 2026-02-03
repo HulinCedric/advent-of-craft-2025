@@ -5,7 +5,7 @@ using NorthPole.Domain;
 
 namespace NorthPole.Formatters;
 
-public class InvoicePrinter(InvoiceCalculator invoiceCalculator)
+public class InvoicePrinter(InvoiceCalculator calculator)
 {
     public InvoicePrinter() : this(
         new InvoiceCalculator(
@@ -24,17 +24,15 @@ public class InvoicePrinter(InvoiceCalculator invoiceCalculator)
     }
 
     public string PrintWithoutTax(Invoice invoice, Dictionary<string, ElfCompany> elfCompanies)
-    {
-        var printableInvoice = invoiceCalculator.CreateFrom(invoice, elfCompanies);
-        return printableInvoice.FormatWith(new InvoiceFormatterWithoutTax());
-    }
+        => invoice
+            .CalculateWithoutTaxes(calculator, elfCompanies)
+            .FormatWith(new InvoiceFormatterWithoutTax());
 
     public string PrintWithTax(
         Invoice invoice,
         Dictionary<string, ElfCompany> elfCompanies,
         Dictionary<string, Tax> taxes)
-    {
-        var printableInvoice = invoiceCalculator.CreateFrom(invoice, elfCompanies, taxes);
-        return printableInvoice.FormatWith(new InvoiceFormatterWithTax());
-    }
+        => invoice
+            .CalculateWithTaxes(calculator, elfCompanies, taxes)
+            .FormatWith(new InvoiceFormatterWithTax());
 }

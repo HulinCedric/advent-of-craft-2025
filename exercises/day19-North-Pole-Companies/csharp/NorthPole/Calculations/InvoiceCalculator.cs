@@ -21,12 +21,12 @@ public class InvoiceCalculator
         _loyaltyPointsCalculators = loyaltyPointsCalculators;
     }
 
-    public CalculatedInvoice CreateFrom(
+    public CalculatedInvoice Calculate(
         Invoice invoice,
         Dictionary<string, ElfCompany> elfCompanies)
-        => CreateFrom(invoice, elfCompanies, new Dictionary<string, Tax>());
+        => Calculate(invoice, elfCompanies, new Dictionary<string, Tax>());
 
-    public CalculatedInvoice CreateFrom(
+    public CalculatedInvoice Calculate(
         Invoice invoice,
         Dictionary<string, ElfCompany> elfCompanies,
         Dictionary<string, Tax> taxRates)
