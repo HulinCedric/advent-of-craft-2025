@@ -25,7 +25,7 @@ public class InvoicePrinter(InvoiceCalculator invoiceCalculator)
     public string PrintWithoutTax(Invoice invoice, Dictionary<string, ElfCompany> elfCompanies)
     {
         var printableInvoice = invoiceCalculator.CreateFrom(invoice, elfCompanies);
-        return new PrintWithoutTax().Print(printableInvoice);
+        return printableInvoice.FormatWith(new InvoiceFormatterWithoutTax());
     }
 
     public string PrintWithTax(
@@ -34,6 +34,14 @@ public class InvoicePrinter(InvoiceCalculator invoiceCalculator)
         Dictionary<string, Tax> taxes)
     {
         var printableInvoice = invoiceCalculator.CreateFrom(invoice, elfCompanies, taxes);
-        return new PrintWithTax().Print(printableInvoice);
+        return printableInvoice.FormatWith(new InvoiceFormatterWithTax());
+    }
+}
+
+public static class CalculatedInvoiceExtensions
+{
+    extension(CalculatedInvoice invoice)
+    {
+        public string FormatWith(IInvoiceFormatter formatter) => formatter.Format(invoice);
     }
 }
