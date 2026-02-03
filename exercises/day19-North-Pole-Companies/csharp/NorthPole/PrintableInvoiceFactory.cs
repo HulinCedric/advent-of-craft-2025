@@ -54,8 +54,8 @@ public static class PrintableInvoiceFactory
         Dictionary<string, ElfCompany> elfCompanies,
         Dictionary<string, Tax> taxRates)
         => from delivery in deliveries
-            let company = elfCompanies[delivery.CompanyID]
-            let taxRate = taxRates.GetValueOrDefault(company.Region, Tax.NoTax)
+            let company = elfCompanies[delivery.CompanyId]
+            let taxRate = taxRates.GetValueOrDefault(company.RegionName, Tax.NoTax)
             select Line(delivery, company, taxRate);
 
     private static Line Line(Delivery delivery, ElfCompany company, Tax tax)
