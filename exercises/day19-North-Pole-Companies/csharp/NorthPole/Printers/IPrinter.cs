@@ -2,5 +2,5 @@ namespace NorthPole;
 
 public interface IPrinter
 {
-    string Print(PrintableInvoice invoice);
+    string Print(CalculatedInvoice invoice);
 }

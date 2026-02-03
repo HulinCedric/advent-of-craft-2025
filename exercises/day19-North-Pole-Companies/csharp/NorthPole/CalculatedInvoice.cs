@@ -1,8 +1,8 @@
 namespace NorthPole;
 
-public record PrintableInvoice(
+public record CalculatedInvoice(
     string Customer,
-    IReadOnlyList<PrintableInvoice.Line> Lines,
+    IReadOnlyList<CalculatedInvoice.Line> Lines,
     Money SubTotalAmount,
     Money TaxTotalAmount,
     Money TotalAmount,

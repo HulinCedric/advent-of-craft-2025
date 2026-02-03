@@ -1,10 +1,10 @@
 namespace NorthPole;
 
-public class InvoicePrinter(PrintableInvoiceFactory printableInvoiceFactory)
+public class InvoicePrinter(InvoiceCalculator invoiceCalculator)
 {
     public string PrintWithoutTax(Invoice invoice, Dictionary<string, ElfCompany> elfCompanies)
     {
-        var printableInvoice = printableInvoiceFactory.CreateFrom(invoice, elfCompanies);
+        var printableInvoice = invoiceCalculator.CreateFrom(invoice, elfCompanies);
         return new PrintWithoutTax().Print(printableInvoice);
     }
 
@@ -13,7 +13,7 @@ public class InvoicePrinter(PrintableInvoiceFactory printableInvoiceFactory)
         Dictionary<string, ElfCompany> elfCompanies,
         Dictionary<string, Tax> taxes)
     {
-        var printableInvoice = printableInvoiceFactory.CreateFrom(invoice, elfCompanies, taxes);
+        var printableInvoice = invoiceCalculator.CreateFrom(invoice, elfCompanies, taxes);
         return new PrintWithTax().Print(printableInvoice);
     }
 }

@@ -1,14 +1,14 @@
-using static NorthPole.PrintableInvoice;
+using static NorthPole.CalculatedInvoice;
 
 namespace NorthPole;
 
-public class PrintableInvoiceFactory
+public class InvoiceCalculator
 {
     private readonly ILoyaltyPointsCalculator _defaultLoyaltyPointsCalculator;
     private readonly IReadOnlyDictionary<string, IDeliveryCostCalculator> _deliveryCostCalculators;
     private readonly IReadOnlyDictionary<string, ILoyaltyPointsCalculator> _loyaltyPointsCalculators;
 
-    public PrintableInvoiceFactory(
+    public InvoiceCalculator(
         IReadOnlyDictionary<string, IDeliveryCostCalculator> deliveryCostCalculators,
         IReadOnlyDictionary<string, ILoyaltyPointsCalculator> loyaltyPointsCalculators,
         ILoyaltyPointsCalculator defaultLoyaltyPointsCalculator)
@@ -18,12 +18,12 @@ public class PrintableInvoiceFactory
         _loyaltyPointsCalculators = loyaltyPointsCalculators;
     }
 
-    public PrintableInvoice CreateFrom(
+    public CalculatedInvoice CreateFrom(
         Invoice invoice,
         Dictionary<string, ElfCompany> elfCompanies)
         => CreateFrom(invoice, elfCompanies, new Dictionary<string, Tax>());
 
-    public PrintableInvoice CreateFrom(
+    public CalculatedInvoice CreateFrom(
         Invoice invoice,
         Dictionary<string, ElfCompany> elfCompanies,
         Dictionary<string, Tax> taxRates)
@@ -35,7 +35,7 @@ public class PrintableInvoiceFactory
         var totalAmount = lines.Sum(line => line.GrossAmount);
         var loyaltyPoints = lines.Sum(l => l.LoyaltyPoints);
 
-        return new PrintableInvoice(
+        return new CalculatedInvoice(
             invoice.Customer,
             lines,
             subTotalAmount,

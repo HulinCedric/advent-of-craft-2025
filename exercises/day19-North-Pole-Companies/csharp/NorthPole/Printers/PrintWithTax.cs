@@ -1,10 +1,10 @@
-using static NorthPole.PrintableInvoice;
+using static NorthPole.CalculatedInvoice;
 
 namespace NorthPole;
 
 public class PrintWithTax : IPrinter
 {
-    public string Print(PrintableInvoice invoice)
+    public string Print(CalculatedInvoice invoice)
         => $"""
             Invoice for {invoice.Customer}
             {Print(invoice.Lines)}

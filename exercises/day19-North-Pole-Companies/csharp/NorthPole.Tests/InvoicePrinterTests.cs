@@ -12,7 +12,7 @@ public class InvoicePrinterTests
 
     public InvoicePrinterTests()
         => _invoicePrinter = new InvoicePrinter(
-            new PrintableInvoiceFactory(
+            new InvoiceCalculator(
                 new Dictionary<string, IDeliveryCostCalculator>
                 {
                     { ElfCompany.ExpressType, new ExpressDeliveryCostCalculator() },
