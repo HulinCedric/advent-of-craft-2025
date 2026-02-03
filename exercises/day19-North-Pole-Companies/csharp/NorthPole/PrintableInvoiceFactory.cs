@@ -2,33 +2,28 @@ using static NorthPole.PrintableInvoice;
 
 namespace NorthPole;
 
-public static class PrintableInvoiceFactory
+public class PrintableInvoiceFactory
 {
-    private static readonly IReadOnlyDictionary<string, IDeliveryCostCalculator> DeliveryCostCalculators =
-        new Dictionary<string, IDeliveryCostCalculator>
-        {
-            { ElfCompany.ExpressType, new ExpressDeliveryCostCalculator() },
-            { ElfCompany.StandardType, new StandardDeliveryCostCalculator() }
-        };
+    private readonly ILoyaltyPointsCalculator _defaultLoyaltyPointsCalculator;
+    private readonly IReadOnlyDictionary<string, IDeliveryCostCalculator> _deliveryCostCalculators;
+    private readonly IReadOnlyDictionary<string, ILoyaltyPointsCalculator> _loyaltyPointsCalculators;
 
-    private static readonly ILoyaltyPointsCalculator StandardLoyaltyPointsCalculator =
-        new StandardLoyaltyPointsCalculator();
+    public PrintableInvoiceFactory(
+        IReadOnlyDictionary<string, IDeliveryCostCalculator> deliveryCostCalculators,
+        IReadOnlyDictionary<string, ILoyaltyPointsCalculator> loyaltyPointsCalculators,
+        ILoyaltyPointsCalculator defaultLoyaltyPointsCalculator)
+    {
+        _deliveryCostCalculators = deliveryCostCalculators;
+        _defaultLoyaltyPointsCalculator = defaultLoyaltyPointsCalculator;
+        _loyaltyPointsCalculators = loyaltyPointsCalculators;
+    }
 
-    private static readonly ILoyaltyPointsCalculator DefaultLoyaltyPointsCalculator = StandardLoyaltyPointsCalculator;
-
-    private static readonly IReadOnlyDictionary<string, ILoyaltyPointsCalculator> LoyaltyPointsCalculators =
-        new Dictionary<string, ILoyaltyPointsCalculator>
-        {
-            { ElfCompany.ExpressType, new ExpressLoyaltyPointsCalculator() },
-            { ElfCompany.StandardType, StandardLoyaltyPointsCalculator }
-        };
-
-    public static PrintableInvoice CreateFrom(
+    public PrintableInvoice CreateFrom(
         Invoice invoice,
         Dictionary<string, ElfCompany> elfCompanies)
         => CreateFrom(invoice, elfCompanies, new Dictionary<string, Tax>());
 
-    public static PrintableInvoice CreateFrom(
+    public PrintableInvoice CreateFrom(
         Invoice invoice,
         Dictionary<string, ElfCompany> elfCompanies,
         Dictionary<string, Tax> taxRates)
@@ -49,7 +44,7 @@ public static class PrintableInvoiceFactory
             loyaltyPoints);
     }
 
-    private static IEnumerable<Line> CreateLines(
+    private IEnumerable<Line> CreateLines(
         List<Delivery> deliveries,
         Dictionary<string, ElfCompany> elfCompanies,
         Dictionary<string, Tax> taxRates)
@@ -58,7 +53,7 @@ public static class PrintableInvoiceFactory
             let taxRate = taxRates.GetValueOrDefault(company.RegionName, Tax.NoTax)
             select Line(delivery, company, taxRate);
 
-    private static Line Line(Delivery delivery, ElfCompany company, Tax tax)
+    private Line Line(Delivery delivery, ElfCompany company, Tax tax)
     {
         var (netAmount, taxAmount, grossAmount) = LineAmounts(company.Type, delivery.Packages, tax.Rate);
 
@@ -74,14 +69,14 @@ public static class PrintableInvoiceFactory
             loyaltyPoints);
     }
 
-    private static int LineLoyaltyPoints(string companyType, int numberOfPackages)
+    private int LineLoyaltyPoints(string companyType, int numberOfPackages)
     {
         var loyaltyPointCalculator = CreateLoyaltyPointCalculator(companyType);
 
         return loyaltyPointCalculator.Calculate(numberOfPackages);
     }
 
-    private static (decimal netAmount, decimal taxAmount, decimal grossAmount) LineAmounts(
+    private (decimal netAmount, decimal taxAmount, decimal grossAmount) LineAmounts(
         string companyType,
         int numberOfPackages,
         TaxRate taxRate)
@@ -98,11 +93,11 @@ public static class PrintableInvoiceFactory
     private static decimal CalculateGrossAmount(decimal netAmount, decimal taxAmount) => netAmount + taxAmount;
     private static decimal CalculateTaxAmount(decimal netAmount, TaxRate taxRate) => netAmount * taxRate;
 
-    private static IDeliveryCostCalculator CreateDeliveryCostCalculator(string companyType)
-        => DeliveryCostCalculators.TryGetValue(companyType, out var calculator)
+    private IDeliveryCostCalculator CreateDeliveryCostCalculator(string companyType)
+        => _deliveryCostCalculators.TryGetValue(companyType, out var calculator)
             ? calculator
             : throw new Exception($"unknown type: {companyType}");
 
-    private static ILoyaltyPointsCalculator CreateLoyaltyPointCalculator(string companyType)
-        => LoyaltyPointsCalculators.GetValueOrDefault(companyType, DefaultLoyaltyPointsCalculator);
+    private ILoyaltyPointsCalculator CreateLoyaltyPointCalculator(string companyType)
+        => _loyaltyPointsCalculators.GetValueOrDefault(companyType, _defaultLoyaltyPointsCalculator);
 }
