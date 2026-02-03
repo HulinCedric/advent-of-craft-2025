@@ -1,5 +1,6 @@
+using NorthPole.Calculations;
 using NorthPole.Domain;
-using static NorthPole.Domain.CalculatedInvoice;
+using static NorthPole.Calculations.CalculatedInvoice;
 
 namespace NorthPole.Formatters;
 

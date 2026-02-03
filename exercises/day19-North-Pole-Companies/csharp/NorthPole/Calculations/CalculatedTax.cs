@@ -1,4 +1,6 @@
-﻿namespace NorthPole.Domain;
+﻿using NorthPole.Domain;
+
+namespace NorthPole.Calculations;
 
 public record CalculatedTax(Tax Tax, Money Amount)
 {

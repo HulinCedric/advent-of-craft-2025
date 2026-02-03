@@ -2,8 +2,9 @@ using NorthPole.Calculations;
 using NorthPole.Calculations.DeliveryCosts;
 using NorthPole.Calculations.LoyaltyPoints;
 using NorthPole.Domain;
+using NorthPole.Formatters;
 
-namespace NorthPole.Formatters;
+namespace NorthPole;
 
 public class InvoicePrinter(InvoiceCalculator calculator)
 {
@@ -23,18 +24,18 @@ public class InvoicePrinter(InvoiceCalculator calculator)
     {
     }
 
-    public string PrintWithoutTax(Invoice invoice, Dictionary<string, ElfCompany> elfCompanies)
+    public string PrintWithoutTax(Invoice invoice, Dictionary<string, ElfCompany> companies)
         => invoice
-            .EnrichWith(elfCompanies)
+            .EnrichWith(companies)
             .CalculateWith(calculator)
             .FormatWith(new InvoiceFormatterWithoutTax());
 
     public string PrintWithTax(
         Invoice invoice,
-        Dictionary<string, ElfCompany> elfCompanies,
+        Dictionary<string, ElfCompany> companies,
         Dictionary<string, Tax> taxes)
         => invoice
-            .EnrichWith(elfCompanies, taxes)
+            .EnrichWith(companies, taxes)
             .CalculateWith(calculator)
             .FormatWith(new InvoiceFormatterWithTax());
 }
