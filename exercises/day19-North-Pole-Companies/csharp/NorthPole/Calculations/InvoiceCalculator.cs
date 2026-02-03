@@ -52,7 +52,7 @@ public class InvoiceCalculator
         var loyaltyPoints = LoyaltyPoints(delivery, company);
 
         return new Line(
-            delivery.NumberOfPackages,
+            delivery.Packages,
             company.Name,
             taxLine,
             netAmount,
@@ -61,7 +61,7 @@ public class InvoiceCalculator
 
     private Money NetAmount(Delivery delivery, ElfCompany company)
         => _deliveryCostCalculators.TryGetValue(company.Type, out var calculator)
-            ? new Money(calculator.Calculate(delivery.NumberOfPackages))
+            ? new Money(calculator.Calculate(delivery.Packages))
             : throw new InvalidOperationException($"Unknown company type: {company.Type}");
 
     private static TaxLine TaxLine(Tax tax, Money netAmount) => new(tax, new Money(netAmount.Value * tax.Rate.Value));
@@ -69,5 +69,5 @@ public class InvoiceCalculator
     private int LoyaltyPoints(Delivery delivery, ElfCompany company)
         => _loyaltyPointsCalculators
             .GetValueOrDefault(company.Type, _defaultLoyaltyPointsCalculator)
-            .Calculate(delivery.NumberOfPackages);
+            .Calculate(delivery.Packages);
 }
