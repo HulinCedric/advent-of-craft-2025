@@ -26,12 +26,12 @@ public static class PrintableInvoiceFactory
     public static PrintableInvoice CreateFrom(
         Invoice invoice,
         Dictionary<string, ElfCompany> elfCompanies)
-        => CreateFrom(invoice, elfCompanies, new Dictionary<string, TaxRate>());
+        => CreateFrom(invoice, elfCompanies, new Dictionary<string, Tax>());
 
     public static PrintableInvoice CreateFrom(
         Invoice invoice,
         Dictionary<string, ElfCompany> elfCompanies,
-        Dictionary<string, TaxRate> taxRates)
+        Dictionary<string, Tax> taxRates)
     {
         var lines = CreateLines(invoice.Deliveries, elfCompanies, taxRates).ToList();
 
@@ -52,23 +52,23 @@ public static class PrintableInvoiceFactory
     private static IEnumerable<Line> CreateLines(
         List<Delivery> deliveries,
         Dictionary<string, ElfCompany> elfCompanies,
-        Dictionary<string, TaxRate> taxRates)
+        Dictionary<string, Tax> taxRates)
         => from delivery in deliveries
             let company = elfCompanies[delivery.CompanyID]
-            let taxRate = taxRates.GetValueOrDefault(company.Region, TaxRate.NoTaxRate)
+            let taxRate = taxRates.GetValueOrDefault(company.Region, Tax.NoTax)
             select Line(delivery, company, taxRate);
 
-    private static Line Line(Delivery delivery, ElfCompany company, TaxRate taxRate)
+    private static Line Line(Delivery delivery, ElfCompany company, Tax tax)
     {
-        var (netAmount, taxAmount, grossAmount) = LineAmounts(company.Type, delivery.Packages, taxRate.TaxRateValue);
+        var (netAmount, taxAmount, grossAmount) = LineAmounts(company.Type, delivery.Packages, tax.TaxRateValue);
 
         var loyaltyPoints = LineLoyaltyPoints(company.Type, delivery.Packages);
 
         return new Line(
             delivery.Packages,
             company.Name,
-            taxRate.Name,
-            taxRate.TaxRateValue,
+            tax.Name,
+            new TaxRate(tax.TaxRateValue),
             new Money(netAmount),
             new Money(taxAmount),
             new Money(grossAmount),

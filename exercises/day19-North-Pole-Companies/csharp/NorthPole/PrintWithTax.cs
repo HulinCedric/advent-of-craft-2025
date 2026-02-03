@@ -23,6 +23,6 @@ public class PrintWithTax : IPrinter
     private string Print(Line line)
         => $"""
              {line.CompanyName}: {line.NetAmount} ({line.NumberOfPackages} packages)
-               Tax ({line.TaxName} - {line.TaxRate.ToString("P0", _culture)}): {line.TaxAmount}
+               Tax ({line.TaxName} - {line.TaxRate}): {line.TaxAmount}
             """;
 }

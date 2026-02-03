@@ -70,15 +70,15 @@ public class InvoicePrinterTests
         return new Invoice(customer, deliveries);
     }
 
-    private static Dictionary<string, TaxRate> LoadTaxes()
+    private static Dictionary<string, Tax> LoadTaxes()
     {
         var json = File.ReadAllText("Resources/taxRates.json");
         var data = JsonConvert.DeserializeObject<Dictionary<string, JObject>>(json);
-        var taxes = new Dictionary<string, TaxRate>();
+        var taxes = new Dictionary<string, Tax>();
 
         foreach (var kvp in data)
         {
-            taxes[kvp.Key] = new TaxRate(
+            taxes[kvp.Key] = new Tax(
                 name: kvp.Value["name"].ToString(),
                 taxRate: kvp.Value["taxRate"].ToObject<decimal>(),
                 description: kvp.Value["description"].ToString());

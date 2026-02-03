@@ -1,12 +1,9 @@
-using System.Globalization;
 using static NorthPole.PrintableInvoice;
 
 namespace NorthPole;
 
 public class PrintWithoutTax : IPrinter
 {
-    private readonly CultureInfo _culture = new("en-US");
-
     public string Print(PrintableInvoice invoice)
         => $"""
             Invoice for {invoice.Customer}

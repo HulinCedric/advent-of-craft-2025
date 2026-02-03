@@ -1,17 +1,12 @@
+﻿using System.Globalization;
+
 namespace NorthPole;
 
-public class TaxRate
+public readonly record struct TaxRate(decimal Value)
 {
-    public string Name { get; }
-    public decimal TaxRateValue { get; }
-    public string Description { get; }
+    private static readonly CultureInfo Culture = new("en-US");
 
-    public TaxRate(string name, decimal taxRate, string description)
-    {
-        Name = name;
-        TaxRateValue = taxRate;
-        Description = description;
-    }
+    public static readonly TaxRate Zero = new(0m);
 
-    public static readonly TaxRate NoTaxRate = new("No Tax", 0m, "No tax rate for this region");
+    public override string ToString() => Value.ToString("P0", Culture);
 }

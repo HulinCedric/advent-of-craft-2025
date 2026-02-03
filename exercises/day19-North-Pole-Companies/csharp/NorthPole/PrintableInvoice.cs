@@ -12,7 +12,7 @@ public record PrintableInvoice(
         int NumberOfPackages,
         string CompanyName,
         string TaxName,
-        decimal TaxRate,
+        TaxRate TaxRate,
         Money NetAmount,
         Money TaxAmount,
         Money GrossAmount,
