@@ -56,31 +56,15 @@ public class InvoiceCalculator
             loyaltyPoints);
     }
 
-    private static TaxLine TaxLine(Tax tax, Money netAmount)
-    {
-        var taxAmount = new Money(netAmount.Value * tax.Rate.Value);
-        return new TaxLine(tax, taxAmount);
-    }
-
     private Money NetAmount(Delivery delivery, ElfCompany company)
-    {
-        var deliveryCostCalculator = CreateDeliveryCostCalculator(company.Type);
+        => _deliveryCostCalculators.TryGetValue(company.Type, out var calculator)
+            ? new Money(calculator.Calculate(delivery.NumberOfPackages))
+            : throw new Exception($"unknown type: {company.Type}");
 
-        return new Money(deliveryCostCalculator.Calculate(delivery.NumberOfPackages));
-    }
+    private static TaxLine TaxLine(Tax tax, Money netAmount) => new(tax, new Money(netAmount.Value * tax.Rate.Value));
 
     private int LoyaltyPoints(Delivery delivery, ElfCompany company)
-    {
-        var loyaltyPointCalculator = CreateLoyaltyPointCalculator(company.Type);
-
-        return loyaltyPointCalculator.Calculate(delivery.NumberOfPackages);
-    }
-
-    private IDeliveryCostCalculator CreateDeliveryCostCalculator(string companyType)
-        => _deliveryCostCalculators.TryGetValue(companyType, out var calculator)
-            ? calculator
-            : throw new Exception($"unknown type: {companyType}");
-
-    private ILoyaltyPointsCalculator CreateLoyaltyPointCalculator(string companyType)
-        => _loyaltyPointsCalculators.GetValueOrDefault(companyType, _defaultLoyaltyPointsCalculator);
+        => _loyaltyPointsCalculators
+            .GetValueOrDefault(company.Type, _defaultLoyaltyPointsCalculator)
+            .Calculate(delivery.NumberOfPackages);
 }
