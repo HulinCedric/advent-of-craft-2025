@@ -55,33 +55,39 @@ public class InvoiceCalculator
 
     private Line Line(Delivery delivery, ElfCompany company, Tax tax)
     {
-        var deliveryCostCalculator = CreateDeliveryCostCalculator(company.Type);
-
-        var netAmount = deliveryCostCalculator.Calculate(delivery.Packages);
-        var taxAmount = CalculateTaxAmount(netAmount, tax.Rate);
-        var grossAmount = CalculateGrossAmount(netAmount, taxAmount);
-
-        var loyaltyPoints = LineLoyaltyPoints(company.Type, delivery.Packages);
+        var netAmount = NetAmount(delivery, company);
+        var taxAmount = TaxAmount(netAmount, tax.Rate);
+        var taxLine = new TaxLine(tax, taxAmount);
+        var grossAmount = GrossAmount(netAmount, taxAmount);
+        var loyaltyPoints = LoyaltyPoints(delivery, company);
 
         return new Line(
-            delivery.Packages,
+            delivery.NumberOfPackages,
             company.Name,
-            new TaxLine(tax, new Money(taxAmount)),
-            new Money(netAmount),
-            new Money(taxAmount),
-            new Money(grossAmount),
+            taxLine,
+            netAmount,
+            taxAmount,
+            grossAmount,
             loyaltyPoints);
     }
 
-    private int LineLoyaltyPoints(string companyType, int numberOfPackages)
+    private Money NetAmount(Delivery delivery, ElfCompany company)
     {
-        var loyaltyPointCalculator = CreateLoyaltyPointCalculator(companyType);
+        var deliveryCostCalculator = CreateDeliveryCostCalculator(company.Type);
 
-        return loyaltyPointCalculator.Calculate(numberOfPackages);
+        return new Money(deliveryCostCalculator.Calculate(delivery.NumberOfPackages));
     }
 
-    private static decimal CalculateGrossAmount(decimal netAmount, decimal taxAmount) => netAmount + taxAmount;
-    private static decimal CalculateTaxAmount(decimal netAmount, TaxRate taxRate) => netAmount * taxRate;
+    private static Money GrossAmount(Money netAmount, Money taxAmount) => new(netAmount.Value + taxAmount.Value);
+
+    private static Money TaxAmount(Money netAmount, TaxRate taxRate) => new(netAmount.Value * taxRate.Value);
+
+    private int LoyaltyPoints(Delivery delivery, ElfCompany company)
+    {
+        var loyaltyPointCalculator = CreateLoyaltyPointCalculator(company.Type);
+
+        return loyaltyPointCalculator.Calculate(delivery.NumberOfPackages);
+    }
 
     private IDeliveryCostCalculator CreateDeliveryCostCalculator(string companyType)
         => _deliveryCostCalculators.TryGetValue(companyType, out var calculator)

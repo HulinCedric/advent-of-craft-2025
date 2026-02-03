@@ -1,3 +1,3 @@
 namespace NorthPole;
 
-public record Delivery(string CompanyId, int Packages);
+public record Delivery(string CompanyId, int NumberOfPackages);
