@@ -1,0 +1,6 @@
+﻿Invoice for Toys-R-Us North America
+ Rudolph Express Delivery: $600.00 (120 packages)
+ Jingle's Standard Service: $560.00 (80 packages)
+ Frosty's Fast Fleet: $500.00 (95 packages)
+Amount owed is $1,660.00
+You earned 166 loyalty points

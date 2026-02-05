@@ -1,62 +1,88 @@
-using ApprovalTests;
-using ApprovalTests.Reporters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Xunit;
-using System.Collections.Generic;
-using System.IO;
+using NorthPole.Domain;
+using NorthPole.Formatters;
 
-namespace NorthPole.Tests
+namespace NorthPole.Tests;
+
+public class InvoicePrinterTests
 {
-    [UseReporter(typeof(DiffReporter))]
-    public class InvoicePrinterTests
+    private const string ResourcesOrderWithTaxes = "Resources/orderWithTaxes.json";
+    private const string ResourcesOrder = "Resources/order.json";
+
+    private readonly InvoicePrinter _invoicePrinter = new();
+
+    [Fact]
+    public Task ExampleInvoice()
     {
-        [Fact]
-        public void ExampleInvoice()
+        var elfCompanies = LoadElfCompanies();
+        var invoice = LoadInvoice(ResourcesOrder);
+
+        var result = _invoicePrinter.PrintWithoutTax(invoice, elfCompanies);
+
+        return Verify(result);
+    }
+
+    [Fact]
+    public Task ExampleInvoiceWithTaxes()
+    {
+        var elfCompanies = LoadElfCompanies();
+        var invoice = LoadInvoice(ResourcesOrderWithTaxes);
+        var taxes = LoadTaxes();
+
+        var result = _invoicePrinter.PrintWithTax(invoice, elfCompanies, taxes);
+
+        return Verify(result);
+    }
+
+    private static Dictionary<string, ElfCompany> LoadElfCompanies()
+    {
+        var json = File.ReadAllText("Resources/elfCompanies.json");
+        var data = JsonConvert.DeserializeObject<Dictionary<string, JObject>>(json);
+        var companies = new Dictionary<string, ElfCompany>();
+
+        foreach (var kvp in data)
         {
-            var elfCompanies = LoadElfCompanies();
-            var invoice = LoadInvoice();
-            var printer = new InvoicePrinter();
-
-            var result = printer.Print(invoice, elfCompanies);
-
-            Approvals.Verify(result);
+            companies[kvp.Key] = new ElfCompany(
+                kvp.Value["name"].ToString(),
+                kvp.Value["type"].ToString(),
+                kvp.Value["region"].ToString());
         }
 
-        // TODO: Add ExampleInvoiceWithTaxes() test here
+        return companies;
+    }
 
-        private Dictionary<string, ElfCompany> LoadElfCompanies()
+    private static Invoice LoadInvoice(string orders)
+    {
+        var json = File.ReadAllText(orders);
+        var data = JObject.Parse(json);
+        var customer = data["customer"].ToString();
+        var deliveries = new List<Delivery>();
+
+        foreach (var d in data["deliveries"])
         {
-            var json = File.ReadAllText("Resources/elfCompanies.json");
-            var data = JsonConvert.DeserializeObject<Dictionary<string, JObject>>(json);
-            var companies = new Dictionary<string, ElfCompany>();
-
-            foreach (var kvp in data)
-            {
-                companies[kvp.Key] = new ElfCompany(
-                    kvp.Value["name"].ToString(),
-                    kvp.Value["type"].ToString(),
-                    kvp.Value["region"].ToString()
-                );
-            }
-            return companies;
-        }
-
-        private Invoice LoadInvoice()
-        {
-            var json = File.ReadAllText("Resources/order.json");
-            var data = JObject.Parse(json);
-            var customer = data["customer"].ToString();
-            var deliveries = new List<Delivery>();
-
-            foreach (var d in data["deliveries"])
-            {
-                deliveries.Add(new Delivery(
+            deliveries.Add(
+                new Delivery(
                     d["companyID"].ToString(),
-                    d["packages"].ToObject<int>()
-                ));
-            }
-            return new Invoice(customer, deliveries);
+                    d["packages"].ToObject<int>()));
         }
+
+        return new Invoice(customer, deliveries);
+    }
+
+    private static Dictionary<string, Tax> LoadTaxes()
+    {
+        var json = File.ReadAllText("Resources/taxRates.json");
+        var data = JsonConvert.DeserializeObject<Dictionary<string, JObject>>(json);
+        var taxes = new Dictionary<string, Tax>();
+
+        foreach (var kvp in data)
+        {
+            taxes[kvp.Key] = new Tax(
+                RegionName: kvp.Value["name"].ToString(),
+                Rate: new TaxRate(kvp.Value["taxRate"].ToObject<decimal>()));
+        }
+
+        return taxes;
     }
 }
